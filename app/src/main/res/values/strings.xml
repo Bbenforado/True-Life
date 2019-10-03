@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">ApplicationSecond</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    //NAVIGATION DRAWER
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    //ANIMATION
+    <string name="animation_main_to_detail" translatable="false">AnimationMainToDetail</string>
+</resources>

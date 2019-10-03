@@ -1,0 +1,89 @@
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_margin="5dp"
+    app:cardBackgroundColor="@android:color/white"
+    app:cardCornerRadius="2dp"
+    app:cardElevation="2dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/fragment_page_item_image"
+                android:layout_width="60dip"
+                android:layout_height="60dip"
+                android:layout_margin="5dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/image_cours"
+                android:layout_alignParentLeft="true"
+                android:transitionName="@string/animation_main_to_detail"/>
+
+            <LinearLayout
+                android:id="@+id/linear_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginLeft="16dp"
+                android:layout_toRightOf="@+id/fragment_page_item_image">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/owner_of_post"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Owner of post's name"
+                        android:textSize="12sp"/>
+
+                    <TextView
+                        android:id="@+id/date_creation_project_item"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="date here"
+                        android:textStyle="italic"
+                        android:textSize="9sp"
+                        android:layout_alignParentRight="true"/>
+
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/title_of_news"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="this will display title of the news"
+                    android:textStyle="bold"
+                    android:textSize="16sp"/>
+
+                <TextView
+                    android:id="@+id/content_of_news"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="this will display begining of content of the news, bla, bla, bla, bla, bla, bla, bla, bla, bla, bla..."/>
+
+                <TextView
+                    android:id="@+id/text_view_view_more"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="View more ..."
+                    android:textSize="9dp"
+                    android:textStyle="italic"
+                    android:layout_gravity="center_horizontal"/>
+
+            </LinearLayout>
+
+
+        </RelativeLayout>
+
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

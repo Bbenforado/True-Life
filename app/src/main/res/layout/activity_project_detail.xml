@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.ProjectDetailActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <include
+            layout="@layout/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+
+        <ImageView
+            android:id="@+id/fragment_detail_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:src="@drawable/image_cours"
+            android:scaleType="centerCrop"
+            android:transitionName="@string/animation_main_to_detail"/>
+
+        <LinearLayout
+            android:id="@+id/fragment_detail_layout_detail"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+
+            <TextView
+                android:id="@+id/activity_detail_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="56dip"
+                android:text="title"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/project_detail_activity_author_button"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:background="@drawable/button_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="From: Username"
+                android:paddingLeft="4dp"
+                android:paddingRight="4dp"
+                android:textAllCaps="false"/>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp">
+
+                <TextView
+                    android:id="@+id/text_view_date_of_publication"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Date of publication :"
+                    android:textSize="9sp" />
+
+                <TextView
+                    android:id="@+id/activity_detail_publish_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/text_view_date_of_publication"
+                    android:paddingLeft="7dp"
+                    android:text="date here"
+                    android:textSize="9sp" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/text_view_date_of_event"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Date of event :"
+                    android:textSize="9sp" />
+
+                <TextView
+                    android:id="@+id/activity_detail_event_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/text_view_date_of_event"
+                    android:paddingLeft="7dp"
+                    android:text="date here"
+                    android:textSize="9sp" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/text_view_end_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="End date :"
+                    android:textSize="9sp" />
+
+                <TextView
+                    android:id="@+id/activity_detail_end_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/text_view_end_date"
+                    android:paddingLeft="7dp"
+                    android:text="date here"
+                    android:textSize="9sp" />
+
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/activity_detail_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:ellipsize="end"
+                android:text="description" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:text="Location :"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/activity_detail_street_number_and_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="number and street name" />
+
+            <TextView
+                android:id="@+id/activity_detail_complement"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="complement" />
+
+            <TextView
+                android:id="@+id/activity_detail_postal_code_and_city"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="postal code and city" />
+
+            <TextView
+                android:id="@+id/activity_detail_country"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="country" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/activity_detail_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:clickable="true"
+        app:backgroundTint="@android:color/white"
+        android:src="@drawable/ic_check"
+        app:layout_anchor="@id/fragment_detail_image"
+        app:layout_anchorGravity="bottom|right|end"/>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

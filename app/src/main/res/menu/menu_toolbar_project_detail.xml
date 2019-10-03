@@ -1,0 +1,10 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/edit_item"
+        android:icon="@drawable/edit_small"
+        android:title="Search"
+        app:showAsAction="ifRoom|withText"/>
+
+</menu>
