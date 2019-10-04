@@ -46,7 +46,7 @@ public class AddProjectFragment extends Fragment {
     private boolean isPublished;
     //-------------------------------------------------
     public static final String APP_PREFERENCES = "appPreferences";
-    public static final String USER_ID = "userId";
+    public static final String KEY_EDIT_PROJECT = "keyEditproject";
 
 
     public AddProjectFragment() {
@@ -60,6 +60,14 @@ public class AddProjectFragment extends Fragment {
         View result = inflater.inflate(R.layout.fragment_add_project, container, false);
         ButterKnife.bind(this, result);
         preferences = getActivity().getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
+
+        //check if it s for editing one existing project
+        //if 0 it s not
+        //if 1 it is
+        if (preferences.getInt(KEY_EDIT_PROJECT, -1) == 1) {
+            //update ui with existing data on this project
+
+        }
 
         return result;
     }

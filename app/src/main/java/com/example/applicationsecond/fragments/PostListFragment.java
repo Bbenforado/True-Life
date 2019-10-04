@@ -22,8 +22,12 @@ import android.widget.ViewSwitcher;
 
 import com.example.applicationsecond.R;
 import com.example.applicationsecond.adapters.AdapterRecyclerViewPosts;
+import com.example.applicationsecond.api.PostHelper;
+import com.example.applicationsecond.api.UserHelper;
 import com.example.applicationsecond.models.Post;
+import com.example.applicationsecond.models.User;
 import com.example.applicationsecond.utils.ItemClickSupport;
+import com.example.applicationsecond.utils.Utils;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
@@ -53,6 +57,7 @@ public class PostListFragment extends Fragment {
     private AdapterRecyclerViewPosts adapter;
     private boolean isNewsToDisplay;
     private List<Post> postList;
+    private List<String> publishedPostsId;
     //-----------------------------------------------
     //-------------------------------------------------
 
@@ -67,6 +72,8 @@ public class PostListFragment extends Fragment {
                              Bundle savedInstanceState) {
         View result = inflater.inflate(R.layout.fragment_post_list, container, false);
         ButterKnife.bind(this, result);
+
+        publishedPostsId = new ArrayList<>();
 
         doBasicConfiguration();
         return result;
@@ -132,7 +139,7 @@ public class PostListFragment extends Fragment {
 
     private void getDataToConfigureRecyclerView() {
 
-        CollectionReference collectionReference = FirebaseFirestore.getInstance().collection("posts");
+        /*CollectionReference collectionReference = FirebaseFirestore.getInstance().collection("posts");
         collectionReference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -151,6 +158,54 @@ public class PostListFragment extends Fragment {
 
                 } else {
                     Log.e("TAG", "Error");
+                }
+            }
+        });*/
+        //get the current user
+        UserHelper.getUser(Utils.getCurrentUser().getUid()).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    User user = task.getResult().toObject(User.class);
+
+                    //get the list of the followed associations
+                    if (user.getAssociationSubscribedId() != null) {
+                        if (user.getAssociationSubscribedId().size() > 0) {
+                            for (int i = 0; i < user.getAssociationSubscribedId().size(); i++) {
+
+                                UserHelper.getUser(user.getAssociationSubscribedId().get(i)).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                        if (task.isSuccessful()) {
+                                            User association = task.getResult().toObject(User.class);
+
+                                            if (association.getPublishedPostId().size() > 0) {
+                                                for (int j = 0; j < association.getPublishedPostId().size(); j++) {
+                                                    String id = association.getPublishedPostId().get(j);
+                                                    PostHelper.getPost(id).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                        @Override
+                                                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                            if (task.isSuccessful()) {
+                                                                Post post = task.getResult().toObject(Post.class);
+                                                                postList.add(post);
+
+                                                                adapter = new AdapterRecyclerViewPosts(postList);
+                                                                recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                                                                recyclerView.setAdapter(adapter);
+                                                            }
+
+                                                        }
+                                                    });
+                                                }
+
+                                            }
+
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    }
                 }
             }
         });

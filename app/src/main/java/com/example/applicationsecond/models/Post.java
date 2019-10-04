@@ -14,12 +14,21 @@ public class Post {
 
     }
 
-    public Post(String title, String content, String authorName, Date dateOfPublication) {
+    public Post(String id, String title, String content, String authorName, Date dateOfPublication) {
+        this.id = id;
         this.title = title;
         this.content = content;
         this.authorName = authorName;
         this.dateOfPublication = dateOfPublication;
     }
+
+    /*public Post(String id, String title, String content, String authorName, Date dateOfPublication) {
+        this.id = id;
+        this.title = title;
+        this.content = content;
+        this.authorName = authorName;
+        this.dateOfPublication = dateOfPublication;
+    }*/
 
 
     public String getId() {

@@ -18,9 +18,9 @@ public class PostHelper {
     }
 
     //CREATE
-    public static Task<Void> createPost(String title, String content, String authorName, Date dateOfPublication) {
-        Post postToCreate = new Post(title, content, authorName, dateOfPublication);
-        return PostHelper.getPostsCollection().document().set(postToCreate);
+    public static Task<Void> createPost(String id, String title, String content, String authorName, Date dateOfPublication) {
+        Post postToCreate = new Post(id, title, content, authorName, dateOfPublication);
+        return PostHelper.getPostsCollection().document(id).set(postToCreate);
     }
 
     //GET

@@ -17,6 +17,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,11 +37,16 @@ import com.example.applicationsecond.utils.Utils;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -68,7 +74,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private SearchFragment searchFragment;
     private AddProjectFragment addProjectFragment;
     private PostListFragment postListFragment;
-    private User currentUser;
     private boolean isCurrentUserAssociation;
     private SharedPreferences preferences;
     //---------------------------------------
@@ -297,13 +302,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .setPositiveButton("Publish", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+
+                        CollectionReference ref = FirebaseFirestore.getInstance().collection("posts");
+                        String postId = ref.document().getId();
+
                         EditText title = view.findViewById(R.id.input_title);
                         EditText content = view.findViewById(R.id.input_description);
                         String postTitle = title.getText().toString();
                         String postContent = content.getText().toString();
                         Date creationDate = new Date();
                         String authorName = Utils.getCurrentUser().getDisplayName();
-                        PostHelper.createPost(postTitle, postContent, authorName, creationDate);
+                        PostHelper.createPost(postId, postTitle, postContent, authorName, creationDate);
+
+                        //save the id of the post in the user
+                        UserHelper.updatePublishedPostIdList(Utils.getCurrentUser().getUid(), postId);
 
                         Toast.makeText(getApplication(), "Post published!", Toast.LENGTH_SHORT).show();
 

@@ -46,8 +46,13 @@ public class UserHelper {
                 FieldValue.arrayUnion(associationId));
     }
 
-    public static Task<Void> removeAssociationSubscription(String userid, String associationId) {
-        return UserHelper.getUsersCollection().document(userid).update("associationSubscribedId",
+    public static Task<Void> removeAssociationSubscription(String userId, String associationId) {
+        return UserHelper.getUsersCollection().document(userId).update("associationSubscribedId",
                 FieldValue.arrayRemove(associationId));
+    }
+
+    public static Task<Void> updatePublishedPostIdList(String userId, String postId) {
+        return UserHelper.getUsersCollection().document(userId).update("publishedPostId",
+                FieldValue.arrayUnion(postId));
     }
 }

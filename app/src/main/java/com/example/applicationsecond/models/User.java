@@ -11,6 +11,7 @@ public class User {
     private boolean isAssociation;
     private List<String> projectsSubscribedId;
     private List<String> associationSubscribedId;
+    private List<String> publishedPostId;
 
     public User() {
 
@@ -85,5 +86,13 @@ public class User {
 
     public void setProjectsSubscribedId(List<String> projectsSubscribedId) {
         this.projectsSubscribedId = projectsSubscribedId;
+    }
+
+    public List<String> getPublishedPostId() {
+        return publishedPostId;
+    }
+
+    public void setPublishedPostId(List<String> publishedPostId) {
+        this.publishedPostId = publishedPostId;
     }
 }

@@ -162,28 +162,7 @@ public class ActualityListFragment extends Fragment {
 
 
     private void getDataToConfigureRecyclerView() {
-        ProjectHelper.getProjectsForOneUser(Utils.getCurrentUser().getUid()).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    List<Project> projects = new ArrayList<>();
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        Project project = document.toObject(Project.class);
-                        projects.add(project);
-                    }
-
-                    projectList.addAll(projects);
-
-                    adapter = new AdapterRecyclerViewProjects(projects);
-                    recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                    recyclerView.setAdapter(adapter);
-
-                } else {
-                    Log.e("TAG", "Error");
-                }
-            }
-        });
-        /*ProjectHelper.getPublishedProjects().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        /*ProjectHelper.getProjectsForOneUser(Utils.getCurrentUser().getUid()).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
@@ -204,6 +183,27 @@ public class ActualityListFragment extends Fragment {
                 }
             }
         });*/
+        ProjectHelper.getPublishedProjects().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    List<Project> projects = new ArrayList<>();
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        Project project = document.toObject(Project.class);
+                        projects.add(project);
+                    }
+
+                    projectList.addAll(projects);
+
+                    adapter = new AdapterRecyclerViewProjects(projects);
+                    recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                    recyclerView.setAdapter(adapter);
+
+                } else {
+                    Log.e("TAG", "Error");
+                }
+            }
+        });
     }
 
 }

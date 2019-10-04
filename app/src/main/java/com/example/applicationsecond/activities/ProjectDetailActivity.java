@@ -4,6 +4,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -19,6 +22,7 @@ import com.example.applicationsecond.R;
 import com.example.applicationsecond.api.PostHelper;
 import com.example.applicationsecond.api.ProjectHelper;
 import com.example.applicationsecond.api.UserHelper;
+import com.example.applicationsecond.fragments.AddProjectFragment;
 import com.example.applicationsecond.models.Project;
 import com.example.applicationsecond.models.User;
 import com.example.applicationsecond.utils.Utils;
@@ -59,6 +63,7 @@ public class ProjectDetailActivity extends AppCompatActivity {
     //-------------------------------------------
     public static final String APP_PREFERENCES = "appPreferences";
     private static final String CLICKED_PROJECT = "clickedProject";
+    public static final String KEY_EDIT_PROJECT = "keyEditproject";
     //---------------------------------------
     //------------------------------------------
     private SharedPreferences preferences;
@@ -99,10 +104,22 @@ public class ProjectDetailActivity extends AppCompatActivity {
         if (item.getItemId() == R.id.edit_item) {
             Toast.makeText(this, "You ll soon be able to edit this project!", Toast.LENGTH_SHORT).show();
             //launch add project activity with fields completed
+            preferences.edit().putInt(KEY_EDIT_PROJECT, 1).apply();
+            //then display the fragment
+            AddProjectFragment fragment = new AddProjectFragment();
+            //showFragment(fragment);
+
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
+
+    /*private void showFragment(Fragment fragment) {
+        FragmentManager fragmentManager = this.getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.replace(R.id.frame_layout_content_project_detail_activity, fragment);
+        transaction.commit();
+    }*/
 
     private void configureToolbar() {
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -156,13 +173,15 @@ public class ProjectDetailActivity extends AppCompatActivity {
     private void displayColorButton(User user, String projectId) {
 
         //check if user subscribed to this project maybe
-        if (user.getProjectsSubscribedId().contains(projectId)) {
+        if (user.getProjectsSubscribedId() != null) {
+            if (user.getProjectsSubscribedId().contains(projectId)) {
                 buttonFollowProject.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorPrimaryDark)));
                 isButtonClicked = true;
             } else {
                 buttonFollowProject.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorAccent)));
                 isButtonClicked = false;
             }
+        }
     }
 
     private void getCurrentUserInfoToDisplayButtonState(String projectId) {
