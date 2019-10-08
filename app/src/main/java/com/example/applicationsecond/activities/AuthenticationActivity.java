@@ -103,6 +103,9 @@ public class AuthenticationActivity extends AppCompatActivity {
 
     @OnClick(R.id.button_login_authentication_activity)
     public void login() {
+        Intent loginItent = new Intent(this, LoginActivity.class);
+        startActivity(loginItent);
+
     }
 
     private void configureSwitchButton() {
@@ -120,12 +123,7 @@ public class AuthenticationActivity extends AppCompatActivity {
     }
 
     private boolean checkIfStringIsNotEmpty(String value) {
-        if (TextUtils.isEmpty(value)) {
-            Toast.makeText(this, "A Field is Empty", Toast.LENGTH_SHORT).show();
-            return false;
-        } else {
-            return true;
-        }
+        return !TextUtils.isEmpty(value);
     }
 
     private boolean checkAllFieldsAreCompleted() {

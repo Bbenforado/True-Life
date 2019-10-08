@@ -44,7 +44,6 @@ public class ProfileActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
-                            System.out.println("come here.????");
                             Intent intent = new Intent(getApplicationContext(), AuthenticationActivity.class);
                             startActivity(intent);
                             finish();
