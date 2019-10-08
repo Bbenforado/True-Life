@@ -114,10 +114,10 @@ public class ProjectDetailActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    /*private void showFragment(Fragment fragment) {
+    /*public void showFragment(Fragment fragment) {
         FragmentManager fragmentManager = this.getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.replace(R.id.frame_layout_content_project_detail_activity, fragment);
+        transaction.replace(R.id.frame_layout_content_detail_activity, fragment);
         transaction.commit();
     }*/
 

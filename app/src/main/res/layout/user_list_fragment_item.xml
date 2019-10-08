@@ -1,0 +1,46 @@
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_margin="5dp"
+    app:cardBackgroundColor="@android:color/white"
+    app:cardCornerRadius="2dp"
+    app:cardElevation="2dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/user_list_fragment_item_image"
+                android:layout_width="60dip"
+                android:layout_height="60dip"
+                android:layout_margin="5dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/image_cours"
+                android:layout_alignParentLeft="true"
+                android:transitionName="@string/animation_main_to_detail"/>
+
+            <TextView
+                android:id="@+id/user_list_fragment_item_username"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/user_list_fragment_item_image"
+                android:layout_centerInParent="true"
+                android:layout_marginLeft="15dp"
+                android:text="user name"
+                android:textStyle="bold"
+                android:textSize="16sp"/>
+
+
+        </RelativeLayout>
+
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

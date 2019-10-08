@@ -7,6 +7,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.Date;
 
@@ -28,6 +29,10 @@ public class UserHelper {
     //GET
     public static Task<DocumentSnapshot> getUser(String id) {
         return UserHelper.getUsersCollection().document(id).get();
+    }
+
+    public static Task<QuerySnapshot> getUserForSearchOnName(String search) {
+        return UserHelper.getUsersCollection().whereEqualTo("username", search).get();
     }
 
     //UPDATE
@@ -55,4 +60,6 @@ public class UserHelper {
         return UserHelper.getUsersCollection().document(userId).update("publishedPostId",
                 FieldValue.arrayUnion(postId));
     }
+
+
 }

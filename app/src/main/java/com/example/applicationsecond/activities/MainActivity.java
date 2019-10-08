@@ -96,12 +96,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         preferences = getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE);
 
         if (!isCurrentUserLogged()) {
-            startSignInActivity();
+            //startSignInActivity();
+            System.out.println("come here?????? or not?");
+            Intent authenticationIntent = new Intent(this, AuthenticationActivity.class);
+            startActivity(authenticationIntent);
+            this.finish();
         } else {
-            getDataFromCurrentUser();
+            /*getDataFromCurrentUser();
             //configure
             doBasicConfiguration();
-            showFragment(actualityListFragment);
+            showFragment(actualityListFragment);*/
+
+            configureToolbar();
+            configureDrawerLayout();
+            configureNavigationView();
         }
     }
 
@@ -180,14 +188,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     //-------------------------------------------------
     //-------------------------------------------------
-    private void showFragment(Fragment fragment) {
+    public void showFragment(Fragment fragment) {
         FragmentManager fragmentManager = this.getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.frame_layout_content_main_activity, fragment);
         transaction.commit();
     }
 
-    private void startSignInActivity() {
+    public void startSignInActivity() {
+
+        System.out.println("and here?");
+
         startActivityForResult(
                 AuthUI.getInstance()
                         .createSignInIntentBuilder()

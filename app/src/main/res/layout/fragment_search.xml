@@ -37,6 +37,12 @@
                 android:layout_marginTop="30dp"
                 android:text="Key words :"/>
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:text="Username :"/>
+
         </LinearLayout>
 
         <LinearLayout
@@ -57,11 +63,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
+            <EditText
+                android:id="@+id/input_username_search_fragment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
         </LinearLayout>
 
     </LinearLayout>
 
     <Button
+        android:id="@+id/button_search_fragment"
         style="@style/Widget.AppCompat.Button.Borderless"
         android:background="@drawable/button_style"
         android:layout_width="match_parent"

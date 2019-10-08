@@ -170,6 +170,8 @@
 
         </LinearLayout>
 
+
+
     </LinearLayout>
 
     </LinearLayout>
@@ -184,6 +186,8 @@
         android:src="@drawable/ic_check"
         app:layout_anchor="@id/fragment_detail_image"
         app:layout_anchorGravity="bottom|right|end"/>
+
+
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
