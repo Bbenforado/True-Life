@@ -1,5 +1,8 @@
 package com.example.applicationsecond.adapters;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -11,6 +14,7 @@ import com.example.applicationsecond.fragments.UsersProjectsListFragment;
 
 public class ViewPagerAdapter extends FragmentPagerAdapter {
 
+
     public ViewPagerAdapter(FragmentManager fm) {
         super(fm);
     }
@@ -18,6 +22,7 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         return new UsersProjectsListFragment();
+
     }
 
     @Override

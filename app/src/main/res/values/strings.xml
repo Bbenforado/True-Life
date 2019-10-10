@@ -10,4 +10,7 @@
 
     //ANIMATION
     <string name="animation_main_to_detail" translatable="false">AnimationMainToDetail</string>
+
+    //PERMISSIONS
+    <string name="popup_title_permission_files_access">Cette application a besoin de permission pour fonctionner.</string>
 </resources>

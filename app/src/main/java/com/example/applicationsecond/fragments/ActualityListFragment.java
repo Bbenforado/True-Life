@@ -86,6 +86,7 @@ public class ActualityListFragment extends Fragment {
 
         preferences = getActivity().getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
         doBasicConfiguration();
+
         return result;
     }
 

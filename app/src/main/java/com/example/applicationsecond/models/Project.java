@@ -52,6 +52,18 @@ public class Project {
         this.usersWhoSubscribed.add(authorId);
     }
 
+    public Project(String id, String title, String description, String authorId, Date creationDate, boolean isPublished, String urlPhoto) {
+        this.usersWhoSubscribed = new ArrayList<>();
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.authorId = authorId;
+        this.creationDate = creationDate;
+        this.isPublished = isPublished;
+        this.usersWhoSubscribed.add(authorId);
+        this.urlPhoto = urlPhoto;
+    }
+
     public List<String> getUsersWhoSubscribed() {
         return usersWhoSubscribed;
     }

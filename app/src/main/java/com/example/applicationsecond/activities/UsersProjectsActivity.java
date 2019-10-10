@@ -21,9 +21,6 @@ public class UsersProjectsActivity extends AppCompatActivity {
     ViewPager viewPager;
     @BindView(R.id.activity_users_projects_tabs)
     TabLayout tabLayout;
-    //-----------------------------------
-    private Toolbar toolbar;
-    private ActionBar actionBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,9 +39,10 @@ public class UsersProjectsActivity extends AppCompatActivity {
     }
 
     private void configureToolbar() {
-        toolbar = findViewById(R.id.toolbar);
+        //-----------------------------------
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        actionBar = getSupportActionBar();
+        ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("My projects");
         actionBar.setDisplayHomeAsUpEnabled(true);
     }

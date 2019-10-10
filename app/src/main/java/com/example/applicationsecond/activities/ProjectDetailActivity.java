@@ -8,16 +8,21 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.applicationsecond.R;
 import com.example.applicationsecond.api.PostHelper;
 import com.example.applicationsecond.api.ProjectHelper;
@@ -59,11 +64,14 @@ public class ProjectDetailActivity extends AppCompatActivity {
     @BindView(R.id.activity_detail_country) TextView projectCountryTextView;
     @BindView(R.id.project_detail_activity_author_button)
     Button authorButton;
+    @BindView(R.id.image_detail_activity)
+    ImageView imageView;
     //-----------------------------------------
     //-------------------------------------------
     public static final String APP_PREFERENCES = "appPreferences";
     private static final String CLICKED_PROJECT = "clickedProject";
     public static final String KEY_EDIT_PROJECT = "keyEditproject";
+    public static final String PROJECT_ID = "projectId";
     //---------------------------------------
     //------------------------------------------
     private SharedPreferences preferences;
@@ -74,12 +82,12 @@ public class ProjectDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_project_detail);
-
         ButterKnife.bind(this);
         preferences = getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE);
         clickedProject = retrieveClickedProject();
         if (clickedProject.getId() != null) {
-            getCurrentUserInfoToDisplayButtonState(clickedProject.getId());
+            //getCurrentUserInfoToDisplayButtonState(clickedProject.getId());
+            displayFollowButton();
         }
 
         configureToolbar();
@@ -102,24 +110,19 @@ public class ProjectDetailActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.edit_item) {
-            Toast.makeText(this, "You ll soon be able to edit this project!", Toast.LENGTH_SHORT).show();
             //launch add project activity with fields completed
             preferences.edit().putInt(KEY_EDIT_PROJECT, 1).apply();
-            //then display the fragment
-            AddProjectFragment fragment = new AddProjectFragment();
-            //showFragment(fragment);
 
+            Intent editIntent = new Intent(getApplicationContext(), AddProjectActivity.class);
+            String projectId = clickedProject.getId();
+            Bundle bundle = new Bundle();
+            bundle.putString(PROJECT_ID, projectId);
+            editIntent.putExtras(bundle);
+            startActivity(editIntent);
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
-
-    /*public void showFragment(Fragment fragment) {
-        FragmentManager fragmentManager = this.getSupportFragmentManager();
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.replace(R.id.frame_layout_content_detail_activity, fragment);
-        transaction.commit();
-    }*/
 
     private void configureToolbar() {
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -184,6 +187,15 @@ public class ProjectDetailActivity extends AppCompatActivity {
         }
     }
 
+    @SuppressLint("RestrictedApi")
+    private void displayFollowButton() {
+        if (clickedProject.getAuthorId().equals(Utils.getCurrentUser().getUid())) {
+            buttonFollowProject.setVisibility(View.GONE);
+        } else {
+            getCurrentUserInfoToDisplayButtonState(clickedProject.getId());
+        }
+    }
+
     private void getCurrentUserInfoToDisplayButtonState(String projectId) {
         UserHelper.getUser(getCurrentUser().getUid()).addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
@@ -221,6 +233,12 @@ public class ProjectDetailActivity extends AppCompatActivity {
 
             String buttonText = "From : " + project.getAuthorId();
             authorButton.setText(buttonText);
+        }
+
+        if (project.getUrlPhoto() != null) {
+            Glide.with(this)
+                    .load(project.getUrlPhoto())
+                    .into(this.imageView);
         }
     }
 }

@@ -7,11 +7,24 @@
     android:orientation="vertical"
     tools:context="activities.AddProjectActivity">
 
+
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:orientation="vertical">
+
+        <include
+            layout="@layout/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="16dp">
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/input_layout_name"
@@ -78,6 +91,182 @@
 
         </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="10dp"
+                    android:src="@drawable/ic_location"
+                    android:layout_marginEnd="10dp" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                    android:layout_width="0dp"
+                    android:layout_height="45dp"
+                    android:layout_weight="30"
+                    app:boxStrokeColor="@color/colorAccent"
+                    app:errorEnabled="true">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/text_edit_street_nbr"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Number"
+                        android:singleLine="true"
+                        android:inputType="number"
+                        android:maxLines="1"
+                        android:textSize="12sp"
+                        app:hintEnabled="true" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                    android:layout_width="0dp"
+                    android:layout_height="45dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_weight="80"
+                    app:boxStrokeColor="@color/colorAccent"
+                    app:errorEnabled="true"
+                    android:layout_marginStart="10dp">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/edit_text_street_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Street name"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:inputType="textCapSentences"
+                        android:textSize="12sp"
+                        app:hintEnabled="true" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                    android:layout_width="match_parent"
+                    android:layout_height="45dp"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginTop="4dp"
+                    app:boxStrokeColor="@color/colorAccent"
+                    app:errorEnabled="true"
+                    android:layout_marginStart="30dp">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/edit_text_complement"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Complement"
+                        android:singleLine="true"
+                        android:inputType="textCapSentences"
+                        android:maxLines="1"
+                        android:textSize="12sp"
+                        app:hintEnabled="true" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                    android:layout_width="match_parent"
+                    android:layout_height="45dp"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_weight="50"
+                    app:boxStrokeColor="@color/colorAccent"
+                    app:errorEnabled="true"
+                    android:layout_marginStart="30dp">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/text_edit_postal_code"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Postal code"
+                        android:inputType="number"
+                        android:singleLine="true"
+                        android:maxLines="1"
+                        android:textSize="12sp"
+                        app:hintEnabled="true" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                    android:layout_width="match_parent"
+                    android:layout_height="45dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_weight="50"
+                    app:boxStrokeColor="@color/colorAccent"
+                    app:errorEnabled="true"
+                    android:layout_marginStart="10dp">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/text_edit_city"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="City"
+                        android:singleLine="true"
+                        android:inputType="textCapSentences"
+                        android:maxLines="1"
+                        android:textSize="12sp"
+                        app:hintEnabled="true" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                    android:layout_width="match_parent"
+                    android:layout_height="45dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginLeft="30dp"
+                    app:boxStrokeColor="@color/colorAccent"
+                    app:errorEnabled="true"
+                    android:layout_marginStart="30dp">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/text_edit_country"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Country"
+                        android:singleLine="true"
+                        android:inputType="textCapSentences"
+                        android:maxLines="1"
+                        android:textSize="12sp"
+                        app:hintEnabled="true" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </LinearLayout>
+
         <RelativeLayout
             android:layout_marginTop="10dp"
             android:layout_width="match_parent"
@@ -94,7 +283,7 @@
                 android:text="Add a picture"/>
 
             <ImageView
-                android:id="@+id/image_chosen_picture"
+                android:id="@+id/image_chosen_picture_add_project_activity"
                 android:layout_width="70dp"
                 android:layout_height="70dp"
                 android:layout_alignParentRight="true"
@@ -105,30 +294,38 @@
 
         </RelativeLayout>
 
-        <Button
-            android:id="@+id/button_publish_add_project_activity"
-            style="@style/Widget.AppCompat.Button.Borderless"
-            android:background="@drawable/button_style"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="20dp"
-            android:padding="16dp"
-            android:text="Publish project"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <Button
+                    android:id="@+id/button_publish_add_project_activity"
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:background="@drawable/button_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="20dp"
+                    android:padding="16dp"
+                    android:layout_weight="1"
+                    android:text="Publish project"/>
 
-        <Button
-            android:id="@+id/button_save_for_later_add_project_activity"
-            style="@style/Widget.AppCompat.Button.Borderless"
-            android:background="@drawable/button_style"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="20dp"
-            android:padding="16dp"
-            android:text="Save project for later"/>
+                <Button
+                    android:id="@+id/button_save_for_later_add_project_activity"
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:background="@drawable/button_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="20dp"
+                    android:padding="16dp"
+                    android:layout_weight="1"
+                    android:text="Save project for later"/>
+
+            </LinearLayout>
 
 
-
+        </LinearLayout>
 
     </LinearLayout>
 

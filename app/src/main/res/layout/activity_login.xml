@@ -19,7 +19,7 @@
             android:padding="20dp"
             android:textSize="30sp"
             android:textColor="#000"
-            android:text="Login"/>
+            android:text="Welcome back!"/>
         <EditText
             android:padding="10dp"
             android:layout_margin="5dp"

@@ -77,7 +77,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private boolean isCurrentUserAssociation;
     private SharedPreferences preferences;
     //---------------------------------------
-    public static final int RC_SIGN_IN = 123;
     public static final String APP_PREFERENCES = "appPreferences";
     public static final String USER_ID = "userId";
     private ActionBar actionBar;
@@ -96,20 +95,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         preferences = getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE);
 
         if (!isCurrentUserLogged()) {
-            //startSignInActivity();
-            System.out.println("come here?????? or not?");
             Intent authenticationIntent = new Intent(this, AuthenticationActivity.class);
             startActivity(authenticationIntent);
             this.finish();
         } else {
-            /*getDataFromCurrentUser();
+            getDataFromCurrentUser();
             //configure
             doBasicConfiguration();
-            showFragment(actualityListFragment);*/
-
-            configureToolbar();
-            configureDrawerLayout();
-            configureNavigationView();
+            showFragment(actualityListFragment);
         }
     }
 
@@ -156,8 +149,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         if (isCurrentUserAssociation) {
                             displayPostOrProjectDialog();
                         } else {
-                            showFragment(addProjectFragment);
-                            actionBar.setTitle("Add a project");
+                            /*showFragment(addProjectFragment);
+                            actionBar.setTitle("Add a project");*/
+                            Intent addProject = new Intent(getApplicationContext(), AddProjectActivity.class);
+                            startActivity(addProject);
                         }
                         return true;
                     case R.id.navigation_map:
@@ -193,48 +188,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.frame_layout_content_main_activity, fragment);
         transaction.commit();
-    }
-
-    public void startSignInActivity() {
-
-        System.out.println("and here?");
-
-        startActivityForResult(
-                AuthUI.getInstance()
-                        .createSignInIntentBuilder()
-                        .setAvailableProviders(
-                                Arrays.asList(
-                                        new AuthUI.IdpConfig.EmailBuilder().build()))
-                        .setIsSmartLockEnabled(false, true)
-                        .setLogo(R.drawable.ic_map)
-                        .build(),
-                RC_SIGN_IN);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        handleResponseAfterSignIn(requestCode, resultCode, data);
-    }
-
-    private void handleResponseAfterSignIn(int requestCode, int resultCode, Intent data) {
-        if (requestCode == RC_SIGN_IN) {
-            IdpResponse response = IdpResponse.fromResultIntent(data);
-            if (resultCode == RESULT_OK) {
-
-                // check if user is already saved, if not ask if he s association
-                displayDialogToAskIfUserIsAssociation();
-
-            } else {
-                if (response == null) {
-                    finish();
-                } else if (response.getError().getErrorCode() == ErrorCodes.NO_NETWORK) {
-                    Toast.makeText(this, "No internet", Toast.LENGTH_SHORT).show();
-                } else if (response.getError().getErrorCode() == ErrorCodes.UNKNOWN_ERROR) {
-                    Toast.makeText(this, "Unknown error", Toast.LENGTH_SHORT).show();
-                }
-            }
-        }
     }
 
     @Override
@@ -292,8 +245,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 displayCreatePostDialog();
                                 break;
                             case 1:
-                                showFragment(addProjectFragment);
-                                actionBar.setTitle("Add a project");
+                                /*showFragment(addProjectFragment);
+                                actionBar.setTitle("Add a project");*/
+                                Intent addProject = new Intent(getApplicationContext(), AddProjectActivity.class);
+                                startActivity(addProject);
                                 break;
                             default:
                                 break;
@@ -339,37 +294,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     }
                 })
                 .setNegativeButton("Cancel", null)
-                .show();
-    }
-
-    private void displayDialogToAskIfUserIsAssociation() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        LayoutInflater inflater = getLayoutInflater();
-        builder.setTitle("Are you an association?")
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        //create user in firebase
-                        UserHelper.createUser(getCurrentUser().getUid(), getCurrentUser().getDisplayName(), true);
-
-                        isCurrentUserAssociation = true;
-                        preferences.edit().putString(USER_ID, getCurrentUser().getUid()).apply();
-                        doBasicConfiguration();
-                        showFragment(actualityListFragment);
-                    }
-                })
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        //create user in firebase
-                        UserHelper.createUser(getCurrentUser().getUid(), getCurrentUser().getDisplayName(), false);
-
-                        isCurrentUserAssociation = false;
-                        preferences.edit().putString(USER_ID, getCurrentUser().getUid()).apply();
-                        doBasicConfiguration();
-                        showFragment(actualityListFragment);
-                    }
-                })
                 .show();
     }
 

@@ -118,8 +118,8 @@ public class UsersProjectsListFragment extends Fragment {
         return true;
     }
 
-    private void getDataToConfigureRecyclerView(String usersId) {
-        ProjectHelper.getUsersPublishedProjects(usersId).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+    private void getDataToConfigureRecyclerView(String userId) {
+        ProjectHelper.getUsersPublishedProjects(userId).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
@@ -128,8 +128,6 @@ public class UsersProjectsListFragment extends Fragment {
                         Project project = document.toObject(Project.class);
                         projects.add(project);
                     }
-
-                    projectList.addAll(projects);
 
                     adapter = new AdapterUsersProjectsList(projects);
                     recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));

@@ -35,7 +35,7 @@ import butterknife.OnClick;
  */
 public class AddProjectFragment extends Fragment {
 
-    @BindView(R.id.input_title_add_project_activity)
+ /*   @BindView(R.id.input_title_add_project_activity)
     EditText editTextTitle;
     @BindView(R.id.input_description_add_project_activity)
     EditText editTextDescription;
@@ -117,6 +117,6 @@ public class AddProjectFragment extends Fragment {
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.frame_layout_content_main_activity, fragment);
         transaction.commit();
-    }
+    }*/
 
 }
