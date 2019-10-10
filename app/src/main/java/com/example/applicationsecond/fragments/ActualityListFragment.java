@@ -196,7 +196,7 @@ public class ActualityListFragment extends Fragment {
                         projects.add(project);
                     }
 
-                    //projectList.addAll(projects);
+                    projectList.addAll(projects);
 
                     displayScreenDependingOfNewsAvailable(projects);
 

@@ -110,5 +110,8 @@ public class ProjectHelper {
     public static Task<Void> updateEventDate(String projectId, String eventDate) {
         return ProjectHelper.getProjectsCollection().document(projectId).update("eventDate", eventDate);
     }
+    public static Task<Void> updateUrlPhoto(String projectId, String urlPhoto) {
+        return ProjectHelper.getProjectsCollection().document(projectId).update("urlPhoto", urlPhoto);
+    }
 
 }

@@ -114,6 +114,8 @@ public class AddProjectActivity extends AppCompatActivity {
         if (preferences.getInt(KEY_EDIT_PROJECT, -1) == 1) {
             //update ui with existing data on this project
             projectId = getIntent().getExtras().getString(PROJECT_ID);
+
+            System.out.println("project id = " + projectId);
             updateUiWithProjectsData(projectId, this);
         } else {
             //display current date on the button to choose date project
@@ -122,8 +124,10 @@ public class AddProjectActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onDestroy() {
+        super.onDestroy();
+
+        System.out.println("on destroy");
         preferences.edit().putInt(KEY_EDIT_PROJECT, -1).apply();
     }
 
@@ -161,12 +165,13 @@ public class AddProjectActivity extends AppCompatActivity {
     public void publishProject() {
         isPublished = true;
 
+        System.out.println("key = " + preferences.getInt(KEY_EDIT_PROJECT, -1));
+
         if (preferences.getInt(KEY_EDIT_PROJECT, -1) == 1) {
             updateProjectInFireBase();
             Toast.makeText(this, "Project updated!", Toast.LENGTH_SHORT).show();
             finish();
         } else {
-
             //boolean isLocationCompleted = checkIfLocationIsFilled();
             if (fieldsAreCorrectlyFilled()) {
                 saveProjectInFireBase();
@@ -464,6 +469,8 @@ public class AddProjectActivity extends AppCompatActivity {
         String city = cityEditText.getText().toString();
         String country = countryEditText.getText().toString();
 
+        System.out.println("here project id = " + projectId);
+
         ProjectHelper.updateTitle(projectId, title);
         ProjectHelper.updateDescription(projectId, description);
         ProjectHelper.updateStreetNumber(projectId, streetNumber);
@@ -473,6 +480,26 @@ public class AddProjectActivity extends AppCompatActivity {
         ProjectHelper.updateCity(projectId, city);
         ProjectHelper.updateCountry(projectId, country);
         ProjectHelper.updateEventDate(projectId, eventDate);
+        if (uriImageSelected != null) {
+            System.out.println("come here?");
+
+            String uuid = UUID.randomUUID().toString(); // GENERATE UNIQUE STRING
+            StorageReference filePath = FirebaseStorage.getInstance().getReference(uuid);
+
+            filePath.putFile(uriImageSelected).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            Log.d("LOG URI", "onSuccess: uri= "+ uri.toString());
+                            ProjectHelper.updateUrlPhoto(projectId, uri.toString());
+                        }
+                    });
+                }
+            });
+
+        }
     }
 
     //---------------------------------------
