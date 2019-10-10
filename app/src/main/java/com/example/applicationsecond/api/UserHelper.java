@@ -61,5 +61,9 @@ public class UserHelper {
                 FieldValue.arrayUnion(postId));
     }
 
+    public static Task<Void> updateUrlPhoto(String userId, String urlPhoto) {
+        return UserHelper.getUsersCollection().document(userId).update("urlPhoto", urlPhoto);
+    }
+
 
 }
