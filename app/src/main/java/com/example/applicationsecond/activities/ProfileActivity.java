@@ -1,7 +1,9 @@
 package com.example.applicationsecond.activities;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.Manifest;
 import android.content.Context;
@@ -66,6 +68,7 @@ public class ProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_profile);
         ButterKnife.bind(this);
 
+        configureToolbar();
         displayUserInformation(this );
 
     }
@@ -82,6 +85,34 @@ public class ProfileActivity extends AppCompatActivity {
         handleResponseForGallery(requestCode, resultCode, data);
     }
 
+    //------------------------------
+    //CONFIGURATION
+    //-----------------------------------
+    private void configureToolbar() {
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle("Profile");
+        actionBar.setDisplayHomeAsUpEnabled(true);
+    }
+
+    //-------------------------------------------------
+    //ACTIONS
+    //---------------------------------------------------
+    @OnClick(R.id.profile_activity_change_picture_image_view)
+    @AfterPermissionGranted(RC_IMAGE_PERMS)
+    public void changeProfilePicture() {
+        if (!EasyPermissions.hasPermissions(this, PERMS)) {
+            EasyPermissions.requestPermissions(this, getString(R.string.popup_title_permission_files_access), RC_IMAGE_PERMS, PERMS);
+            return;
+        }
+        chooseImageFromPhone();
+
+    }
+
+    //-------------------------------
+    //METHODS
+    //---------------------------------
     private void handleResponseForGallery(int requestCode, int resultCode, Intent data) {
         if (requestCode == RC_CHOOSE_PHOTO) {
             if (resultCode == RESULT_OK) { //SUCCESS
@@ -99,39 +130,6 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
-    //-------------------------------------------------
-    //ACTIONS
-    //---------------------------------------------------
-    @OnClick(R.id.profile_activity_sign_out_button)
-    public void signOut() {
-        AuthUI.getInstance()
-                .signOut(this)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            Intent intent = new Intent(getApplicationContext(), AuthenticationActivity.class);
-                            startActivity(intent);
-                            finish();
-                        }
-                    }
-                });
-    }
-
-    @OnClick(R.id.profile_activity_change_picture_image_view)
-    @AfterPermissionGranted(RC_IMAGE_PERMS)
-    public void changeProfilePicture() {
-        if (!EasyPermissions.hasPermissions(this, PERMS)) {
-            EasyPermissions.requestPermissions(this, getString(R.string.popup_title_permission_files_access), RC_IMAGE_PERMS, PERMS);
-            return;
-        }
-        chooseImageFromPhone();
-
-    }
-
-    //-------------------------------
-    //METHODS
-    //---------------------------------
     private void chooseImageFromPhone(){
         if (!EasyPermissions.hasPermissions(this, PERMS)) {
             EasyPermissions.requestPermissions(this, getString(R.string.popup_title_permission_files_access), RC_IMAGE_PERMS, PERMS);

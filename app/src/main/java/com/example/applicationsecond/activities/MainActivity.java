@@ -202,6 +202,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             case R.id.users_projects:
                 launchActivity(UsersProjectsActivity.class);
+            case R.id.sign_out:
+                signOut();
             default:
                 break;
         }
@@ -295,6 +297,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 })
                 .setNegativeButton("Cancel", null)
                 .show();
+    }
+
+    private void signOut() {
+        AuthUI.getInstance()
+                .signOut(this)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Intent intent = new Intent(getApplicationContext(), AuthenticationActivity.class);
+                            startActivity(intent);
+                            finish();
+                        }
+                    }
+                });
     }
 
 }
