@@ -99,7 +99,7 @@ public class PostListFragment extends Fragment {
         viewSwitcher.setInAnimation(newsAvailable);
         viewSwitcher.setOutAnimation(noNewsAvailable);
 
-        displayScreenDependingOfNewsAvailable();
+        //displayScreenDependingOfNewsAvailable();
     }
 
     private void configureRecyclerView() {
@@ -119,8 +119,8 @@ public class PostListFragment extends Fragment {
     //-------------------------------------
     //-------------------------------------
     private void displayScreenDependingOfNewsAvailable() {
-        isNewsToDisplay = checkIfTheresNewsToDisplay();
-        if (isNewsToDisplay) {
+        //isNewsToDisplay = checkIfTheresNewsToDisplay();
+        if (checkIfTheresNewsToDisplay()) {
             viewSwitcher.setDisplayedChild(0);
         } else {
             viewSwitcher.setDisplayedChild(1);
@@ -128,7 +128,7 @@ public class PostListFragment extends Fragment {
     }
 
     private boolean checkIfTheresNewsToDisplay() {
-        return true;
+        return (postList.size() > 0);
     }
 
     private void launchActivity(Class activity) {
@@ -162,14 +162,18 @@ public class PostListFragment extends Fragment {
             }
         });*/
         //get the current user
+
+        System.out.println("come here");
+
         UserHelper.getUser(Utils.getCurrentUser().getUid()).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     User user = task.getResult().toObject(User.class);
 
+                    System.out.println("here we get the user");
+
                     //get the list of the followed associations
-                    if (user.getAssociationSubscribedId() != null) {
                         if (user.getAssociationSubscribedId().size() > 0) {
                             for (int i = 0; i < user.getAssociationSubscribedId().size(); i++) {
 
@@ -179,25 +183,28 @@ public class PostListFragment extends Fragment {
                                         if (task.isSuccessful()) {
                                             User association = task.getResult().toObject(User.class);
 
-                                            if (association.getPublishedPostId().size() > 0) {
-                                                for (int j = 0; j < association.getPublishedPostId().size(); j++) {
-                                                    String id = association.getPublishedPostId().get(j);
-                                                    PostHelper.getPost(id).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                                        @Override
-                                                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                                            if (task.isSuccessful()) {
-                                                                Post post = task.getResult().toObject(Post.class);
-                                                                postList.add(post);
+                                            if (association.getPublishedPostId() != null) {
+                                                if (association.getPublishedPostId().size() > 0) {
+                                                    for (int j = 0; j < association.getPublishedPostId().size(); j++) {
+                                                        String id = association.getPublishedPostId().get(j);
+                                                        PostHelper.getPost(id).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                            @Override
+                                                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                                if (task.isSuccessful()) {
+                                                                    Post post = task.getResult().toObject(Post.class);
+                                                                    postList.add(post);
 
-                                                                adapter = new AdapterRecyclerViewPosts(postList);
-                                                                recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                                                                recyclerView.setAdapter(adapter);
+                                                                    displayScreenDependingOfNewsAvailable();
+                                                                    adapter = new AdapterRecyclerViewPosts(postList);
+                                                                    recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                                                                    recyclerView.setAdapter(adapter);
+                                                                }
+
                                                             }
+                                                        });
+                                                    }
 
-                                                        }
-                                                    });
                                                 }
-
                                             }
 
                                         }
@@ -205,9 +212,12 @@ public class PostListFragment extends Fragment {
                                 });
                             }
                         }
+                    } else {
+
+                        System.out.println("and here no");
+                        displayScreenDependingOfNewsAvailable();
                     }
                 }
-            }
         });
     }
 

@@ -223,7 +223,7 @@ public class ProjectDetailActivity extends AppCompatActivity {
             projectPublishedDateTextView.setText(project.getCreationDate().toString());
         }
         if (project.getEventDate() != null) {
-            projectEventDateTextView.setText(project.getEventDate().toString());
+            projectEventDateTextView.setText(project.getEventDate());
         }
         if (project.getEndDate() != null) {
             projectEndDateTextView.setText(project.getEndDate().toString());
@@ -240,5 +240,14 @@ public class ProjectDetailActivity extends AppCompatActivity {
                     .load(project.getUrlPhoto())
                     .into(this.imageView);
         }
+
+        projectStreetNameAndStreetNumberTextView.setText(project.getStreetNumber() + " " + project.getStreetName());
+        if (project.getLocationComplement() != null) {
+            projectComplementTextView.setText(project.getLocationComplement());
+        } else {
+            projectComplementTextView.setVisibility(View.GONE);
+        }
+        projectPostalCodeAndCityTextView.setText(project.getPostalCode() + " " + project.getCity());
+        projectCountryTextView.setText(project.getCountry());
     }
 }

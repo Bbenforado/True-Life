@@ -22,6 +22,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ViewSwitcher;
 
+import com.bumptech.glide.Glide;
 import com.example.applicationsecond.R;
 import com.example.applicationsecond.activities.ProjectDetailActivity;
 import com.example.applicationsecond.adapters.AdapterRecyclerViewProjects;
@@ -45,6 +46,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.gson.Gson;
 
+import java.net.PortUnreachableException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -110,7 +112,7 @@ public class ActualityListFragment extends Fragment {
         viewSwitcher.setInAnimation(newsAvailable);
         viewSwitcher.setOutAnimation(noNewsAvailable);
 
-        displayScreenDependingOfNewsAvailable();
+        //displayScreenDependingOfNewsAvailable();
     }
 
     private void configureRecyclerView() {
@@ -143,17 +145,17 @@ public class ActualityListFragment extends Fragment {
 
     //-------------------------------------
     //-------------------------------------
-    private void displayScreenDependingOfNewsAvailable() {
-        isNewsToDisplay = checkIfTheresNewsToDisplay();
-        if (isNewsToDisplay) {
+    private void displayScreenDependingOfNewsAvailable(List<Project> list) {
+        //isNewsToDisplay = checkIfTheresNewsToDisplay();
+        if (checkIfTheresNewsToDisplay(list)) {
             viewSwitcher.setDisplayedChild(0);
         } else {
             viewSwitcher.setDisplayedChild(1);
         }
     }
 
-    private boolean checkIfTheresNewsToDisplay() {
-        return true;
+    private boolean checkIfTheresNewsToDisplay(List<Project> list) {
+        return (list.size() > 0);
     }
 
     private void launchActivity(Class activity) {
@@ -194,9 +196,11 @@ public class ActualityListFragment extends Fragment {
                         projects.add(project);
                     }
 
-                    projectList.addAll(projects);
+                    //projectList.addAll(projects);
 
-                    adapter = new AdapterRecyclerViewProjects(projects);
+                    displayScreenDependingOfNewsAvailable(projects);
+
+                    adapter = new AdapterRecyclerViewProjects(projects, Glide.with(getActivity()));
                     recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                     recyclerView.setAdapter(adapter);
 

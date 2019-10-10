@@ -79,7 +79,7 @@
                 android:text="Project's date :"/>
 
             <Button
-                android:id="@+id/spinner_button_project_date_add_project_activity"
+                android:id="@+id/spinner_button_event_date_add_project_activity"
                 style="?android:attr/spinnerStyle"
                 android:layout_width="0dp"
                 android:layout_weight="1"
@@ -115,7 +115,7 @@
                     app:errorEnabled="true">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/text_edit_street_nbr"
+                        android:id="@+id/text_edit_street_nbr_add_project_activity"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Number"
@@ -138,7 +138,7 @@
                     android:layout_marginStart="10dp">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/edit_text_street_name"
+                        android:id="@+id/edit_text_street_name_add_project_activity"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Street name"
@@ -168,7 +168,7 @@
                     android:layout_marginStart="30dp">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/edit_text_complement"
+                        android:id="@+id/edit_text_complement_add_project_activity"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Complement"
@@ -199,7 +199,7 @@
                     android:layout_marginStart="30dp">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/text_edit_postal_code"
+                        android:id="@+id/text_edit_postal_code_add_project_activity"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Postal code"
@@ -223,7 +223,7 @@
                     android:layout_marginStart="10dp">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/text_edit_city"
+                        android:id="@+id/text_edit_city_add_project_activity"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="City"
@@ -253,7 +253,7 @@
                     android:layout_marginStart="30dp">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/text_edit_country"
+                        android:id="@+id/text_edit_country_add_project_activity"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Country"
@@ -288,7 +288,6 @@
                 android:layout_height="70dp"
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="15dp"
-                android:src="@drawable/image_cours"
                 android:scaleType="centerCrop"/>
 
 

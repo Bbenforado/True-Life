@@ -9,7 +9,7 @@ public class Project {
     private String id;
     private String title;
     private Date creationDate;
-    private Date eventDate;
+    private String eventDate;
     private Date endDate;
     private String description;
     private String urlPhoto;
@@ -17,13 +17,20 @@ public class Project {
     private String authorId;
     private boolean isPublished;
     private List<String> usersWhoSubscribed;
+    private String streetNumber;
+    private String streetName;
+    private String locationComplement;
+    private String postalCode;
+    private String city;
+    private String country;
+
 
     public Project() {
 
     }
 
 
-    public Project(String title, Date creationDate, Date eventDate, Date endDate,
+    public Project(String title, Date creationDate, String eventDate, Date endDate,
                    String description, String urlPhoto, String idAddress) {
         this.title = title;
         this.creationDate = creationDate;
@@ -41,18 +48,29 @@ public class Project {
         this.creationDate = creationDate;
     }
 
-    public Project(String id, String title, String description, String authorId, Date creationDate, boolean isPublished) {
+    public Project(String id, String title, String description, String authorId, Date creationDate, String eventDate,
+                   boolean isPublished, String streetNumber, String streetName, String locationComplement,
+                   String postalCode, String city, String country) {
         this.usersWhoSubscribed = new ArrayList<>();
         this.id = id;
         this.title = title;
         this.description = description;
         this.authorId = authorId;
         this.creationDate = creationDate;
+        this.eventDate = eventDate;
         this.isPublished = isPublished;
         this.usersWhoSubscribed.add(authorId);
+        this.streetNumber = streetNumber;
+        this.streetName = streetName;
+        this.locationComplement = locationComplement;
+        this.postalCode = postalCode;
+        this.city = city;
+        this.country = country;
     }
 
-    public Project(String id, String title, String description, String authorId, Date creationDate, boolean isPublished, String urlPhoto) {
+    public Project(String id, String title, String description, String authorId, Date creationDate, String eventDate, boolean isPublished, String urlPhoto,
+                   String streetNumber, String streetName, String locationComplement, String postalCode,
+                   String city, String country) {
         this.usersWhoSubscribed = new ArrayList<>();
         this.id = id;
         this.title = title;
@@ -62,6 +80,13 @@ public class Project {
         this.isPublished = isPublished;
         this.usersWhoSubscribed.add(authorId);
         this.urlPhoto = urlPhoto;
+        this.streetNumber = streetNumber;
+        this.streetName = streetName;
+        this.locationComplement = locationComplement;
+        this.postalCode = postalCode;
+        this.city = city;
+        this.country = country;
+        this.eventDate = eventDate;
     }
 
     public List<String> getUsersWhoSubscribed() {
@@ -96,11 +121,11 @@ public class Project {
         this.creationDate = creationDate;
     }
 
-    public Date getEventDate() {
+    public String getEventDate() {
         return eventDate;
     }
 
-    public void setEventDate(Date eventDate) {
+    public void setEventDate(String eventDate) {
         this.eventDate = eventDate;
     }
 
@@ -150,5 +175,53 @@ public class Project {
 
     public void setPublished(boolean published) {
         isPublished = published;
+    }
+
+    public String getStreetNumber() {
+        return streetNumber;
+    }
+
+    public void setStreetNumber(String streetNumber) {
+        this.streetNumber = streetNumber;
+    }
+
+    public String getStreetName() {
+        return streetName;
+    }
+
+    public void setStreetName(String streetName) {
+        this.streetName = streetName;
+    }
+
+    public String getLocationComplement() {
+        return locationComplement;
+    }
+
+    public void setLocationComplement(String locationComplement) {
+        this.locationComplement = locationComplement;
+    }
+
+    public String getPostalCode() {
+        return postalCode;
+    }
+
+    public void setPostalCode(String postalCode) {
+        this.postalCode = postalCode;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
     }
 }

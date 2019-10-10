@@ -9,6 +9,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.RequestManager;
 import com.example.applicationsecond.R;
 import com.example.applicationsecond.models.Project;
 
@@ -19,9 +20,11 @@ import butterknife.BindView;
 public class AdapterRecyclerViewProjects extends RecyclerView.Adapter<ViewHolderProjects>{
 
     private List<Project> projectList;
+    private RequestManager glide;
 
-    public AdapterRecyclerViewProjects(List<Project> projectList) {
+    public AdapterRecyclerViewProjects(List<Project> projectList, RequestManager glide) {
         this.projectList = projectList;
+        this.glide = glide;
     }
 
     @NonNull
@@ -35,7 +38,7 @@ public class AdapterRecyclerViewProjects extends RecyclerView.Adapter<ViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolderProjects holder, int position) {
-        holder.updateUi(this.projectList.get(position));
+        holder.updateUi(this.projectList.get(position), this.glide);
     }
 
     @Override

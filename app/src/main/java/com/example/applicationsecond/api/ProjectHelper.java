@@ -28,13 +28,20 @@ public class ProjectHelper {
         return ProjectHelper.getProjectsCollection().document().set(projectToCreate);
     }*/
 
-    public static Task<Void> createProject(String id, String title, String description, String idAuthor, Date creationDate, boolean isPublished) {
-        Project projectToCreate = new Project(id, title, description, idAuthor, creationDate, isPublished);
+    public static Task<Void> createProject(String id, String title, String description, String idAuthor, Date creationDate, String eventDate,
+                                           boolean isPublished, String streetNumber, String streetName, String locationComplement, String postalCode,
+                                           String city, String country) {
+        Project projectToCreate = new Project(id, title, description, idAuthor, creationDate, eventDate, isPublished, streetNumber, streetName, locationComplement,
+                postalCode, city, country);
         return ProjectHelper.getProjectsCollection().document(id).set(projectToCreate);
     }
 
-    public static Task<Void> createprojectWithImage(String id, String title, String description, String idAuthor, Date creationDate, boolean isPublished, String urlPhoto) {
-        Project project = new Project(id, title, description, idAuthor, creationDate, isPublished, urlPhoto);
+    public static Task<Void> createProjectWithImage(String id, String title, String description, String idAuthor, Date creationDate, String eventDate,
+                                                    boolean isPublished, String urlPhoto,
+                                                    String streetNumber, String streetName, String locationComplement, String postalCode,
+                                                    String city, String country) {
+        Project project = new Project(id, title, description, idAuthor, creationDate, eventDate, isPublished, urlPhoto, streetNumber, streetName, locationComplement,
+                postalCode, city, country);
         return ProjectHelper.getProjectsCollection().document(id).set(project);
     }
 
@@ -80,6 +87,28 @@ public class ProjectHelper {
 
     public static Task<Void> updateDescription(String projectId, String description) {
         return ProjectHelper.getProjectsCollection().document(projectId).update("description", description);
+    }
+
+    public static Task<Void> updateStreetNumber(String projectId, String streetNumber) {
+        return ProjectHelper.getProjectsCollection().document(projectId).update("streetNumber", streetNumber);
+    }
+    public static Task<Void> updateStreetName(String projectId, String streetName) {
+        return ProjectHelper.getProjectsCollection().document(projectId).update("streetName", streetName);
+    }
+    public static Task<Void> updateComplement(String projectId, String complement) {
+        return ProjectHelper.getProjectsCollection().document(projectId).update("locationComplement", complement);
+    }
+    public static Task<Void> updatePostalCode(String projectId, String postalCode) {
+        return ProjectHelper.getProjectsCollection().document(projectId).update("postalCode", postalCode);
+    }
+    public static Task<Void> updateCity(String projectId, String city) {
+        return ProjectHelper.getProjectsCollection().document(projectId).update("city", city);
+    }
+    public static Task<Void> updateCountry(String projectId, String country) {
+        return ProjectHelper.getProjectsCollection().document(projectId).update("country", country);
+    }
+    public static Task<Void> updateEventDate(String projectId, String eventDate) {
+        return ProjectHelper.getProjectsCollection().document(projectId).update("eventDate", eventDate);
     }
 
 }
