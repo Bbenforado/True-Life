@@ -1,19 +1,31 @@
 package com.example.applicationsecond.activities;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
+import android.content.Context;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
+import android.os.ConditionVariable;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.applicationsecond.R;
 import com.example.applicationsecond.api.ProjectHelper;
 import com.example.applicationsecond.api.UserHelper;
 import com.example.applicationsecond.models.Project;
+import com.example.applicationsecond.models.User;
 import com.example.applicationsecond.utils.Utils;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -24,11 +36,15 @@ public class AssociationProfileActivity extends AppCompatActivity {
     @BindView(R.id.follow_button)
     ImageButton followButton;
     @BindView(R.id.textview_follow) TextView textViewFollow;
+    @BindView(R.id.image_view_association_profile_activity)
+    ImageView imageViewAssociationProfile;
+    @BindView(R.id.text_view_association_name_association_profile_activity) TextView textViewAsociationName;
     //--------------------------------
     private boolean isButtonClicked;
     private String authorId;
     private String currentUserId;
     private ColorStateList defaultColor;
+    private ActionBar actionBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,15 +52,28 @@ public class AssociationProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_association_profile);
 
         ButterKnife.bind(this);
+        configureToolbar();
         defaultColor = textViewFollow.getTextColors();
         currentUserId = Utils.getCurrentUser().getUid();
         Bundle bundle = getIntent().getExtras();
         authorId = null;
         if (bundle != null) {
             authorId = bundle.getString("authorId");
+            displayAssociationInformation(this);
         }
         hideFollowButtonIfItsCurrentUserProfile();
 
+    }
+
+    //------------------------------
+    //CONFIGURATION
+    //-----------------------------------
+    private void configureToolbar() {
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        actionBar = getSupportActionBar();
+        //actionBar.setTitle();
+        actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
     @OnClick(R.id.follow_button)
@@ -80,6 +109,31 @@ public class AssociationProfileActivity extends AppCompatActivity {
             textViewFollow.setTextColor(getResources().getColor(R.color.disabledColor));
         } else {
             followButton.setEnabled(true);
+        }
+    }
+
+    //------------------------------
+    //UPDATE UI
+    //-------------------------------
+    private void displayAssociationInformation(Context context) {
+        if (authorId != null) {
+            UserHelper.getUser(authorId).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        User association = task.getResult().toObject(User.class);
+                        if (association.getUrlPhoto() != null) {
+                            Glide.with(context) //SHOWING PREVIEW OF IMAGE
+                                    .load(association.getUrlPhoto())
+                                    .apply(RequestOptions.circleCropTransform())
+                                    .into(imageViewAssociationProfile);
+                        }
+
+                        textViewAsociationName.setText(association.getUsername());
+                        actionBar.setTitle(association.getUsername());
+                    }
+                }
+            });
         }
     }
 }

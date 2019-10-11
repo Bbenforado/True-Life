@@ -30,18 +30,18 @@ public class ProjectHelper {
 
     public static Task<Void> createProject(String id, String title, String description, String idAuthor, Date creationDate, String eventDate,
                                            boolean isPublished, String streetNumber, String streetName, String locationComplement, String postalCode,
-                                           String city, String country) {
+                                           String city, String country, String latLng) {
         Project projectToCreate = new Project(id, title, description, idAuthor, creationDate, eventDate, isPublished, streetNumber, streetName, locationComplement,
-                postalCode, city, country);
+                postalCode, city, country, latLng);
         return ProjectHelper.getProjectsCollection().document(id).set(projectToCreate);
     }
 
     public static Task<Void> createProjectWithImage(String id, String title, String description, String idAuthor, Date creationDate, String eventDate,
                                                     boolean isPublished, String urlPhoto,
                                                     String streetNumber, String streetName, String locationComplement, String postalCode,
-                                                    String city, String country) {
+                                                    String city, String country, String latLng) {
         Project project = new Project(id, title, description, idAuthor, creationDate, eventDate, isPublished, urlPhoto, streetNumber, streetName, locationComplement,
-                postalCode, city, country);
+                postalCode, city, country, latLng);
         return ProjectHelper.getProjectsCollection().document(id).set(project);
     }
 
@@ -112,6 +112,9 @@ public class ProjectHelper {
     }
     public static Task<Void> updateUrlPhoto(String projectId, String urlPhoto) {
         return ProjectHelper.getProjectsCollection().document(projectId).update("urlPhoto", urlPhoto);
+    }
+    public static Task<Void> updateLatLng(String projectid, String latLng) {
+        return ProjectHelper.getProjectsCollection().document(projectid).update("latLng", latLng);
     }
 
 }

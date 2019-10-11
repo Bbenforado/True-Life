@@ -4,11 +4,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
@@ -16,7 +14,6 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,13 +21,19 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.applicationsecond.R;
-import com.example.applicationsecond.api.PostHelper;
 import com.example.applicationsecond.api.ProjectHelper;
 import com.example.applicationsecond.api.UserHelper;
-import com.example.applicationsecond.fragments.AddProjectFragment;
 import com.example.applicationsecond.models.Project;
 import com.example.applicationsecond.models.User;
 import com.example.applicationsecond.utils.Utils;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -46,8 +49,11 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static com.example.applicationsecond.utils.Utils.getCurrentUser;
+import static com.example.applicationsecond.utils.Utils.getLatLngOfPlace;
+import static com.example.applicationsecond.utils.Utils.isNetworkAvailable;
+import static java.security.AccessController.getContext;
 
-public class ProjectDetailActivity extends AppCompatActivity {
+public class ProjectDetailActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     //---------------------------------
     //BIND VIEWS
@@ -62,10 +68,9 @@ public class ProjectDetailActivity extends AppCompatActivity {
     @BindView(R.id.activity_detail_complement) TextView projectComplementTextView;
     @BindView(R.id.activity_detail_postal_code_and_city) TextView projectPostalCodeAndCityTextView;
     @BindView(R.id.activity_detail_country) TextView projectCountryTextView;
-    @BindView(R.id.project_detail_activity_author_button)
-    Button authorButton;
-    @BindView(R.id.image_detail_activity)
-    ImageView imageView;
+    @BindView(R.id.project_detail_activity_author_button) ImageView authorPhotoImageView;
+    @BindView(R.id.image_detail_activity) ImageView imageView;
+    @BindView(R.id.map_view_detail_activity) MapView mapView;
     //-----------------------------------------
     //-------------------------------------------
     public static final String APP_PREFERENCES = "appPreferences";
@@ -91,7 +96,11 @@ public class ProjectDetailActivity extends AppCompatActivity {
         }
 
         configureToolbar();
-        updateUi(clickedProject);
+        updateUi(clickedProject, this);
+        if (mapView != null) {
+            mapView.onCreate(savedInstanceState);
+            mapView.getMapAsync(this);
+        }
 
     }
 
@@ -217,7 +226,7 @@ public class ProjectDetailActivity extends AppCompatActivity {
         return project;
     }
 
-    private void updateUi(Project project) {
+    private void updateUi(Project project, Context context) {
         projectTitleTextView.setText(project.getTitle());
         if (project.getCreationDate() != null) {
             projectPublishedDateTextView.setText(project.getCreationDate().toString());
@@ -231,8 +240,20 @@ public class ProjectDetailActivity extends AppCompatActivity {
         projectDescriptionTextView.setText(project.getDescription());
         if (project.getAuthorId() != null) {
 
-            String buttonText = "From : " + project.getAuthorId();
-            authorButton.setText(buttonText);
+            UserHelper.getUser(project.getAuthorId()).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        User user = task.getResult().toObject(User.class);
+                        //String buttonText = "From : " + user.getUsername();
+                        //authorButton.setText(buttonText);
+                        Glide.with(context)
+                                .load(user.getUrlPhoto())
+                                .apply(RequestOptions.circleCropTransform())
+                                .into(authorPhotoImageView);
+                    }
+                }
+            });
         }
 
         if (project.getUrlPhoto() != null) {
@@ -249,5 +270,29 @@ public class ProjectDetailActivity extends AppCompatActivity {
         }
         projectPostalCodeAndCityTextView.setText(project.getPostalCode() + " " + project.getCity());
         projectCountryTextView.setText(project.getCountry());
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        MapsInitializer.initialize(getApplicationContext());
+        if (isNetworkAvailable(getApplicationContext())) {
+
+            if (clickedProject.getLatLng() != null) {
+
+                String latLng = clickedProject.getLatLng();
+                LatLng latLngOfAddress = getLatLngOfPlace(latLng);
+                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLngOfAddress, 16);
+                googleMap.animateCamera(cameraUpdate);
+                googleMap.addMarker(new MarkerOptions()
+                        .position(latLngOfAddress));
+
+            } else {
+                Toast.makeText(getApplicationContext(), "Location not found", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            //textViewNoInternet.setVisibility(View.VISIBLE);
+            mapView.setVisibility(View.GONE);
+            Toast.makeText(this, "You don't have internet, try again later", Toast.LENGTH_SHORT).show();
+        }
     }
 }

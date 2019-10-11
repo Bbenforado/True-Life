@@ -23,6 +23,7 @@ public class Project {
     private String postalCode;
     private String city;
     private String country;
+    private String latLng;
 
 
     public Project() {
@@ -50,7 +51,7 @@ public class Project {
 
     public Project(String id, String title, String description, String authorId, Date creationDate, String eventDate,
                    boolean isPublished, String streetNumber, String streetName, String locationComplement,
-                   String postalCode, String city, String country) {
+                   String postalCode, String city, String country, String latLng) {
         this.usersWhoSubscribed = new ArrayList<>();
         this.id = id;
         this.title = title;
@@ -66,11 +67,12 @@ public class Project {
         this.postalCode = postalCode;
         this.city = city;
         this.country = country;
+        this.latLng = latLng;
     }
 
     public Project(String id, String title, String description, String authorId, Date creationDate, String eventDate, boolean isPublished, String urlPhoto,
                    String streetNumber, String streetName, String locationComplement, String postalCode,
-                   String city, String country) {
+                   String city, String country, String latLng) {
         this.usersWhoSubscribed = new ArrayList<>();
         this.id = id;
         this.title = title;
@@ -87,6 +89,7 @@ public class Project {
         this.city = city;
         this.country = country;
         this.eventDate = eventDate;
+        this.latLng = latLng;
     }
 
     public List<String> getUsersWhoSubscribed() {
@@ -223,5 +226,13 @@ public class Project {
 
     public void setCountry(String country) {
         this.country = country;
+    }
+
+    public String getLatLng() {
+        return latLng;
+    }
+
+    public void setLatLng(String latLng) {
+        this.latLng = latLng;
     }
 }

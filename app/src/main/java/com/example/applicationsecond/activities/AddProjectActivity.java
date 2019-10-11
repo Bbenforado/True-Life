@@ -366,6 +366,7 @@ public class AddProjectActivity extends AppCompatActivity {
         if (!TextUtils.isEmpty(locationComplementEditText.getText())) {
             complement = locationComplementEditText.getText().toString();
         }
+        String latLng = Utils.getLatLngOfProject(this, streetNbr, streetName, city, postalCode, country);
 
         if (imageView.getDrawable() == null) {
             //means there is no photo saved for the project
@@ -374,14 +375,14 @@ public class AddProjectActivity extends AppCompatActivity {
 
             if (isPublished) {
                 ProjectHelper.createProject(projectId, title, description, authorId, creation_date, eventDate, true, streetNbr, streetName,
-                        complement, postalCode, city, country);
+                        complement, postalCode, city, country, latLng);
             } else {
                 ProjectHelper.createProject(projectId, title, description, authorId, creation_date, eventDate,false, streetNbr, streetName,
-                        complement, postalCode, city, country);
+                        complement, postalCode, city, country, latLng);
             }
         } else {
             uploadPhotoInFireBaseAndSaveProject(title, description, authorId, creation_date, eventDate, streetNbr, streetName, complement, postalCode,
-                    city, country);
+                    city, country, latLng);
         }
     }
 
@@ -415,21 +416,25 @@ public class AddProjectActivity extends AppCompatActivity {
         if (!TextUtils.isEmpty(locationComplementEditText.getText())) {
             complement = locationComplementEditText.getText().toString();
         }
+        String latLng = null;
+        if (checkIfLocationIsFilled()) {
+            latLng = Utils.getLatLngOfProject(this, streetNbr, streetName, city, postalCode, country);
+        }
         if (imageView.getDrawable() == null) {
             //means there is no photo saved for the project
             CollectionReference ref = FirebaseFirestore.getInstance().collection("projects");
             String projectId = ref.document().getId();
             ProjectHelper.createProject(projectId, title, description, authorId, creation_date, eventDate, false, streetNbr, streetName,
-                        complement, postalCode, city, country);
+                        complement, postalCode, city, country, latLng);
         } else {
             uploadPhotoInFireBaseAndSaveProject(title, description, authorId, creation_date, eventDate, streetNbr, streetName, complement, postalCode,
-                    city, country);
+                    city, country, latLng);
         }
     }
 
     private void uploadPhotoInFireBaseAndSaveProject(final String title, final String description, final String authorId, final Date creation_date,
                                                      String eventDate, String streetNumber, String streetName, String complement, String postalCode,
-                                                     String city, String country) {
+                                                     String city, String country, String latLng) {
         String uuid = UUID.randomUUID().toString(); // GENERATE UNIQUE STRING
         StorageReference filePath = FirebaseStorage.getInstance().getReference(uuid);
 
@@ -445,10 +450,10 @@ public class AddProjectActivity extends AppCompatActivity {
                         String idProject = ref.document().getId();
                         if (isPublished) {
                             ProjectHelper.createProjectWithImage(idProject, title, description, authorId, creation_date, eventDate, true, uri.toString(),
-                                    streetNumber, streetName, complement, postalCode, city, country);
+                                    streetNumber, streetName, complement, postalCode, city, country, latLng);
                         } else {
                             ProjectHelper.createProjectWithImage(idProject, title, description, authorId, creation_date, eventDate, false, uri.toString(),
-                                    streetNumber, streetName, complement, postalCode, city, country);
+                                    streetNumber, streetName, complement, postalCode, city, country, latLng);
                         }
                     }
                 });

@@ -25,6 +25,7 @@
             android:padding="16dp">
 
             <ImageView
+                android:id="@+id/image_view_association_profile_activity"
                 android:layout_width="90dp"
                 android:layout_height="90dp"
                 android:src="@drawable/image_cours"
@@ -36,6 +37,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
                 <TextView
+                    android:id="@+id/text_view_association_name_association_profile_activity"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="name of the association"
@@ -120,18 +122,18 @@
                     android:layout_weight="1">
 
                     <ImageButton
-                        android:id="@+id/call_button"
+                        android:id="@+id/posts_button"
                         android:layout_width="35dp"
                         android:layout_height="35dp"
-                        android:background="@drawable/ic_map"
+                        android:background="@drawable/ic_post"
                         android:layout_gravity="center"
                         android:layout_marginTop="10dp"/>
 
                     <TextView
-                        android:id="@+id/textview_call"
+                        android:id="@+id/textview_posts"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Call"
+                        android:text="Posts"
                         android:layout_gravity="center"/>
 
                 </LinearLayout>
