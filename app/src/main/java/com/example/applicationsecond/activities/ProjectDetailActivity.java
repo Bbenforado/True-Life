@@ -245,8 +245,6 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                     if (task.isSuccessful()) {
                         User user = task.getResult().toObject(User.class);
-                        //String buttonText = "From : " + user.getUsername();
-                        //authorButton.setText(buttonText);
                         Glide.with(context)
                                 .load(user.getUrlPhoto())
                                 .apply(RequestOptions.circleCropTransform())

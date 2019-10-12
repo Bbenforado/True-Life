@@ -65,5 +65,9 @@ public class UserHelper {
         return UserHelper.getUsersCollection().document(userId).update("urlPhoto", urlPhoto);
     }
 
+    public static Task<Void> updateUsername(String userId, String username) {
+        return UserHelper.getUsersCollection().document(userId).update("username", username);
+    }
+
 
 }

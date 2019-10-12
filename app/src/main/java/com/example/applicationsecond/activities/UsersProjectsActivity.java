@@ -39,7 +39,6 @@ public class UsersProjectsActivity extends AppCompatActivity {
     }
 
     private void configureToolbar() {
-        //-----------------------------------
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();

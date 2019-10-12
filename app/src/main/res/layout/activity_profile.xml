@@ -24,8 +24,8 @@
 
         <ImageView
             android:id="@+id/profile_activity_picture"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:src="@drawable/ic_profile"
             android:layout_marginLeft="40dp"
             android:layout_centerInParent="true"/>
@@ -54,7 +54,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="User name here"
                 android:padding="7dp"
                 android:textAllCaps="false"/>
 
@@ -81,16 +80,23 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:padding="16dp"
         android:layout_weight="70"
         android:orientation="vertical">
 
-        <TextView
-            android:layout_width="wrap_content"
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/activity_profile_tabs"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Your subscriptions"
-            android:textStyle="bold"
-            android:textSize="20sp"/>
+            android:background="#B6C9F1"
+            app:tabIndicatorColor="@color/colorPrimary"
+            app:tabTextColor="#D4E0F8"
+            app:tabSelectedTextColor="#fff"/>
+
+        <androidx.viewpager.widget.ViewPager
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/activity_profile_viewpager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
 
     </LinearLayout>
 

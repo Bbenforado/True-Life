@@ -2,43 +2,42 @@ package com.example.applicationsecond.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.viewpager.widget.ViewPager;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
-import android.widget.Switch;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.applicationsecond.R;
-import com.example.applicationsecond.api.ProjectHelper;
+import com.example.applicationsecond.adapters.ViewPagerAdapterFollowedProjectsAndAssociations;
 import com.example.applicationsecond.api.UserHelper;
 import com.example.applicationsecond.models.User;
 import com.example.applicationsecond.utils.Utils;
-import com.firebase.ui.auth.AuthUI;
-import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.CollectionReference;
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import java.util.Date;
 import java.util.UUID;
 
 import butterknife.BindView;
@@ -55,6 +54,10 @@ public class ProfileActivity extends AppCompatActivity {
     @BindView(R.id.profile_activity_change_picture_image_view) ImageView imageViewChangeProfilePicture;
     @BindView(R.id.profile_activity_username_button)
     Button userNameButton;
+    @BindView(R.id.activity_profile_viewpager)
+    ViewPager viewPager;
+    @BindView(R.id.activity_profile_tabs)
+    TabLayout tabLayout;
     //-----------------------------------
     private Uri uri;
     //------------------------------------
@@ -69,6 +72,7 @@ public class ProfileActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         configureToolbar();
+        configureViewPager();
         displayUserInformation(this );
 
     }
@@ -96,6 +100,12 @@ public class ProfileActivity extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
+    private void configureViewPager() {
+        viewPager.setAdapter(new ViewPagerAdapterFollowedProjectsAndAssociations(getSupportFragmentManager()));
+        tabLayout.setupWithViewPager(viewPager);
+        tabLayout.setTabMode(TabLayout.MODE_FIXED);
+    }
+
     //-------------------------------------------------
     //ACTIONS
     //---------------------------------------------------
@@ -110,14 +120,19 @@ public class ProfileActivity extends AppCompatActivity {
 
     }
 
+    @OnClick(R.id.profile_activity_username_button)
+    public void changeUsername() {
+        displayDialogToChangeUsername();
+    }
+
     //-------------------------------
     //METHODS
     //---------------------------------
     private void handleResponseForGallery(int requestCode, int resultCode, Intent data) {
         if (requestCode == RC_CHOOSE_PHOTO) {
-            if (resultCode == RESULT_OK) { //SUCCESS
+            if (resultCode == RESULT_OK) {
                 this.uri = data.getData();
-                Glide.with(this) //SHOWING PREVIEW OF IMAGE
+                Glide.with(this)
                         .load(this.uri)
                         .apply(RequestOptions.circleCropTransform())
                         .into(this.imageView);
@@ -139,6 +154,23 @@ public class ProfileActivity extends AppCompatActivity {
         startActivityForResult(i, RC_CHOOSE_PHOTO);
     }
 
+    private void displayDialogToChangeUsername() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = getLayoutInflater();
+        View view = inflater.inflate(R.layout.dialog_profile_activity_change_username, null);
+        builder.setTitle("Change user name")
+                .setView(view)
+                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        final TextInputEditText usernameInputEditText = view.findViewById(R.id.text_input_new_username);
+                        userNameButton.setText(usernameInputEditText.getEditableText().toString());
+                        UserHelper.updateUsername(Utils.getCurrentUser().getUid(), usernameInputEditText.getEditableText().toString());
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
 
     //------------------------------------
     //FIREBASE

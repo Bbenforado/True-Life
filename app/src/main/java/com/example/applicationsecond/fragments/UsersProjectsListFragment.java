@@ -125,6 +125,7 @@ public class UsersProjectsListFragment extends Fragment {
                 if (task.isSuccessful()) {
                     List<Project> projects = new ArrayList<>();
                     for (QueryDocumentSnapshot document : task.getResult()) {
+
                         Project project = document.toObject(Project.class);
                         projects.add(project);
                     }

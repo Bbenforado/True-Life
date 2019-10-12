@@ -353,6 +353,9 @@ public class AddProjectActivity extends AppCompatActivity {
     //FIREBASE METHODS
     //------------------------------------------
     private void saveProjectInFireBase() {
+
+        System.out.println("hello");
+
         String title = titleEditText.getText().toString();
         String description = descriptionEditText.getText().toString();
         String authorId = Utils.getCurrentUser().getUid();
@@ -374,6 +377,8 @@ public class AddProjectActivity extends AppCompatActivity {
             String projectId = ref.document().getId();
 
             if (isPublished) {
+
+                System.out.println("here");
                 ProjectHelper.createProject(projectId, title, description, authorId, creation_date, eventDate, true, streetNbr, streetName,
                         complement, postalCode, city, country, latLng);
             } else {
@@ -381,6 +386,9 @@ public class AddProjectActivity extends AppCompatActivity {
                         complement, postalCode, city, country, latLng);
             }
         } else {
+
+            System.out.println("or here");
+
             uploadPhotoInFireBaseAndSaveProject(title, description, authorId, creation_date, eventDate, streetNbr, streetName, complement, postalCode,
                     city, country, latLng);
         }

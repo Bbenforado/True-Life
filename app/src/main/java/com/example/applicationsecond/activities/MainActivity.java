@@ -204,6 +204,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             case R.id.users_projects:
                 launchActivity(UsersProjectsActivity.class);
+                break;
             case R.id.sign_out:
                 signOut();
             default:

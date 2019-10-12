@@ -42,13 +42,11 @@ public class AuthenticationActivity extends AppCompatActivity {
     //-------------------------------------
     //-------------------------------------
     private FirebaseAuth mAuth;
-    private SharedPreferences preferences;
     private boolean isAssociation;
     private String email;
     private String password;
     private String username;
     //----------------------------------------
-    public static final String APP_PREFERENCES = "appPreferences";
 
 
     @Override
@@ -57,7 +55,6 @@ public class AuthenticationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_authentication);
         ButterKnife.bind(this);
         configureSwitchButton();
-        preferences = getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE);
         mAuth = FirebaseAuth.getInstance();
     }
 

@@ -47,22 +47,13 @@ public class Utils {
      * get the latLng of an address and set it to the address
      * @param
      */
-    /*public static void getAndSetLatLngOfPlace(Context context, String projectId, String streetNbr, String streetName, String city,
-                                              String postalCode, String country) {
-        String finalAddress = streetNbr + " " + streetName + "," +
-                city + "," + postalCode + " " + country;
 
-        String latLng = Utils.getLocationFromAddress(context, finalAddress);
-        //ProjectHelper.updateLatLng(projectId, latLng);
-
-    }*/
     public static String getLatLngOfProject(Context context, String streetNbr, String streetName, String city,
                                               String postalCode, String country) {
         String finalAddress = streetNbr + " " + streetName + "," +
                 city + "," + postalCode + " " + country;
 
         return Utils.getLocationFromAddress(context, finalAddress);
-        //ProjectHelper.updateLatLng(projectId, latLng);
 
     }
 

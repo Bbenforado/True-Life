@@ -13,7 +13,7 @@
         android:padding="16dp"
         android:orientation="vertical">
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -24,22 +24,19 @@
                 android:layout_margin="5dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/image_cours"
-                android:layout_alignParentLeft="true"
                 android:transitionName="@string/animation_main_to_detail"/>
 
-            <TextView
-                android:id="@+id/user_list_fragment_item_username"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toRightOf="@+id/user_list_fragment_item_image"
-                android:layout_centerInParent="true"
-                android:layout_marginLeft="15dp"
-                android:text="user name"
-                android:textStyle="bold"
-                android:textSize="16sp"/>
+                <TextView
+                    android:id="@+id/user_list_fragment_item_username"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="15dp"
+                    android:layout_gravity="center"
+                    android:textStyle="bold"
+                    android:textSize="16sp"/>
 
 
-        </RelativeLayout>
+        </LinearLayout>
 
 
     </LinearLayout>
