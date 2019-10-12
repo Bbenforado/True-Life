@@ -62,6 +62,7 @@ public class AssociationProfileActivity extends AppCompatActivity {
             displayAssociationInformation(this);
         }
         hideFollowButtonIfItsCurrentUserProfile();
+        displayStateOfFollowButtonDependingOnIfTheUserFollowsOrNot();
 
     }
 
@@ -76,6 +77,9 @@ public class AssociationProfileActivity extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
+    //----------------------------------------
+    //ACTIONS
+    //--------------------------------------------
     @OnClick(R.id.follow_button)
     public void followThisAssociation() {
         isButtonClicked = !isButtonClicked;
@@ -89,18 +93,19 @@ public class AssociationProfileActivity extends AppCompatActivity {
 
             //display toast message to tell the user he s now following this association
             Toast.makeText(this, "You are now following " + authorId, Toast.LENGTH_SHORT).show();
-
-
         } else {
             //unclick button
             UserHelper.removeAssociationSubscription(currentUserId, authorId);
             //change button color
             followButton.setBackground(getResources().getDrawable(R.drawable.ic_heart));
             textViewFollow.setTextColor(defaultColor);
-            Toast.makeText(this, "You are not part of this project anymore", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "You are not following " + authorId + " anymore", Toast.LENGTH_SHORT).show();
         }
     }
 
+    //----------------------------------------
+    //METHODS
+    //----------------------------------------
     private void hideFollowButtonIfItsCurrentUserProfile() {
         //check if it s current user s profile
         if (currentUserId.equals(authorId)) {
@@ -110,6 +115,24 @@ public class AssociationProfileActivity extends AppCompatActivity {
         } else {
             followButton.setEnabled(true);
         }
+    }
+
+    private void displayStateOfFollowButtonDependingOnIfTheUserFollowsOrNot(){
+        //check if current user is following the association
+        UserHelper.getUser(currentUserId).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                User user = task.getResult().toObject(User.class);
+                if (user.getAssociationSubscribedId().contains(authorId)) {
+                    //set the color of the button to red
+                    followButton.setBackground(getResources().getDrawable(R.drawable.ic_heart_red));
+                    textViewFollow.setTextColor(getResources().getColor(R.color.red));
+                    isButtonClicked = true;
+                } else {
+                    followButton.setBackground(getResources().getDrawable(R.drawable.ic_heart));
+                    textViewFollow.setTextColor(defaultColor);
+                }
+            }
+        });
     }
 
     //------------------------------
