@@ -1,5 +1,6 @@
 package com.example.applicationsecond.adapters;
 
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.view.View;
 import android.widget.ImageView;
@@ -44,14 +45,14 @@ public class ChatViewHolder extends RecyclerView.ViewHolder {
     TextView textViewMessage;
     @BindView(R.id.activity_chat_item_message_container_text_view_date) TextView textViewDate;
     //-------------------------------------
-    private final int colorCurrentUser;
-    private final int colorRemoteUser;
+    private Drawable drawableCurrentUser;
+    private Drawable drawableRemoteUser;
 
     public ChatViewHolder(@NonNull View itemView) {
         super(itemView);
         ButterKnife.bind(this, itemView);
-        colorCurrentUser = ContextCompat.getColor(itemView.getContext(), R.color.colorAccent);
-        colorRemoteUser = ContextCompat.getColor(itemView.getContext(), R.color.red);
+        drawableCurrentUser = ContextCompat.getDrawable(itemView.getContext(), R.drawable.bubble_style_user_sender);
+        drawableRemoteUser = ContextCompat.getDrawable(itemView.getContext(), R.drawable.bubble_style);
     }
 
     public void updateWithMessage(Message message, String currentUserId, RequestManager glide) {
@@ -78,8 +79,8 @@ public class ChatViewHolder extends RecyclerView.ViewHolder {
             imageViewSent.setVisibility(View.GONE);
         }
 
-        ((GradientDrawable) textMessageContainer.getBackground()).setColor(isCurrentUser?
-                colorCurrentUser : colorRemoteUser);
+        //Update Message Bubble Color Background
+        textMessageContainer.setBackground(isCurrentUser ? drawableCurrentUser : drawableRemoteUser);
         updateDesignDependingOnUser(isCurrentUser);
     }
 

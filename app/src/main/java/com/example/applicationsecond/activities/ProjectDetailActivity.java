@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -71,6 +72,8 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
     @BindView(R.id.project_detail_activity_author_button) ImageView authorPhotoImageView;
     @BindView(R.id.image_detail_activity) ImageView imageView;
     @BindView(R.id.map_view_detail_activity) MapView mapView;
+    @BindView(R.id.activity_detail_image_button_chat)
+    ImageButton chatButton;
     //-----------------------------------------
     //-------------------------------------------
     public static final String APP_PREFERENCES = "appPreferences";
@@ -132,6 +135,9 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
         }
         return super.onOptionsItemSelected(item);
     }
+    //--------------------------------------
+    //CONFIGURATION
+    //-----------------------------------------
 
     private void configureToolbar() {
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -139,6 +145,18 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(clickedProject.getTitle());
         actionBar.setDisplayHomeAsUpEnabled(true);
+    }
+
+    //--------------------------------------
+    //ACTIONS
+    //----------------------------------------
+    @OnClick(R.id.activity_detail_image_button_chat)
+    public void openChatForTheProject() {
+        Intent chatIntent = new Intent(this, ChatActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putString("chatName", clickedProject.getId());
+        chatIntent.putExtras(bundle);
+        startActivity(chatIntent);
     }
 
     @OnClick(R.id.project_detail_activity_author_button)
@@ -181,6 +199,9 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
         }
 
     }
+
+    //------------------------------------------
+    //--------------------------------------------
 
     private void displayColorButton(User user, String projectId) {
 
