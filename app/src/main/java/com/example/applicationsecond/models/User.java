@@ -12,6 +12,8 @@ public class User {
     private List<String> projectsSubscribedId;
     private List<String> associationSubscribedId;
     private List<String> publishedPostId;
+    private String country;
+    private String city;
 
     public User() {
 
@@ -28,6 +30,14 @@ public class User {
         this.id = id;
         this.username = username;
         this.isAssociation = isAssociation;
+    }
+
+    public User(String id, String username, boolean isAssociation, String city, String country) {
+        this.id = id;
+        this.username = username;
+        this.isAssociation = isAssociation;
+        this.city = city;
+        this.country = country;
     }
 
     //-------------------------------------
@@ -94,5 +104,21 @@ public class User {
 
     public void setPublishedPostId(List<String> publishedPostId) {
         this.publishedPostId = publishedPostId;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
     }
 }

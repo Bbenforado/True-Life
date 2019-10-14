@@ -21,8 +21,8 @@ public class UserHelper {
     }
 
     //CREATE
-    public static Task<Void> createUser(String id, String username, boolean isAssociation) {
-        User userToCreate = new User(id, username, isAssociation);
+    public static Task<Void> createUser(String id, String username, boolean isAssociation, String city, String country) {
+        User userToCreate = new User(id, username, isAssociation, city, country);
         return UserHelper.getUsersCollection().document(id).set(userToCreate);
     }
 

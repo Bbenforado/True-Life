@@ -1,48 +1,47 @@
 package com.example.applicationsecond.adapters;
 
-import android.content.Context;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.RequestManager;
 import com.example.applicationsecond.R;
 import com.example.applicationsecond.models.Project;
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 
-import java.util.List;
+public class AdapterRecyclerViewProjects extends FirestoreRecyclerAdapter<Project, ViewHolderProjects> {
 
-import butterknife.BindView;
+    public interface Listener {
+        void onDataChanged();
+    }
 
-public class AdapterRecyclerViewProjects extends RecyclerView.Adapter<ViewHolderProjects>{
-
-    private List<Project> projectList;
     private RequestManager glide;
+    private Listener callback;
 
-    public AdapterRecyclerViewProjects(List<Project> projectList, RequestManager glide) {
-        this.projectList = projectList;
+    public AdapterRecyclerViewProjects(@NonNull FirestoreRecyclerOptions<Project> options, RequestManager glide, Listener callback) {
+        super(options);
         this.glide = glide;
+        this.callback = callback;
     }
 
     @NonNull
     @Override
     public ViewHolderProjects onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        Context context = parent.getContext();
-        LayoutInflater inflater = LayoutInflater.from(context);
-        View view = inflater.inflate(R.layout.actuality_list_item, parent, false);
-        return new ViewHolderProjects(view);
+        return new ViewHolderProjects(LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.actuality_list_item, parent, false));
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolderProjects holder, int position) {
-        holder.updateUi(this.projectList.get(position), this.glide);
+    public void onBindViewHolder(@NonNull ViewHolderProjects holder, int position, @NonNull Project project) {
+        holder.updateUi(project, this.glide);
     }
 
+
     @Override
-    public int getItemCount() {
-        return projectList.size();
+    public void onDataChanged() {
+        super.onDataChanged();
+        this.callback.onDataChanged();
     }
 }

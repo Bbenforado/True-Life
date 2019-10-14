@@ -162,17 +162,11 @@ public class PostListFragment extends Fragment {
             }
         });*/
         //get the current user
-
-        System.out.println("come here");
-
         UserHelper.getUser(Utils.getCurrentUser().getUid()).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     User user = task.getResult().toObject(User.class);
-
-                    System.out.println("here we get the user");
-
                     //get the list of the followed associations
                         if (user.getAssociationSubscribedId().size() > 0) {
                             for (int i = 0; i < user.getAssociationSubscribedId().size(); i++) {
@@ -213,8 +207,6 @@ public class PostListFragment extends Fragment {
                             }
                         }
                     } else {
-
-                        System.out.println("and here no");
                         displayScreenDependingOfNewsAvailable();
                     }
                 }

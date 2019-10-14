@@ -39,6 +39,22 @@
         android:hint="Username"
         android:id="@+id/user_name_input_authentication_activity"/>
 
+    <EditText
+        android:padding="10dp"
+        android:layout_margin="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="City (not required)"
+        android:id="@+id/city_input_authentication_activity"/>
+
+    <EditText
+        android:padding="10dp"
+        android:layout_margin="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Country (not required)"
+        android:id="@+id/country_input_authentication_activity"/>
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

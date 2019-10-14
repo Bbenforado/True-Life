@@ -39,6 +39,8 @@ public class AuthenticationActivity extends AppCompatActivity {
     @BindView(R.id.email_input_authentication_activity) EditText emailEditText;
     @BindView(R.id.button_login_authentication_activity) Button buttonLogin;
     @BindView(R.id.user_name_input_authentication_activity) EditText usernameEditText;
+    @BindView(R.id.city_input_authentication_activity) EditText cityEditText;
+    @BindView(R.id.country_input_authentication_activity) EditText countryEditText;
     //-------------------------------------
     //-------------------------------------
     private FirebaseAuth mAuth;
@@ -46,6 +48,8 @@ public class AuthenticationActivity extends AppCompatActivity {
     private String email;
     private String password;
     private String username;
+    private String city;
+    private String country;
     //----------------------------------------
 
 
@@ -62,6 +66,16 @@ public class AuthenticationActivity extends AppCompatActivity {
         email = emailEditText.getText().toString().trim();
         password = passwordEditText.getText().toString().trim();
         username = usernameEditText.getText().toString();
+        if (!TextUtils.isEmpty(cityEditText.getText())) {
+            city = cityEditText.getText().toString();
+        } else {
+            city = null;
+        }
+        if (!TextUtils.isEmpty(countryEditText.getText())) {
+            country = countryEditText.getText().toString();
+        } else {
+            country = null;
+        }
       if (checkAllFieldsAreCompleted()) {
           mAuth.createUserWithEmailAndPassword(email, password)
                   .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -70,9 +84,9 @@ public class AuthenticationActivity extends AppCompatActivity {
                           try {
                               if (task.isSuccessful()) {
                                   if (isAssociation) {
-                                      UserHelper.createUser(getCurrentUser().getUid(), username, true);
+                                      UserHelper.createUser(getCurrentUser().getUid(), username, true, city, country);
                                   } else {
-                                      UserHelper.createUser(getCurrentUser().getUid(), username, false);
+                                      UserHelper.createUser(getCurrentUser().getUid(), username, false, city, country);
                                   }
                                   Toast.makeText(getApplicationContext(), "registration successful",
                                           Toast.LENGTH_SHORT).show();

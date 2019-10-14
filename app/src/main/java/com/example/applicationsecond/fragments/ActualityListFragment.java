@@ -28,10 +28,12 @@ import com.example.applicationsecond.activities.ProjectDetailActivity;
 import com.example.applicationsecond.adapters.AdapterRecyclerViewProjects;
 import com.example.applicationsecond.api.ProjectHelper;
 import com.example.applicationsecond.callbacks.MyCallback;
+import com.example.applicationsecond.models.Message;
 import com.example.applicationsecond.models.Post;
 import com.example.applicationsecond.models.Project;
 import com.example.applicationsecond.utils.ItemClickSupport;
 import com.example.applicationsecond.utils.Utils;
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
@@ -42,6 +44,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.gson.Gson;
@@ -53,10 +56,12 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.example.applicationsecond.utils.Utils.getCurrentUser;
+
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ActualityListFragment extends Fragment {
+public class ActualityListFragment extends Fragment implements AdapterRecyclerViewProjects.Listener{
     //------------------------------
     //BIND VIEWS
     //-------------------------------
@@ -68,8 +73,8 @@ public class ActualityListFragment extends Fragment {
     //-------------------------------------
     private AdapterRecyclerViewProjects adapter;
     private SharedPreferences preferences;
-    private boolean isNewsToDisplay;
-    private List<Project> projectList;
+  /*  private boolean isNewsToDisplay;
+    private List<Project> projectList;*/
     //-----------------------------------------------
     //-------------------------------------------------
     public static final String APP_PREFERENCES = "appPreferences";
@@ -96,27 +101,37 @@ public class ActualityListFragment extends Fragment {
     //CONFIGURATION
     //-----------------------------
     private void doBasicConfiguration() {
-        projectList = new ArrayList<>();
+        //projectList = new ArrayList<>();
 
         configureRecyclerView();
         configureOnClickRecyclerView();
-        configureViewSwitcher();
+       // configureViewSwitcher();
 
     }
 
     private void configureViewSwitcher() {
         // Declare in and out animations and load them using AnimationUtils class
-        Animation newsAvailable = AnimationUtils.loadAnimation(getActivity().getApplicationContext(), android.R.anim.slide_in_left);
+     /*   Animation newsAvailable = AnimationUtils.loadAnimation(getActivity().getApplicationContext(), android.R.anim.slide_in_left);
         Animation noNewsAvailable = AnimationUtils.loadAnimation(getActivity().getApplicationContext(), android.R.anim.slide_out_right);
         // set the animation type to ViewSwitcher
         viewSwitcher.setInAnimation(newsAvailable);
-        viewSwitcher.setOutAnimation(noNewsAvailable);
+        viewSwitcher.setOutAnimation(noNewsAvailable);*/
 
         //displayScreenDependingOfNewsAvailable();
     }
 
     private void configureRecyclerView() {
-        getDataToConfigureRecyclerView();
+        adapter = new AdapterRecyclerViewProjects(generateOptionsForAdapter(ProjectHelper.getPublishedProjects(Utils.getCurrentUser().getUid())),
+                Glide.with(this), this);
+
+        adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onItemRangeInserted(int positionStart, int itemCount) {
+                recyclerView.smoothScrollToPosition(adapter.getItemCount());
+            }
+        });
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setAdapter(adapter);
     }
 
     private void configureOnClickRecyclerView() {
@@ -126,7 +141,7 @@ public class ActualityListFragment extends Fragment {
                     public void onItemClicked(RecyclerView recyclerView, int position, View v) {
                         Intent intent = new Intent(getActivity(), ProjectDetailActivity.class);
 
-                        Project clickedProject = projectList.get(position);
+                        Project clickedProject = adapter.getItem(position);
 
                         Gson gson = new Gson();
                         preferences.edit().putString(CLICKED_PROJECT, gson.toJson(clickedProject)).apply();
@@ -145,19 +160,6 @@ public class ActualityListFragment extends Fragment {
 
     //-------------------------------------
     //-------------------------------------
-    private void displayScreenDependingOfNewsAvailable(List<Project> list) {
-        //isNewsToDisplay = checkIfTheresNewsToDisplay();
-        if (checkIfTheresNewsToDisplay(list)) {
-            viewSwitcher.setDisplayedChild(0);
-        } else {
-            viewSwitcher.setDisplayedChild(1);
-        }
-    }
-
-    private boolean checkIfTheresNewsToDisplay(List<Project> list) {
-        return (list.size() > 0);
-    }
-
     private void launchActivity(Class activity) {
         Intent intent = new Intent(getContext(), activity);
         startActivity(intent);
@@ -186,7 +188,7 @@ public class ActualityListFragment extends Fragment {
                 }
             }
         });*/
-        ProjectHelper.getPublishedProjects().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        /*ProjectHelper.getPublishedProjects().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
@@ -208,7 +210,18 @@ public class ActualityListFragment extends Fragment {
                     Log.e("TAG", "Error");
                 }
             }
-        });
+        });*/
     }
 
+    private FirestoreRecyclerOptions<Project> generateOptionsForAdapter(Query query){
+        return new FirestoreRecyclerOptions.Builder<Project>()
+                .setQuery(query, Project.class)
+                .setLifecycleOwner(this)
+                .build();
+    }
+
+    @Override
+    public void onDataChanged() {
+        viewSwitcher.setDisplayedChild(adapter.getItemCount() == 0? 1 : 0);
+    }
 }

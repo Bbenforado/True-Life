@@ -19,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -58,6 +59,8 @@ public class ProfileActivity extends AppCompatActivity {
     ViewPager viewPager;
     @BindView(R.id.activity_profile_tabs)
     TabLayout tabLayout;
+    @BindView(R.id.activity_profile_text_view_country_city)
+    TextView textViewCountryCity;
     //-----------------------------------
     private Uri uri;
     //------------------------------------
@@ -211,6 +214,15 @@ public class ProfileActivity extends AppCompatActivity {
                     }
                     userNameButton.setText(user.getUsername());
 
+                    if (user.getCountry() != null && user.getCity() != null) {
+                        textViewCountryCity.setText(user.getCity() + ", " + user.getCountry());
+                    } else if (user.getCountry() != null && user.getCity() == null) {
+                        textViewCountryCity.setText(user.getCountry());
+                    } else if (user.getCountry() == null && user.getCity() != null) {
+                        textViewCountryCity.setText(user.getCity());
+                    } else if (user.getCountry() == null && user.getCity() == null) {
+                        textViewCountryCity.setVisibility(View.GONE);
+                    }
                 }
             }
         });

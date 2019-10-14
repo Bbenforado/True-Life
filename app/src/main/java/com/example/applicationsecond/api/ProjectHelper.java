@@ -9,6 +9,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.Date;
@@ -46,13 +47,29 @@ public class ProjectHelper {
     }
 
     //GET
+
+    public static Query getPublishedProjects(String userId) {
+        return ProjectHelper.getProjectsCollection()
+                .whereEqualTo("published", true)
+                .whereEqualTo("authorId", userId)
+                .limit(50);
+    }
+
+    public static Query getProjectsForOneUser(String userId) {
+        return ProjectHelper.getProjectsCollection()
+                .whereEqualTo("published", true)
+                .whereArrayContains("usersWhoSubscribed", userId)
+                .limit(50);
+    }
+
+
     public static Task<DocumentSnapshot> getProject(String id) {
         return ProjectHelper.getProjectsCollection().document(id).get();
     }
 
-    public static Task<QuerySnapshot> getPublishedProjects() {
+    /*public static Task<QuerySnapshot> getPublishedProjects() {
         return ProjectHelper.getProjectsCollection().whereEqualTo("published", true).get();
-    }
+    }*/
 
     public static Task<QuerySnapshot> getUsersPublishedProjects(String currentUserId) {
         return ProjectHelper.getProjectsCollection().whereEqualTo("published", true).whereEqualTo("authorId", currentUserId).get();
@@ -62,9 +79,9 @@ public class ProjectHelper {
         return ProjectHelper.getProjectsCollection().whereEqualTo("published", false).whereEqualTo("authorId", userId).get();
     }
 
-    public static Task<QuerySnapshot> getProjectsForOneUser(String userId) {
+   /* public static Task<QuerySnapshot> getProjectsForOneUser(String userId) {
         return ProjectHelper.getProjectsCollection().whereEqualTo("published", true).whereArrayContains("usersWhoSubscribed", userId).get();
-    }
+    }*/
 
     //UPDATE
     public static Task<Void> addSubscriptionToProject(String projectId, String userId) {
