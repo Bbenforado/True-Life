@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.RequestManager;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.applicationsecond.R;
 import com.example.applicationsecond.models.Project;
 
@@ -16,9 +18,11 @@ import java.util.List;
 public class AdapterUsersProjectsList extends RecyclerView.Adapter<ViewHolderUsersProjectsList>{
 
     private List<Project> projectList;
+    private RequestManager glide;
 
-    public AdapterUsersProjectsList(List<Project> projectList) {
+    public AdapterUsersProjectsList(List<Project> projectList, RequestManager glide) {
         this.projectList = projectList;
+        this.glide = glide;
     }
 
     @NonNull
@@ -32,7 +36,7 @@ public class AdapterUsersProjectsList extends RecyclerView.Adapter<ViewHolderUse
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolderUsersProjectsList holder, int position) {
-        holder.updateUi(projectList.get(position));
+        holder.updateUi(projectList.get(position), this.glide);
     }
 
     @Override

@@ -18,7 +18,14 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        return new UsersProjectsListFragment();
+        switch (position) {
+            case 0:
+                return new UsersProjectsListFragment(true);
+            case 1:
+                return new UsersProjectsListFragment(false);
+                default:
+                    return new UsersProjectsListFragment();
+        }
 
     }
 

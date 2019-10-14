@@ -77,8 +77,9 @@ public class ActualityListFragment extends Fragment implements AdapterRecyclerVi
     private List<Project> projectList;*/
     //-----------------------------------------------
     //-------------------------------------------------
-    public static final String APP_PREFERENCES = "appPreferences";
+    private static final String APP_PREFERENCES = "appPreferences";
     private static final String CLICKED_PROJECT = "clickedProject";
+    public static final String CODE_PROFILE_ACTIVITY = "codeProfileActivity";
 
     public ActualityListFragment() {
         // Required empty public constructor
@@ -92,6 +93,8 @@ public class ActualityListFragment extends Fragment implements AdapterRecyclerVi
         ButterKnife.bind(this, result);
 
         preferences = getActivity().getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
+
+        System.out.println("pref = " + preferences.getInt(CODE_PROFILE_ACTIVITY, -1));
         doBasicConfiguration();
 
         return result;
@@ -121,15 +124,22 @@ public class ActualityListFragment extends Fragment implements AdapterRecyclerVi
     }
 
     private void configureRecyclerView() {
-        adapter = new AdapterRecyclerViewProjects(generateOptionsForAdapter(ProjectHelper.getPublishedProjects(Utils.getCurrentUser().getUid())),
-                Glide.with(this), this);
+        //if it s to display user's published projects in profile activity
+        if (preferences.getInt(CODE_PROFILE_ACTIVITY, -1) == 1) {
+            adapter = new AdapterRecyclerViewProjects(generateOptionsForAdapter(ProjectHelper.getPublishedProjects(Utils.getCurrentUser().getUid())),
+                    Glide.with(this), this);
+        } else {
+            //else if it s to display user s following projects in default screen
+            adapter = new AdapterRecyclerViewProjects(generateOptionsForAdapter(ProjectHelper.getProjectsForOneUser(Utils.getCurrentUser().getUid())),
+                    Glide.with(this), this);
+        }
 
-        adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+        /*adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override
             public void onItemRangeInserted(int positionStart, int itemCount) {
                 recyclerView.smoothScrollToPosition(adapter.getItemCount());
             }
-        });
+        });*/
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);
     }

@@ -21,11 +21,13 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ViewSwitcher;
 
+import com.bumptech.glide.Glide;
 import com.example.applicationsecond.R;
 import com.example.applicationsecond.activities.ProjectDetailActivity;
 import com.example.applicationsecond.adapters.AdapterRecyclerViewProjects;
 import com.example.applicationsecond.adapters.AdapterUsersProjectsList;
 import com.example.applicationsecond.api.ProjectHelper;
+import com.example.applicationsecond.models.Post;
 import com.example.applicationsecond.models.Project;
 import com.example.applicationsecond.utils.ItemClickSupport;
 import com.example.applicationsecond.utils.Utils;
@@ -55,15 +57,17 @@ public class UsersProjectsListFragment extends Fragment {
     //-----------------------------------
     //-------------------------------------
     private AdapterUsersProjectsList adapter;
-    private SharedPreferences preferences;
     private List<Project> projectList;
+    private Boolean isPublished;
     //-----------------------------------------------
     //-------------------------------------------------
-    public static final String APP_PREFERENCES = "appPreferences";
-    public static final String KEY_USERS_PROJECTS_LIST = "keyUsersProjectsList";
 
     public UsersProjectsListFragment() {
         // Required empty public constructor
+    }
+
+    public UsersProjectsListFragment(Boolean isPublished) {
+        this.isPublished = isPublished;
     }
 
 
@@ -72,8 +76,6 @@ public class UsersProjectsListFragment extends Fragment {
                              Bundle savedInstanceState) {
         View result = inflater.inflate(R.layout.fragment_users_projects_list, container, false);
         ButterKnife.bind(this, result);
-
-        preferences = getActivity().getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
         doBasicConfiguration();
         return result;
     }
@@ -94,7 +96,7 @@ public class UsersProjectsListFragment extends Fragment {
         viewSwitcher.setInAnimation(newsAvailable);
         viewSwitcher.setOutAnimation(noNewsAvailable);
 
-        displayScreenDependingOfNewsAvailable();
+        //displayScreenDependingOfNewsAvailable();
     }
 
     private void configureRecyclerView() {
@@ -106,38 +108,63 @@ public class UsersProjectsListFragment extends Fragment {
 
     }
 
-    private void displayScreenDependingOfNewsAvailable() {
-        if (checkIfTheresNewsToDisplay()) {
+    private void displayScreenDependingOfNewsAvailable(List<Project> projects) {
+        if (checkIfTheresNewsToDisplay(projects)) {
             viewSwitcher.setDisplayedChild(0);
         } else {
             viewSwitcher.setDisplayedChild(1);
         }
     }
 
-    private boolean checkIfTheresNewsToDisplay() {
-        return true;
+    private boolean checkIfTheresNewsToDisplay(List<Project> projects) {
+        return projects.size() > 0;
     }
 
     private void getDataToConfigureRecyclerView(String userId) {
-        ProjectHelper.getUsersPublishedProjects(userId).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    List<Project> projects = new ArrayList<>();
-                    for (QueryDocumentSnapshot document : task.getResult()) {
+        if (isPublished) {
+            ProjectHelper.getUsersPublishedProjects(userId).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+                        List<Project> projects = new ArrayList<>();
+                        for (QueryDocumentSnapshot document : task.getResult()) {
 
-                        Project project = document.toObject(Project.class);
-                        projects.add(project);
+                            Project project = document.toObject(Project.class);
+                            projects.add(project);
+                        }
+
+                        adapter = new AdapterUsersProjectsList(projects, Glide.with(getContext()));
+                        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                        recyclerView.setAdapter(adapter);
+                        displayScreenDependingOfNewsAvailable(projects);
+
+                    } else {
+                        Log.e("TAG", "Error");
                     }
-
-                    adapter = new AdapterUsersProjectsList(projects);
-                    recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                    recyclerView.setAdapter(adapter);
-
-                } else {
-                    Log.e("TAG", "Error");
                 }
-            }
-        });
+            });
+        } else {
+            ProjectHelper.getUsersNotPublishedProjects(userId).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+                        List<Project> projects = new ArrayList<>();
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+
+                            Project project = document.toObject(Project.class);
+                            projects.add(project);
+                        }
+
+                        adapter = new AdapterUsersProjectsList(projects, Glide.with(getContext()));
+                        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                        recyclerView.setAdapter(adapter);
+                        displayScreenDependingOfNewsAvailable(projects);
+
+                    } else {
+                        Log.e("TAG", "Error");
+                    }
+                }
+            });
+        }
     }
 }

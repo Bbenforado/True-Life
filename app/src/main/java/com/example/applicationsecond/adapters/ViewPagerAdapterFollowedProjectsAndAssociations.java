@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
+import com.example.applicationsecond.fragments.ActualityListFragment;
 import com.example.applicationsecond.fragments.SearchFragment;
 import com.example.applicationsecond.fragments.UserListFragment;
 
@@ -18,7 +19,7 @@ public class ViewPagerAdapterFollowedProjectsAndAssociations extends FragmentPag
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                return new SearchFragment();
+                return new ActualityListFragment();
             case 1:
                 return new UserListFragment();
                 default:

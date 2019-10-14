@@ -11,6 +11,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -63,16 +64,20 @@ public class ProfileActivity extends AppCompatActivity {
     TextView textViewCountryCity;
     //-----------------------------------
     private Uri uri;
+    private SharedPreferences preferences;
     //------------------------------------
     private static final String PERMS = Manifest.permission.READ_EXTERNAL_STORAGE;
     private static final int RC_IMAGE_PERMS = 100;
     private static final int RC_CHOOSE_PHOTO = 200;
+    public static final String APP_PREFERENCES = "appPreferences";
+    public static final String CODE_PROFILE_ACTIVITY = "codeProfileActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
         ButterKnife.bind(this);
+        preferences = getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE);
 
         configureToolbar();
         configureViewPager();
@@ -92,6 +97,13 @@ public class ProfileActivity extends AppCompatActivity {
         handleResponseForGallery(requestCode, resultCode, data);
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        preferences.edit().putInt(CODE_PROFILE_ACTIVITY, -1).apply();
+        System.out.println("pref on stop  = " + preferences.getInt(CODE_PROFILE_ACTIVITY, -1));
+    }
+
     //------------------------------
     //CONFIGURATION
     //-----------------------------------
@@ -104,6 +116,7 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void configureViewPager() {
+        preferences.edit().putInt(CODE_PROFILE_ACTIVITY, 1).apply();
         viewPager.setAdapter(new ViewPagerAdapterFollowedProjectsAndAssociations(getSupportFragmentManager()));
         tabLayout.setupWithViewPager(viewPager);
         tabLayout.setTabMode(TabLayout.MODE_FIXED);
@@ -188,7 +201,6 @@ public class ProfileActivity extends AppCompatActivity {
                 filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
-                        Log.d("LOG URI", "onSuccess: uri= "+ uri.toString());
                         UserHelper.updateUrlPhoto(Utils.getCurrentUser().getUid(), uri.toString());
                     }
                 });

@@ -23,7 +23,7 @@
                 android:layout_height="60dip"
                 android:layout_margin="5dp"
                 android:scaleType="centerCrop"
-                android:src="@drawable/image_cours"
+                android:src="@drawable/ic_no_image"
                 android:layout_alignParentLeft="true"
                 android:transitionName="@string/animation_main_to_detail"/>
 
