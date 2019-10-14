@@ -59,8 +59,11 @@ public class UsersProjectsListFragment extends Fragment {
     private AdapterUsersProjectsList adapter;
     private List<Project> projectList;
     private Boolean isPublished;
+    private SharedPreferences preferences;
     //-----------------------------------------------
     //-------------------------------------------------
+    public static final String APP_PREFERENCES = "appPreferences";
+    public static final String CLICKED_PROJECT = "clickedProject";
 
     public UsersProjectsListFragment() {
         // Required empty public constructor
@@ -76,6 +79,7 @@ public class UsersProjectsListFragment extends Fragment {
                              Bundle savedInstanceState) {
         View result = inflater.inflate(R.layout.fragment_users_projects_list, container, false);
         ButterKnife.bind(this, result);
+        preferences = getActivity().getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
         doBasicConfiguration();
         return result;
     }
@@ -105,6 +109,17 @@ public class UsersProjectsListFragment extends Fragment {
     }
 
     private void configureOnClickRecyclerView() {
+        ItemClickSupport.addTo(recyclerView, R.layout.fragment_my_projects_item)
+                .setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
+                    @Override
+                    public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+                        Intent intent = new Intent(getActivity(), ProjectDetailActivity.class);
+                        Project clickedProject = adapter.getItem(position);
+                        Gson gson = new Gson();
+                        preferences.edit().putString(CLICKED_PROJECT, gson.toJson(clickedProject)).apply();
+                        startActivity(intent);
+                    }
+                });
 
     }
 

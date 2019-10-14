@@ -73,6 +73,7 @@ public class ActualityListFragment extends Fragment implements AdapterRecyclerVi
     //-------------------------------------
     private AdapterRecyclerViewProjects adapter;
     private SharedPreferences preferences;
+    private Boolean isFromProfileActivity;
   /*  private boolean isNewsToDisplay;
     private List<Project> projectList;*/
     //-----------------------------------------------
@@ -85,6 +86,10 @@ public class ActualityListFragment extends Fragment implements AdapterRecyclerVi
         // Required empty public constructor
     }
 
+    public ActualityListFragment(Boolean isFromProfileActivity) {
+        this.isFromProfileActivity = isFromProfileActivity;
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -94,7 +99,6 @@ public class ActualityListFragment extends Fragment implements AdapterRecyclerVi
 
         preferences = getActivity().getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
 
-        System.out.println("pref = " + preferences.getInt(CODE_PROFILE_ACTIVITY, -1));
         doBasicConfiguration();
 
         return result;
@@ -108,24 +112,24 @@ public class ActualityListFragment extends Fragment implements AdapterRecyclerVi
 
         configureRecyclerView();
         configureOnClickRecyclerView();
-       // configureViewSwitcher();
+        configureViewSwitcher();
 
     }
 
     private void configureViewSwitcher() {
         // Declare in and out animations and load them using AnimationUtils class
-     /*   Animation newsAvailable = AnimationUtils.loadAnimation(getActivity().getApplicationContext(), android.R.anim.slide_in_left);
+        Animation newsAvailable = AnimationUtils.loadAnimation(getActivity().getApplicationContext(), android.R.anim.slide_in_left);
         Animation noNewsAvailable = AnimationUtils.loadAnimation(getActivity().getApplicationContext(), android.R.anim.slide_out_right);
         // set the animation type to ViewSwitcher
         viewSwitcher.setInAnimation(newsAvailable);
-        viewSwitcher.setOutAnimation(noNewsAvailable);*/
+        viewSwitcher.setOutAnimation(noNewsAvailable);
 
         //displayScreenDependingOfNewsAvailable();
     }
 
     private void configureRecyclerView() {
         //if it s to display user's published projects in profile activity
-        if (preferences.getInt(CODE_PROFILE_ACTIVITY, -1) == 1) {
+        if (isFromProfileActivity) {
             adapter = new AdapterRecyclerViewProjects(generateOptionsForAdapter(ProjectHelper.getPublishedProjects(Utils.getCurrentUser().getUid())),
                     Glide.with(this), this);
         } else {
@@ -133,13 +137,6 @@ public class ActualityListFragment extends Fragment implements AdapterRecyclerVi
             adapter = new AdapterRecyclerViewProjects(generateOptionsForAdapter(ProjectHelper.getProjectsForOneUser(Utils.getCurrentUser().getUid())),
                     Glide.with(this), this);
         }
-
-        /*adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-            @Override
-            public void onItemRangeInserted(int positionStart, int itemCount) {
-                recyclerView.smoothScrollToPosition(adapter.getItemCount());
-            }
-        });*/
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);
     }
@@ -173,54 +170,6 @@ public class ActualityListFragment extends Fragment implements AdapterRecyclerVi
     private void launchActivity(Class activity) {
         Intent intent = new Intent(getContext(), activity);
         startActivity(intent);
-    }
-
-
-    private void getDataToConfigureRecyclerView() {
-        /*ProjectHelper.getProjectsForOneUser(Utils.getCurrentUser().getUid()).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    List<Project> projects = new ArrayList<>();
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        Project project = document.toObject(Project.class);
-                        projects.add(project);
-                    }
-
-                    projectList.addAll(projects);
-
-                    adapter = new AdapterRecyclerViewProjects(projects);
-                    recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                    recyclerView.setAdapter(adapter);
-
-                } else {
-                    Log.e("TAG", "Error");
-                }
-            }
-        });*/
-        /*ProjectHelper.getPublishedProjects().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    List<Project> projects = new ArrayList<>();
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        Project project = document.toObject(Project.class);
-                        projects.add(project);
-                    }
-
-                    projectList.addAll(projects);
-
-                    displayScreenDependingOfNewsAvailable(projects);
-
-                    adapter = new AdapterRecyclerViewProjects(projects, Glide.with(getActivity()));
-                    recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                    recyclerView.setAdapter(adapter);
-
-                } else {
-                    Log.e("TAG", "Error");
-                }
-            }
-        });*/
     }
 
     private FirestoreRecyclerOptions<Project> generateOptionsForAdapter(Query query){

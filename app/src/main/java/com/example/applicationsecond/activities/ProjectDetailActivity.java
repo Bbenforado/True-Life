@@ -99,6 +99,7 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
         }
 
         configureToolbar();
+        displayButtonChat();
         updateUi(clickedProject, this);
         if (mapView != null) {
             mapView.onCreate(savedInstanceState);
@@ -214,6 +215,13 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
                 buttonFollowProject.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorAccent)));
                 isButtonClicked = false;
             }
+        }
+    }
+
+    private void displayButtonChat() {
+        if (!clickedProject.isPublished()) {
+            chatButton.setEnabled(false);
+            chatButton.setVisibility(View.GONE);
         }
     }
 

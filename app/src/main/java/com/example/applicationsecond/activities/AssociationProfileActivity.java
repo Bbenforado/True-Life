@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.os.ConditionVariable;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -39,6 +40,7 @@ public class AssociationProfileActivity extends AppCompatActivity {
     @BindView(R.id.image_view_association_profile_activity)
     ImageView imageViewAssociationProfile;
     @BindView(R.id.text_view_association_name_association_profile_activity) TextView textViewAsociationName;
+    @BindView(R.id.association_profile_activity_text_view_city_country) TextView textViewCityCountry;
     //--------------------------------
     private boolean isButtonClicked;
     private String authorId;
@@ -154,6 +156,15 @@ public class AssociationProfileActivity extends AppCompatActivity {
 
                         textViewAsociationName.setText(association.getUsername());
                         actionBar.setTitle(association.getUsername());
+                        if (association.getCountry() != null && association.getCity() != null) {
+                            textViewCityCountry.setText(association.getCity() + ", " + association.getCountry());
+                        } else if (association.getCountry() != null && association.getCity() == null) {
+                            textViewCityCountry.setText(association.getCountry());
+                        } else if (association.getCountry() == null && association.getCity() != null) {
+                            textViewCityCountry.setText(association.getCity());
+                        } else if (association.getCountry() == null && association.getCity() == null) {
+                            textViewCityCountry.setVisibility(View.GONE);
+                        }
                     }
                 }
             });

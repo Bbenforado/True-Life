@@ -100,8 +100,8 @@ public class ProfileActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        preferences.edit().putInt(CODE_PROFILE_ACTIVITY, -1).apply();
-        System.out.println("pref on stop  = " + preferences.getInt(CODE_PROFILE_ACTIVITY, -1));
+        /*preferences.edit().putInt(CODE_PROFILE_ACTIVITY, -1).apply();
+        System.out.println("pref on stop  = " + preferences.getInt(CODE_PROFILE_ACTIVITY, -1));*/
     }
 
     //------------------------------
@@ -116,7 +116,7 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void configureViewPager() {
-        preferences.edit().putInt(CODE_PROFILE_ACTIVITY, 1).apply();
+        //preferences.edit().putInt(CODE_PROFILE_ACTIVITY, 1).apply();
         viewPager.setAdapter(new ViewPagerAdapterFollowedProjectsAndAssociations(getSupportFragmentManager()));
         tabLayout.setupWithViewPager(viewPager);
         tabLayout.setTabMode(TabLayout.MODE_FIXED);

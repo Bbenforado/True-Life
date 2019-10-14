@@ -19,7 +19,7 @@ public class ViewPagerAdapterFollowedProjectsAndAssociations extends FragmentPag
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                return new ActualityListFragment();
+                return new ActualityListFragment(true);
             case 1:
                 return new UserListFragment();
                 default:

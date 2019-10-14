@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        actualityListFragment = new ActualityListFragment();
+        actualityListFragment = new ActualityListFragment(false);
         searchFragment = new SearchFragment();
         addProjectFragment = new AddProjectFragment();
         postListFragment = new PostListFragment();

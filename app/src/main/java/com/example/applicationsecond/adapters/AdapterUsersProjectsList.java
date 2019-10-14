@@ -43,4 +43,8 @@ public class AdapterUsersProjectsList extends RecyclerView.Adapter<ViewHolderUse
     public int getItemCount() {
         return projectList.size();
     }
+
+    public Project getItem(int position) {
+        return this.projectList.get(position);
+    }
 }
