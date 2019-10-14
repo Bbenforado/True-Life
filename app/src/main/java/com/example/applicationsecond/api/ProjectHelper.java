@@ -133,5 +133,8 @@ public class ProjectHelper {
     public static Task<Void> updateLatLng(String projectid, String latLng) {
         return ProjectHelper.getProjectsCollection().document(projectid).update("latLng", latLng);
     }
+    public static Task<Void> updateIsPublished(String projectId, boolean isPublished) {
+        return ProjectHelper.getProjectsCollection().document(projectId).update("published", isPublished);
+    }
 
 }

@@ -107,6 +107,8 @@ public class AddProjectActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_project);
         ButterKnife.bind(this);
         preferences = getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE);
+
+        System.out.println("key = " + preferences.getInt(KEY_EDIT_PROJECT, -1));
         configureToolbar();
         //check if it s for editing one existing project
         //if 0 it s not
@@ -114,8 +116,6 @@ public class AddProjectActivity extends AppCompatActivity {
         if (preferences.getInt(KEY_EDIT_PROJECT, -1) == 1) {
             //update ui with existing data on this project
             projectId = getIntent().getExtras().getString(PROJECT_ID);
-
-            System.out.println("project id = " + projectId);
             updateUiWithProjectsData(projectId, this);
         } else {
             //display current date on the button to choose date project
@@ -124,11 +124,14 @@ public class AddProjectActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
-
-        System.out.println("on destroy");
-        preferences.edit().putInt(KEY_EDIT_PROJECT, -1).apply();
     }
 
     @Override
@@ -165,18 +168,21 @@ public class AddProjectActivity extends AppCompatActivity {
     public void publishProject() {
         isPublished = true;
 
-        System.out.println("key = " + preferences.getInt(KEY_EDIT_PROJECT, -1));
-
         if (preferences.getInt(KEY_EDIT_PROJECT, -1) == 1) {
             updateProjectInFireBase();
             Toast.makeText(this, "Project updated!", Toast.LENGTH_SHORT).show();
-            finish();
+            //finish();
+            //launch main activity
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
         } else {
             //boolean isLocationCompleted = checkIfLocationIsFilled();
             if (fieldsAreCorrectlyFilled()) {
                 saveProjectInFireBase();
                 Toast.makeText(this, "Project published!", Toast.LENGTH_SHORT).show();
-                finish();
+                //finish();
+                Intent intent = new Intent(this, MainActivity.class);
+                startActivity(intent);
             } else {
                 Toast.makeText(this, "You have to give a location for your project or to give a date for event", Toast.LENGTH_SHORT).show();
             }
@@ -186,6 +192,9 @@ public class AddProjectActivity extends AppCompatActivity {
     @OnClick(R.id.button_save_for_later_add_project_activity)
     public void saveProjectForLater() {
         isPublished = false;
+        if (preferences.getInt(KEY_EDIT_PROJECT, -1) == 1) {
+            updateProjectInFireBase();
+        }
         saveProjectInFireBaseForNotPublishedProjects();
         Toast.makeText(this, "Project saved for later!", Toast.LENGTH_SHORT).show();
         finish();
@@ -353,9 +362,6 @@ public class AddProjectActivity extends AppCompatActivity {
     //FIREBASE METHODS
     //------------------------------------------
     private void saveProjectInFireBase() {
-
-        System.out.println("hello");
-
         String title = titleEditText.getText().toString();
         String description = descriptionEditText.getText().toString();
         String authorId = Utils.getCurrentUser().getUid();
@@ -377,8 +383,6 @@ public class AddProjectActivity extends AppCompatActivity {
             String projectId = ref.document().getId();
 
             if (isPublished) {
-
-                System.out.println("here");
                 ProjectHelper.createProject(projectId, title, description, authorId, creation_date, eventDate, true, streetNbr, streetName,
                         complement, postalCode, city, country, latLng);
             } else {
@@ -386,9 +390,6 @@ public class AddProjectActivity extends AppCompatActivity {
                         complement, postalCode, city, country, latLng);
             }
         } else {
-
-            System.out.println("or here");
-
             uploadPhotoInFireBaseAndSaveProject(title, description, authorId, creation_date, eventDate, streetNbr, streetName, complement, postalCode,
                     city, country, latLng);
         }
@@ -452,8 +453,6 @@ public class AddProjectActivity extends AppCompatActivity {
                 filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
-                        Log.d("LOG URI", "onSuccess: uri= "+ uri.toString());
-
                         CollectionReference ref = FirebaseFirestore.getInstance().collection("projects");
                         String idProject = ref.document().getId();
                         if (isPublished) {
@@ -482,8 +481,6 @@ public class AddProjectActivity extends AppCompatActivity {
         String city = cityEditText.getText().toString();
         String country = countryEditText.getText().toString();
 
-        System.out.println("here project id = " + projectId);
-
         ProjectHelper.updateTitle(projectId, title);
         ProjectHelper.updateDescription(projectId, description);
         ProjectHelper.updateStreetNumber(projectId, streetNumber);
@@ -493,8 +490,10 @@ public class AddProjectActivity extends AppCompatActivity {
         ProjectHelper.updateCity(projectId, city);
         ProjectHelper.updateCountry(projectId, country);
         ProjectHelper.updateEventDate(projectId, eventDate);
+        if (isPublished) {
+            ProjectHelper.updateIsPublished(projectId, true);
+        }
         if (uriImageSelected != null) {
-            System.out.println("come here?");
 
             String uuid = UUID.randomUUID().toString(); // GENERATE UNIQUE STRING
             StorageReference filePath = FirebaseStorage.getInstance().getReference(uuid);
@@ -505,7 +504,6 @@ public class AddProjectActivity extends AppCompatActivity {
                     filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
                         public void onSuccess(Uri uri) {
-                            Log.d("LOG URI", "onSuccess: uri= "+ uri.toString());
                             ProjectHelper.updateUrlPhoto(projectId, uri.toString());
                         }
                     });

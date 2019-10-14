@@ -65,6 +65,24 @@
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
+                <ImageView
+                    android:id="@+id/activity_detail_image_view_followers"
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_nbr_of_followers"/>
+
+                <TextView
+                    android:id="@+id/activity_detail_nbr_of_followers"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:textStyle="bold"
+                    android:textSize="10dp"
+                    android:layout_marginLeft="8dp"
+                    />
+
             </LinearLayout>
 
             <RelativeLayout

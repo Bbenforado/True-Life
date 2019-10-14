@@ -79,7 +79,7 @@
                 android:background="@android:color/transparent"
                 app:tabIndicatorColor="@color/yellow"
                 app:tabTextColor="@color/yellow"
-                app:tabSelectedTextColor="#464254"/>
+                app:tabSelectedTextColor="@color/darkPurple"/>
 
             <androidx.viewpager.widget.ViewPager
                 xmlns:android="http://schemas.android.com/apk/res/android"

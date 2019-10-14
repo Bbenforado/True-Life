@@ -59,6 +59,7 @@ import static com.example.applicationsecond.utils.Utils.isCurrentUserLogged;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
+
     //BIND VIEWS
     //-------------------------------
     @BindView(R.id.navigation)
@@ -76,10 +77,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private PostListFragment postListFragment;
     private boolean isCurrentUserAssociation;
     private SharedPreferences preferences;
+    private ActionBar actionBar;
     //---------------------------------------
     public static final String APP_PREFERENCES = "appPreferences";
     public static final String USER_ID = "userId";
-    private ActionBar actionBar;
+    public static final String KEY_EDIT_PROJECT = "keyEditproject";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,6 +96,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         postListFragment = new PostListFragment(false);
 
         preferences = getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE);
+        preferences.edit().putInt(KEY_EDIT_PROJECT, -1).apply();
+
+        System.out.println("key = " + preferences.getInt(KEY_EDIT_PROJECT, -1));
 
         if (!isCurrentUserLogged()) {
             Intent authenticationIntent = new Intent(this, AuthenticationActivity.class);

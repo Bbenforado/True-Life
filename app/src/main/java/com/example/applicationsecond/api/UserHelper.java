@@ -69,5 +69,13 @@ public class UserHelper {
         return UserHelper.getUsersCollection().document(userId).update("username", username);
     }
 
+    public static Task<Void> updateCountry(String userId, String country) {
+        return UserHelper.getUsersCollection().document(userId).update("country", country);
+    }
+
+    public static Task<Void> updateCity(String userId, String city) {
+        return UserHelper.getUsersCollection().document(userId).update("city", city);
+    }
+
 
 }

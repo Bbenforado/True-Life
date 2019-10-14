@@ -74,6 +74,8 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
     @BindView(R.id.activity_detail_image_button_chat)
     ImageButton chatButton;
     @BindView(R.id.activity_detail_text_view_no_internet) TextView textViewNoInternet;
+    @BindView(R.id.activity_detail_image_view_followers) ImageView imageViewFollowers;
+    @BindView(R.id.activity_detail_nbr_of_followers) TextView textViewNbrOfFollowers;
     //-----------------------------------------
     //-------------------------------------------
     public static final String APP_PREFERENCES = "appPreferences";
@@ -266,6 +268,14 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
     }
 
     private void updateUi(Project project, Context context) {
+        if (project.getUsersWhoSubscribed().size() > 0) {
+            String numberOfFollowers = String.valueOf(project.getUsersWhoSubscribed().size());
+            textViewNbrOfFollowers.setText(numberOfFollowers);
+        } else {
+            imageViewFollowers.setVisibility(View.GONE);
+            textViewNbrOfFollowers.setVisibility(View.GONE);
+        }
+
         projectTitleTextView.setText(project.getTitle());
         if (project.getCreationDate() != null) {
             projectPublishedDateTextView.setText(project.getCreationDate().toString());

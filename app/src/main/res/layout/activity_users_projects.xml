@@ -17,10 +17,10 @@
         android:id="@+id/activity_users_projects_tabs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#B6C9F1"
-        app:tabIndicatorColor="@color/colorPrimary"
-        app:tabTextColor="#D4E0F8"
-        app:tabSelectedTextColor="#fff"/>
+        android:background="@android:color/transparent"
+        app:tabIndicatorColor="@color/yellow"
+        app:tabTextColor="@color/yellow"
+        app:tabSelectedTextColor="@color/darkPurple"/>
 
     <androidx.viewpager.widget.ViewPager
         xmlns:android="http://schemas.android.com/apk/res/android"

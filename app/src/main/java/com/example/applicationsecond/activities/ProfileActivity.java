@@ -15,6 +15,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -62,6 +63,7 @@ public class ProfileActivity extends AppCompatActivity {
     TabLayout tabLayout;
     @BindView(R.id.activity_profile_text_view_country_city)
     TextView textViewCountryCity;
+    @BindView(R.id.activity_profile_image_view_add_country_city) ImageView imageViewAddCountryCity;
     //-----------------------------------
     private Uri uri;
     private SharedPreferences preferences;
@@ -137,6 +139,11 @@ public class ProfileActivity extends AppCompatActivity {
         displayDialogToChangeUsername();
     }
 
+    @OnClick(R.id.activity_profile_text_view_country_city)
+    public void addACountryAndACity() {
+        displayDialogToAddCountryAndCity();
+    }
+
     //-------------------------------
     //METHODS
     //---------------------------------
@@ -178,6 +185,38 @@ public class ProfileActivity extends AppCompatActivity {
                         final TextInputEditText usernameInputEditText = view.findViewById(R.id.text_input_new_username);
                         userNameButton.setText(usernameInputEditText.getEditableText().toString());
                         UserHelper.updateUsername(Utils.getCurrentUser().getUid(), usernameInputEditText.getEditableText().toString());
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    private void displayDialogToAddCountryAndCity() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = getLayoutInflater();
+        View view = inflater.inflate(R.layout.dialog_add_country_and_city, null);
+        builder.setTitle("Add some information:")
+                .setView(view)
+                .setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        final TextInputEditText cityInputEditText = view.findViewById(R.id.text_input_new_city);
+                        final TextInputEditText countryInputEditText = view.findViewById(R.id.text_input_new_country);
+
+                        if (!TextUtils.isEmpty(cityInputEditText.getText())) {
+                            UserHelper.updateCity(Utils.getCurrentUser().getUid(), cityInputEditText.getText().toString());
+                            textViewCountryCity.setText(cityInputEditText.getText());
+                        }
+                        if (!TextUtils.isEmpty(countryInputEditText.getText())) {
+                            UserHelper.updateCountry(Utils.getCurrentUser().getUid(), countryInputEditText.getText().toString());
+                            textViewCountryCity.setText(countryInputEditText.getText());
+                        }
+                        if (!TextUtils.isEmpty(cityInputEditText.getText()) && !TextUtils.isEmpty(countryInputEditText.getText())) {
+                            System.out.println("come here");
+                            String finalString = cityInputEditText.getText().toString() + ", " + countryInputEditText.getText().toString();
+                            textViewCountryCity.setText(finalString);
+                        }
+
                     }
                 })
                 .setNegativeButton("Cancel", null)
@@ -229,7 +268,9 @@ public class ProfileActivity extends AppCompatActivity {
                     } else if (user.getCountry() == null && user.getCity() != null) {
                         textViewCountryCity.setText(user.getCity());
                     } else if (user.getCountry() == null && user.getCity() == null) {
-                        textViewCountryCity.setVisibility(View.GONE);
+                        //textViewCountryCity.setVisibility(View.GONE);
+                        imageViewAddCountryCity.setVisibility(View.VISIBLE);
+                        textViewCountryCity.setText("Add a country and a city");
                     }
                 }
             }
