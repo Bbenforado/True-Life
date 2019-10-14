@@ -6,12 +6,12 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
 import com.example.applicationsecond.fragments.ActualityListFragment;
-import com.example.applicationsecond.fragments.SearchFragment;
-import com.example.applicationsecond.fragments.UserListFragment;
+import com.example.applicationsecond.fragments.PostListFragment;
 
-public class ViewPagerAdapterFollowedProjectsAndAssociations extends FragmentPagerAdapter {
+public class ViewPagerAdapterAssociationProfile extends FragmentPagerAdapter {
 
-    public ViewPagerAdapterFollowedProjectsAndAssociations(FragmentManager fm) {
+
+    public ViewPagerAdapterAssociationProfile(FragmentManager fm) {
         super(fm);
     }
 
@@ -19,9 +19,9 @@ public class ViewPagerAdapterFollowedProjectsAndAssociations extends FragmentPag
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                return new ActualityListFragment("profileActivity");
+                return new ActualityListFragment("associationProfileActivity");
             case 1:
-                return new UserListFragment();
+                return new PostListFragment(true);
                 default:
                     return null;
         }
@@ -37,9 +37,9 @@ public class ViewPagerAdapterFollowedProjectsAndAssociations extends FragmentPag
     public CharSequence getPageTitle(int position) {
         switch (position) {
             case 0:
-                return "Followed projects";
+                return "Projects";
             case 1:
-                return "Followed associations";
+                return "Posts";
             default:
                 return null;
         }

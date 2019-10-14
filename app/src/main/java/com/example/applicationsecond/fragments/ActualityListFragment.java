@@ -74,20 +74,25 @@ public class ActualityListFragment extends Fragment implements AdapterRecyclerVi
     private AdapterRecyclerViewProjects adapter;
     private SharedPreferences preferences;
     private Boolean isFromProfileActivity;
+    private String codeLastActivity;
   /*  private boolean isNewsToDisplay;
     private List<Project> projectList;*/
     //-----------------------------------------------
     //-------------------------------------------------
     private static final String APP_PREFERENCES = "appPreferences";
     private static final String CLICKED_PROJECT = "clickedProject";
-    public static final String CODE_PROFILE_ACTIVITY = "codeProfileActivity";
+    public static final String ASSOCIATION_ID = "associationId";
 
     public ActualityListFragment() {
         // Required empty public constructor
     }
 
-    public ActualityListFragment(Boolean isFromProfileActivity) {
+    /*public ActualityListFragment(Boolean isFromProfileActivity) {
         this.isFromProfileActivity = isFromProfileActivity;
+    }*/
+
+    public ActualityListFragment(String codeLastActivity) {
+        this.codeLastActivity = codeLastActivity;
     }
 
 
@@ -128,7 +133,21 @@ public class ActualityListFragment extends Fragment implements AdapterRecyclerVi
     }
 
     private void configureRecyclerView() {
-        //if it s to display user's published projects in profile activity
+        switch (codeLastActivity) {
+            case "profileActivity":
+                adapter = new AdapterRecyclerViewProjects(generateOptionsForAdapter(ProjectHelper.getPublishedProjects(Utils.getCurrentUser().getUid())),
+                Glide.with(this), this);
+                break;
+            case "associationProfileActivity":
+                String assoId = preferences.getString(ASSOCIATION_ID, null);
+                adapter = new AdapterRecyclerViewProjects(generateOptionsForAdapter(ProjectHelper.getPublishedProjects(assoId)),
+                Glide.with(this), this);
+                break;
+            case "defaultScreen":
+                adapter = new AdapterRecyclerViewProjects(generateOptionsForAdapter(ProjectHelper.getProjectsForOneUser(Utils.getCurrentUser().getUid())),
+                        Glide.with(this), this);
+        }
+       /* //if it s to display user's published projects in profile activity
         if (isFromProfileActivity) {
             adapter = new AdapterRecyclerViewProjects(generateOptionsForAdapter(ProjectHelper.getPublishedProjects(Utils.getCurrentUser().getUid())),
                     Glide.with(this), this);
@@ -136,7 +155,7 @@ public class ActualityListFragment extends Fragment implements AdapterRecyclerVi
             //else if it s to display user s following projects in default screen
             adapter = new AdapterRecyclerViewProjects(generateOptionsForAdapter(ProjectHelper.getProjectsForOneUser(Utils.getCurrentUser().getUid())),
                     Glide.with(this), this);
-        }
+        }*/
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);
     }

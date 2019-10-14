@@ -163,10 +163,6 @@ public class UserListFragment extends Fragment {
                                 }
                             });
                         }
-
-
-
-
                     }
                 }
             }

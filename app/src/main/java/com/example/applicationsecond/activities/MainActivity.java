@@ -87,10 +87,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        actualityListFragment = new ActualityListFragment(false);
+        actualityListFragment = new ActualityListFragment("defaultScreen");
         searchFragment = new SearchFragment();
         addProjectFragment = new AddProjectFragment();
-        postListFragment = new PostListFragment();
+        postListFragment = new PostListFragment(false);
 
         preferences = getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE);
 

@@ -2,6 +2,7 @@ package com.example.applicationsecond.fragments;
 
 
 import android.app.ActivityOptions;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -58,12 +59,20 @@ public class PostListFragment extends Fragment {
     private boolean isNewsToDisplay;
     private List<Post> postList;
     private List<String> publishedPostsId;
+    private Boolean isFromAssociationProfile;
+    private SharedPreferences preferences;
     //-----------------------------------------------
     //-------------------------------------------------
+    public static final String APP_PREFERENCES = "appPreferences";
+    public static final String ASSOCIATION_ID = "associationId";
 
 
     public PostListFragment() {
         // Required empty public constructor
+    }
+
+    public PostListFragment(Boolean isFromAssociationProfile) {
+        this.isFromAssociationProfile = isFromAssociationProfile;
     }
 
 
@@ -103,7 +112,44 @@ public class PostListFragment extends Fragment {
     }
 
     private void configureRecyclerView() {
-        getDataToConfigureRecyclerView();
+        if (isFromAssociationProfile) {
+            preferences = getActivity().getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
+            String associationId = preferences.getString(ASSOCIATION_ID, null);
+            UserHelper.getUser(associationId).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        User asso = task.getResult().toObject(User.class);
+                        if (asso.getPublishedPostId() != null) {
+                            if (asso.getPublishedPostId().size() > 0) {
+                                for (int i = 0; i < asso.getPublishedPostId().size(); i++) {
+                                    String id = asso.getPublishedPostId().get(i);
+                                    PostHelper.getPost(id).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                            if (task.isSuccessful()) {
+                                                Post post = task.getResult().toObject(Post.class);
+                                                postList.add(post);
+
+                                                displayScreenDependingOfNewsAvailable();
+                                                adapter = new AdapterRecyclerViewPosts(postList);
+                                                recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                                                recyclerView.setAdapter(adapter);
+                                            }
+
+                                        }
+                                    });
+                                }
+
+                            }
+                        }
+                    }
+                }
+            });
+
+        } else {
+            getDataToConfigureRecyclerView();
+        }
     }
 
     private void configureOnClickRecyclerView() {

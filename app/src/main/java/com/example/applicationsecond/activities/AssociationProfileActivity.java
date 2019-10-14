@@ -4,8 +4,10 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.viewpager.widget.ViewPager;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.os.ConditionVariable;
@@ -19,6 +21,8 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.applicationsecond.R;
+import com.example.applicationsecond.adapters.ViewPagerAdapterAssociationProfile;
+import com.example.applicationsecond.adapters.ViewPagerAdapterFollowedProjectsAndAssociations;
 import com.example.applicationsecond.api.ProjectHelper;
 import com.example.applicationsecond.api.UserHelper;
 import com.example.applicationsecond.models.Project;
@@ -26,6 +30,7 @@ import com.example.applicationsecond.models.User;
 import com.example.applicationsecond.utils.Utils;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.firestore.DocumentSnapshot;
 
 import butterknife.BindView;
@@ -36,33 +41,46 @@ public class AssociationProfileActivity extends AppCompatActivity {
 
     @BindView(R.id.follow_button)
     ImageButton followButton;
-    @BindView(R.id.textview_follow) TextView textViewFollow;
+    //@BindView(R.id.textview_follow) TextView textViewFollow;
     @BindView(R.id.image_view_association_profile_activity)
     ImageView imageViewAssociationProfile;
-    @BindView(R.id.text_view_association_name_association_profile_activity) TextView textViewAsociationName;
+    @BindView(R.id.text_view_association_name_association_profile_activity) TextView textViewAssociationName;
     @BindView(R.id.association_profile_activity_text_view_city_country) TextView textViewCityCountry;
+    @BindView(R.id.activity_association_profile_tabs)
+    TabLayout tabLayout;
+    @BindView(R.id.activity_association_profile_viewpager)
+    ViewPager viewPager;
     //--------------------------------
     private boolean isButtonClicked;
     private String authorId;
     private String currentUserId;
     private ColorStateList defaultColor;
     private ActionBar actionBar;
+    private SharedPreferences preferences;
+    //--------------------------------------
+    public static final String APP_PREFERENCES = "appPreferences";
+    public static final String ASSOCIATION_ID = "associationId";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_association_profile);
 
+        System.out.println("on create asso prof");
+
         ButterKnife.bind(this);
-        configureToolbar();
-        defaultColor = textViewFollow.getTextColors();
+        preferences = getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE);
         currentUserId = Utils.getCurrentUser().getUid();
         Bundle bundle = getIntent().getExtras();
         authorId = null;
         if (bundle != null) {
             authorId = bundle.getString("authorId");
             displayAssociationInformation(this);
+            preferences.edit().putString(ASSOCIATION_ID, authorId).apply();
         }
+        configureToolbar();
+        configureViewPager();
         hideFollowButtonIfItsCurrentUserProfile();
         displayStateOfFollowButtonDependingOnIfTheUserFollowsOrNot();
 
@@ -79,6 +97,12 @@ public class AssociationProfileActivity extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
+    private void configureViewPager() {
+        viewPager.setAdapter(new ViewPagerAdapterAssociationProfile(getSupportFragmentManager()));
+        tabLayout.setupWithViewPager(viewPager);
+        tabLayout.setTabMode(TabLayout.MODE_FIXED);
+    }
+
     //----------------------------------------
     //ACTIONS
     //--------------------------------------------
@@ -87,8 +111,7 @@ public class AssociationProfileActivity extends AppCompatActivity {
         isButtonClicked = !isButtonClicked;
         if (isButtonClicked) {
             //change the color of the button
-            followButton.setBackground(getResources().getDrawable(R.drawable.ic_heart_red));
-            textViewFollow.setTextColor(getResources().getColor(R.color.red));
+            followButton.setImageResource(R.drawable.ic_heart_red);
 
             //create a subscription in user s tuple
             UserHelper.updateAssociationSubscriptions(currentUserId, authorId);
@@ -99,8 +122,9 @@ public class AssociationProfileActivity extends AppCompatActivity {
             //unclick button
             UserHelper.removeAssociationSubscription(currentUserId, authorId);
             //change button color
-            followButton.setBackground(getResources().getDrawable(R.drawable.ic_heart));
-            textViewFollow.setTextColor(defaultColor);
+            //followButton.setBackground(getResources().getDrawable(R.drawable.ic_heart));
+            followButton.setImageResource(R.drawable.ic_heart);
+            //textViewFollow.setTextColor(defaultColor);
             Toast.makeText(this, "You are not following " + authorId + " anymore", Toast.LENGTH_SHORT).show();
         }
     }
@@ -112,8 +136,9 @@ public class AssociationProfileActivity extends AppCompatActivity {
         //check if it s current user s profile
         if (currentUserId.equals(authorId)) {
             followButton.setEnabled(false);
-            followButton.setBackground(getResources().getDrawable(R.drawable.ic_heart_disabled));
-            textViewFollow.setTextColor(getResources().getColor(R.color.disabledColor));
+            //followButton.setBackground(getResources().getDrawable(R.drawable.ic_heart_disabled));
+            followButton.setImageResource(R.drawable.ic_heart_disabled);
+            //textViewFollow.setTextColor(getResources().getColor(R.color.disabledColor));
         } else {
             followButton.setEnabled(true);
         }
@@ -126,12 +151,14 @@ public class AssociationProfileActivity extends AppCompatActivity {
                 User user = task.getResult().toObject(User.class);
                 if (user.getAssociationSubscribedId().contains(authorId)) {
                     //set the color of the button to red
-                    followButton.setBackground(getResources().getDrawable(R.drawable.ic_heart_red));
-                    textViewFollow.setTextColor(getResources().getColor(R.color.red));
+                    //followButton.setBackground(getResources().getDrawable(R.drawable.ic_heart_red));
+                    followButton.setImageResource(R.drawable.ic_heart_red);
+                    //textViewFollow.setTextColor(getResources().getColor(R.color.red));
                     isButtonClicked = true;
                 } else {
-                    followButton.setBackground(getResources().getDrawable(R.drawable.ic_heart));
-                    textViewFollow.setTextColor(defaultColor);
+                    //followButton.setBackground(getResources().getDrawable(R.drawable.ic_heart));
+                    followButton.setImageResource(R.drawable.ic_heart);
+                    //textViewFollow.setTextColor(defaultColor);
                 }
             }
         });
@@ -154,7 +181,7 @@ public class AssociationProfileActivity extends AppCompatActivity {
                                     .into(imageViewAssociationProfile);
                         }
 
-                        textViewAsociationName.setText(association.getUsername());
+                        textViewAssociationName.setText(association.getUsername());
                         actionBar.setTitle(association.getUsername());
                         if (association.getCountry() != null && association.getCity() != null) {
                             textViewCityCountry.setText(association.getCity() + ", " + association.getCountry());

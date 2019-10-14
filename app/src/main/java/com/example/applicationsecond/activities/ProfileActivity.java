@@ -70,7 +70,6 @@ public class ProfileActivity extends AppCompatActivity {
     private static final int RC_IMAGE_PERMS = 100;
     private static final int RC_CHOOSE_PHOTO = 200;
     public static final String APP_PREFERENCES = "appPreferences";
-    public static final String CODE_PROFILE_ACTIVITY = "codeProfileActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,8 +99,6 @@ public class ProfileActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        /*preferences.edit().putInt(CODE_PROFILE_ACTIVITY, -1).apply();
-        System.out.println("pref on stop  = " + preferences.getInt(CODE_PROFILE_ACTIVITY, -1));*/
     }
 
     //------------------------------
@@ -116,7 +113,6 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void configureViewPager() {
-        //preferences.edit().putInt(CODE_PROFILE_ACTIVITY, 1).apply();
         viewPager.setAdapter(new ViewPagerAdapterFollowedProjectsAndAssociations(getSupportFragmentManager()));
         tabLayout.setupWithViewPager(viewPager);
         tabLayout.setTabMode(TabLayout.MODE_FIXED);

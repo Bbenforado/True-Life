@@ -52,7 +52,6 @@ import butterknife.OnClick;
 import static com.example.applicationsecond.utils.Utils.getCurrentUser;
 import static com.example.applicationsecond.utils.Utils.getLatLngOfPlace;
 import static com.example.applicationsecond.utils.Utils.isNetworkAvailable;
-import static java.security.AccessController.getContext;
 
 public class ProjectDetailActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -74,6 +73,7 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
     @BindView(R.id.map_view_detail_activity) MapView mapView;
     @BindView(R.id.activity_detail_image_button_chat)
     ImageButton chatButton;
+    @BindView(R.id.activity_detail_text_view_no_internet) TextView textViewNoInternet;
     //-----------------------------------------
     //-------------------------------------------
     public static final String APP_PREFERENCES = "appPreferences";
@@ -315,9 +315,10 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
 
             } else {
                 Toast.makeText(getApplicationContext(), "Location not found", Toast.LENGTH_SHORT).show();
+                mapView.setVisibility(View.GONE);
             }
         } else {
-            //textViewNoInternet.setVisibility(View.VISIBLE);
+            textViewNoInternet.setVisibility(View.VISIBLE);
             mapView.setVisibility(View.GONE);
             Toast.makeText(this, "You don't have internet, try again later", Toast.LENGTH_SHORT).show();
         }
