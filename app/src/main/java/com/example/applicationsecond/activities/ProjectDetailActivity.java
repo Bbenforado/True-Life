@@ -201,6 +201,16 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
 
     }
 
+    @OnClick(R.id.image_detail_activity)
+    public void displayFullScreenImage() {
+        if (clickedProject.getUrlPhoto() != null) {
+            Intent intent = new Intent(getApplicationContext(), FullScreenImageActivity.class);
+            intent.putExtra("image_url", clickedProject.getUrlPhoto());
+            startActivity(intent);
+        }
+
+    }
+
     //------------------------------------------
     //--------------------------------------------
 

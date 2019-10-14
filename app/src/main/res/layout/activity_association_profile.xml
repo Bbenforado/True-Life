@@ -29,7 +29,7 @@
                 android:id="@+id/image_view_association_profile_activity"
                 android:layout_width="90dp"
                 android:layout_height="90dp"
-                android:src="@drawable/image_cours"
+                android:src="@drawable/ic_profile"
                 android:layout_gravity="center"
                 android:scaleType="centerCrop"/>
 

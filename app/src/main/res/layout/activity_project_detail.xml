@@ -28,10 +28,12 @@
             android:id="@+id/image_detail_activity"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="0.5"
-            android:src="@drawable/image_cours"
+            android:layout_weight="1"
+            android:src="@drawable/ic_no_image_resized"
             android:scaleType="centerCrop"
-            android:transitionName="@string/animation_main_to_detail"/>
+            android:clickable="true"
+            android:transitionName="@string/animation_main_to_detail"
+            android:focusable="true" />
 
         <LinearLayout
             android:id="@+id/fragment_detail_layout_detail"
@@ -207,6 +209,7 @@
                         android:id="@+id/map_view_detail_activity"
                         android:layout_width="150dp"
                         android:layout_height="150dp"
+                        android:layout_alignParentRight="true"
                         app:liteMode="true">
                     </com.google.android.gms.maps.MapView>
 
