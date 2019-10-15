@@ -43,6 +43,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -74,13 +75,14 @@ public class AddProjectActivity extends AppCompatActivity {
 
     @BindView(R.id.input_title_add_project_activity) EditText titleEditText;
     @BindView(R.id.input_description_add_project_activity) EditText descriptionEditText;
-    @BindView(R.id.button_publish_add_project_activity) Button buttonPublish;
-    @BindView(R.id.button_save_for_later_add_project_activity) Button buttonSaveProject;
-    @BindView(R.id.button_add_picture_add_project_activity) Button buttonAddPicture;
+    @BindView(R.id.button_publish_add_project_activity) MaterialButton buttonPublish;
+    @BindView(R.id.button_save_for_later_add_project_activity) MaterialButton buttonSaveProject;
+    @BindView(R.id.button_add_picture_add_project_activity)
+    MaterialButton buttonAddPicture;
     @BindView(R.id.image_chosen_picture_add_project_activity) ImageView imageView;
     @BindView(R.id.text_edit_street_nbr_add_project_activity) TextInputEditText streetNumberEditText;
     @BindView(R.id.edit_text_street_name_add_project_activity) TextInputEditText streetNameEditText;
-    @BindView(R.id.edit_text_complement_add_project_activity) TextInputEditText locationComplementEditText;
+    //@BindView(R.id.edit_text_complement_add_project_activity) TextInputEditText locationComplementEditText;
     @BindView(R.id.text_edit_postal_code_add_project_activity) TextInputEditText postalCodeEditText;
     @BindView(R.id.text_edit_city_add_project_activity) TextInputEditText cityEditText;
     @BindView(R.id.text_edit_country_add_project_activity) TextInputEditText countryEditText;
@@ -370,10 +372,7 @@ public class AddProjectActivity extends AppCompatActivity {
         String postalCode = postalCodeEditText.getText().toString();
         String city = cityEditText.getText().toString();
         String country = countryEditText.getText().toString();
-        String complement = null;
-        if (!TextUtils.isEmpty(locationComplementEditText.getText())) {
-            complement = locationComplementEditText.getText().toString();
-        }
+
         String latLng = Utils.getLatLngOfProject(this, streetNbr, streetName, city, postalCode, country);
 
         if (imageView.getDrawable() == null) {
@@ -383,14 +382,14 @@ public class AddProjectActivity extends AppCompatActivity {
 
             if (isPublished) {
                 ProjectHelper.createProject(projectId, title, description, authorId, creation_date, eventDate, true, streetNbr, streetName,
-                        complement, postalCode, city, country, latLng);
+                        postalCode, city, country, latLng);
             } else {
                 ProjectHelper.createProject(projectId, title, description, authorId, creation_date, eventDate,false, streetNbr, streetName,
-                        complement, postalCode, city, country, latLng);
+                        postalCode, city, country, latLng);
             }
             UserHelper.addProjectsSubscriptions(authorId, projectId);
         } else {
-            uploadPhotoInFireBaseAndSaveProject(title, description, authorId, creation_date, eventDate, streetNbr, streetName, complement, postalCode,
+            uploadPhotoInFireBaseAndSaveProject(title, description, authorId, creation_date, eventDate, streetNbr, streetName, postalCode,
                     city, country, latLng);
         }
     }
@@ -421,10 +420,6 @@ public class AddProjectActivity extends AppCompatActivity {
         if (!TextUtils.isEmpty(countryEditText.getText())) {
             country = countryEditText.getText().toString();
         }
-        String complement = null;
-        if (!TextUtils.isEmpty(locationComplementEditText.getText())) {
-            complement = locationComplementEditText.getText().toString();
-        }
         String latLng = null;
         if (checkIfLocationIsFilled()) {
             latLng = Utils.getLatLngOfProject(this, streetNbr, streetName, city, postalCode, country);
@@ -434,16 +429,16 @@ public class AddProjectActivity extends AppCompatActivity {
             CollectionReference ref = FirebaseFirestore.getInstance().collection("projects");
             String projectId = ref.document().getId();
             ProjectHelper.createProject(projectId, title, description, authorId, creation_date, eventDate, false, streetNbr, streetName,
-                        complement, postalCode, city, country, latLng);
+                        postalCode, city, country, latLng);
         } else {
-            uploadPhotoInFireBaseAndSaveProject(title, description, authorId, creation_date, eventDate, streetNbr, streetName, complement, postalCode,
+            uploadPhotoInFireBaseAndSaveProject(title, description, authorId, creation_date, eventDate, streetNbr, streetName, postalCode,
                     city, country, latLng);
         }
         UserHelper.addProjectsSubscriptions(authorId, projectId);
     }
 
     private void uploadPhotoInFireBaseAndSaveProject(final String title, final String description, final String authorId, final Date creation_date,
-                                                     String eventDate, String streetNumber, String streetName, String complement, String postalCode,
+                                                     String eventDate, String streetNumber, String streetName, String postalCode,
                                                      String city, String country, String latLng) {
         String uuid = UUID.randomUUID().toString(); // GENERATE UNIQUE STRING
         StorageReference filePath = FirebaseStorage.getInstance().getReference(uuid);
@@ -458,10 +453,10 @@ public class AddProjectActivity extends AppCompatActivity {
                         String idProject = ref.document().getId();
                         if (isPublished) {
                             ProjectHelper.createProjectWithImage(idProject, title, description, authorId, creation_date, eventDate, true, uri.toString(),
-                                    streetNumber, streetName, complement, postalCode, city, country, latLng);
+                                    streetNumber, streetName, postalCode, city, country, latLng);
                         } else {
                             ProjectHelper.createProjectWithImage(idProject, title, description, authorId, creation_date, eventDate, false, uri.toString(),
-                                    streetNumber, streetName, complement, postalCode, city, country, latLng);
+                                    streetNumber, streetName, postalCode, city, country, latLng);
                         }
                     }
                 });
@@ -474,10 +469,6 @@ public class AddProjectActivity extends AppCompatActivity {
         String description = descriptionEditText.getText().toString();
         String streetNumber = streetNumberEditText.getText().toString();
         String streetName = streetNameEditText.getText().toString();
-        String complement = null;
-        if (locationComplementEditText.getText() != null) {
-            complement = locationComplementEditText.getText().toString();
-        }
         String postalCode = postalCodeEditText.getText().toString();
         String city = cityEditText.getText().toString();
         String country = countryEditText.getText().toString();
@@ -486,7 +477,6 @@ public class AddProjectActivity extends AppCompatActivity {
         ProjectHelper.updateDescription(projectId, description);
         ProjectHelper.updateStreetNumber(projectId, streetNumber);
         ProjectHelper.updateStreetName(projectId, streetName);
-        ProjectHelper.updateComplement(projectId, complement);
         ProjectHelper.updatePostalCode(projectId, postalCode);
         ProjectHelper.updateCity(projectId, city);
         ProjectHelper.updateCountry(projectId, country);
@@ -535,9 +525,6 @@ public class AddProjectActivity extends AppCompatActivity {
                     }
                     if (project.getStreetName() != null) {
                         streetNameEditText.setText(project.getStreetName());
-                    }
-                    if (project.getLocationComplement() != null) {
-                        locationComplementEditText.setText(project.getLocationComplement());
                     }
                     if (project.getPostalCode() != null) {
                         postalCodeEditText.setText(project.getPostalCode());

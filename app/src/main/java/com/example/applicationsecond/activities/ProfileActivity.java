@@ -12,6 +12,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.drm.DrmStore;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -34,6 +35,7 @@ import com.example.applicationsecond.utils.Utils;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -56,7 +58,8 @@ public class ProfileActivity extends AppCompatActivity {
     ImageView imageView;
     @BindView(R.id.profile_activity_change_picture_image_view) ImageView imageViewChangeProfilePicture;
     @BindView(R.id.profile_activity_username_button)
-    Button userNameButton;
+    MaterialButton userNameButton;
+    @BindView(R.id.profile_activity_text_view_user_name) TextView textViewUsername;
     @BindView(R.id.activity_profile_viewpager)
     ViewPager viewPager;
     @BindView(R.id.activity_profile_tabs)
@@ -68,29 +71,27 @@ public class ProfileActivity extends AppCompatActivity {
     private Uri uri;
     private boolean isCurrentUsersProfile;
     private String authorId;
-    private SharedPreferences preferences;
+    private int defaultColor;
     //------------------------------------
     private static final String PERMS = Manifest.permission.READ_EXTERNAL_STORAGE;
     private static final int RC_IMAGE_PERMS = 100;
     private static final int RC_CHOOSE_PHOTO = 200;
-    public static final String APP_PREFERENCES = "appPreferences";
-    public static final String NOT_CURRENT_USERS_PROFILE = "notCurrentUsersProfile";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
         ButterKnife.bind(this);
-        preferences = getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE);
+
+        defaultColor = textViewCountryCity.getTextColors().getDefaultColor();
 
         Bundle bundle = getIntent().getExtras();
         authorId = null;
         if (bundle != null) {
+            isCurrentUsersProfile = false;
             authorId = bundle.getString("profileId");
             displayUserInformation(this, authorId);
-            isCurrentUsersProfile = false;
-            //preferences.edit().putString(NOT_CURRENT_USERS_PROFILE, "true").apply();
-
+            configurationIfProfileIsNotCurrentUsersProfile();
         } else {
             displayUserInformation(this , Utils.getCurrentUser().getUid());
             isCurrentUsersProfile = true;
@@ -148,6 +149,13 @@ public class ProfileActivity extends AppCompatActivity {
         }
         tabLayout.setupWithViewPager(viewPager);
         tabLayout.setTabMode(TabLayout.MODE_FIXED);
+    }
+
+    private void configurationIfProfileIsNotCurrentUsersProfile() {
+        userNameButton.setVisibility(View.GONE);
+        textViewUsername.setVisibility(View.VISIBLE);
+        textViewCountryCity.setEnabled(false);
+        textViewCountryCity.setTextColor(defaultColor);
     }
 
     //-------------------------------------------------
@@ -288,7 +296,11 @@ public class ProfileActivity extends AppCompatActivity {
                                 .apply(RequestOptions.circleCropTransform())
                                 .into(imageView);
                     }
-                    userNameButton.setText(user.getUsername());
+                    if (isCurrentUsersProfile) {
+                        userNameButton.setText(user.getUsername());
+                    } else {
+                        textViewUsername.setText(user.getUsername());
+                    }
 
                     if (user.getCountry() != null && user.getCity() != null) {
                         textViewCountryCity.setText(user.getCity() + ", " + user.getCountry());

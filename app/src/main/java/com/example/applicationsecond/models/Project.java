@@ -19,7 +19,6 @@ public class Project {
     private List<String> usersWhoSubscribed;
     private String streetNumber;
     private String streetName;
-    private String locationComplement;
     private String postalCode;
     private String city;
     private String country;
@@ -50,7 +49,7 @@ public class Project {
     }
 
     public Project(String id, String title, String description, String authorId, Date creationDate, String eventDate,
-                   boolean isPublished, String streetNumber, String streetName, String locationComplement,
+                   boolean isPublished, String streetNumber, String streetName,
                    String postalCode, String city, String country, String latLng) {
         this.usersWhoSubscribed = new ArrayList<>();
         this.id = id;
@@ -63,15 +62,15 @@ public class Project {
         this.usersWhoSubscribed.add(authorId);
         this.streetNumber = streetNumber;
         this.streetName = streetName;
-        this.locationComplement = locationComplement;
         this.postalCode = postalCode;
         this.city = city;
         this.country = country;
         this.latLng = latLng;
     }
 
-    public Project(String id, String title, String description, String authorId, Date creationDate, String eventDate, boolean isPublished, String urlPhoto,
-                   String streetNumber, String streetName, String locationComplement, String postalCode,
+    public Project(String id, String title, String description, String authorId, Date creationDate,
+                   String eventDate, boolean isPublished, String urlPhoto,
+                   String streetNumber, String streetName,String postalCode,
                    String city, String country, String latLng) {
         this.usersWhoSubscribed = new ArrayList<>();
         this.id = id;
@@ -84,7 +83,6 @@ public class Project {
         this.urlPhoto = urlPhoto;
         this.streetNumber = streetNumber;
         this.streetName = streetName;
-        this.locationComplement = locationComplement;
         this.postalCode = postalCode;
         this.city = city;
         this.country = country;
@@ -194,14 +192,6 @@ public class Project {
 
     public void setStreetName(String streetName) {
         this.streetName = streetName;
-    }
-
-    public String getLocationComplement() {
-        return locationComplement;
-    }
-
-    public void setLocationComplement(String locationComplement) {
-        this.locationComplement = locationComplement;
     }
 
     public String getPostalCode() {

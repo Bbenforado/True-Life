@@ -18,6 +18,9 @@
             android:layout_height="wrap_content"
             />
 
+        <ScrollView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -192,12 +195,6 @@
                         android:text="number and street name" />
 
                     <TextView
-                        android:id="@+id/activity_detail_complement"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="complement" />
-
-                    <TextView
                         android:id="@+id/activity_detail_postal_code_and_city"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -240,6 +237,7 @@
 
 
     </LinearLayout>
+        </ScrollView>
 
     </LinearLayout>
 

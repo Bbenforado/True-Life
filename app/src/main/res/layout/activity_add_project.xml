@@ -163,36 +163,6 @@
                     android:layout_height="45dp"
                     android:layout_marginLeft="30dp"
                     android:layout_marginTop="4dp"
-                    app:boxStrokeColor="@color/colorAccent"
-                    app:errorEnabled="true"
-                    android:layout_marginStart="30dp">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/edit_text_complement_add_project_activity"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Complement"
-                        android:singleLine="true"
-                        android:inputType="textCapSentences"
-                        android:maxLines="1"
-                        android:textSize="12sp"
-                        app:hintEnabled="true" />
-
-                </com.google.android.material.textfield.TextInputLayout>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <com.google.android.material.textfield.TextInputLayout
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-                    android:layout_width="match_parent"
-                    android:layout_height="45dp"
-                    android:layout_marginLeft="30dp"
-                    android:layout_marginTop="4dp"
                     android:layout_weight="50"
                     app:boxStrokeColor="@color/colorAccent"
                     app:errorEnabled="true"
@@ -272,14 +242,17 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_add_picture_add_project_activity"
-                style="@style/Widget.AppCompat.Button.Borderless"
-                android:background="@drawable/button_style"
+                style="@style/Widget.MaterialComponents.Button.UnelevatedButton.Icon"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="45dp"
+                app:icon="@drawable/ic_camera"
                 android:layout_marginTop="15dp"
-                android:padding="16dp"
+                android:backgroundTint="@color/yellow"
+                android:textAllCaps="false"
+                android:textColor="@android:color/white"
+                android:textSize="12sp"
                 android:text="Add a picture"/>
 
             <ImageView
@@ -292,34 +265,35 @@
 
 
         </RelativeLayout>
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:orientation="horizontal">
-                <Button
-                    android:id="@+id/button_publish_add_project_activity"
-                    style="@style/Widget.AppCompat.Button.Borderless"
-                    android:background="@drawable/button_style"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="20dp"
-                    android:padding="16dp"
-                    android:layout_weight="1"
-                    android:text="Publish project"/>
 
-                <Button
-                    android:id="@+id/button_save_for_later_add_project_activity"
-                    style="@style/Widget.AppCompat.Button.Borderless"
-                    android:background="@drawable/button_style"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="20dp"
-                    android:padding="16dp"
-                    android:layout_weight="1"
-                    android:text="Save project for later"/>
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/button_publish_add_project_activity"
+                        style="@style/Widget.MaterialComponents.Button.UnelevatedButton.Icon"
+                        android:layout_width="0dp"
+                        android:layout_height="50dp"
+                        android:layout_weight="1"
+                        android:textSize="12sp"
+                        android:layout_marginStart="0dp"
+                        android:layout_marginEnd="10dp"
+                        android:textColor="@android:color/white"
+                        android:text="Publish project"/>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/button_save_for_later_add_project_activity"
+                        style="@style/Widget.MaterialComponents.Button.UnelevatedButton.Icon"
+                        android:background="@drawable/button_yellow_style"
+                        android:layout_width="0dp"
+                        android:layout_height="50dp"
+                        android:layout_weight="1"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="0dp"
+                        android:textSize="12sp"
+                        android:text="Save project"/>
 
             </LinearLayout>
 

@@ -65,7 +65,6 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
     @BindView(R.id.activity_detail_end_date) TextView projectEndDateTextView;
     @BindView(R.id.activity_detail_description) TextView projectDescriptionTextView;
     @BindView(R.id.activity_detail_street_number_and_name) TextView projectStreetNameAndStreetNumberTextView;
-    @BindView(R.id.activity_detail_complement) TextView projectComplementTextView;
     @BindView(R.id.activity_detail_postal_code_and_city) TextView projectPostalCodeAndCityTextView;
     @BindView(R.id.activity_detail_country) TextView projectCountryTextView;
     @BindView(R.id.project_detail_activity_author_button) ImageView authorPhotoImageView;
@@ -183,10 +182,7 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
                 }
             }
         });
-
-
     }
-
 
     @OnClick(R.id.activity_detail_fab)
     public void followTheProject() {
@@ -194,7 +190,7 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
         //String userUid = getCurrentUser().getUid();
         if (isButtonClicked) {
             //change the color of the button
-            buttonFollowProject.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorPrimaryDark)));
+            buttonFollowProject.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.yellow)));
             //create subscription, maybe list of projects Id in user, so, update a field in user
             String userId = Utils.getCurrentUser().getUid();
             if (clickedProject.getId() != null) {
@@ -214,7 +210,7 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
                 UserHelper.removeProjectSubscription(userId, projectId);
             }
             //change button color
-            buttonFollowProject.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorAccent)));
+            buttonFollowProject.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.white)));
 
             Toast.makeText(this, "You are not part of this project anymore", Toast.LENGTH_SHORT).show();
         }
@@ -239,10 +235,10 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
         //check if user subscribed to this project maybe
         if (user.getProjectsSubscribedId() != null) {
             if (user.getProjectsSubscribedId().contains(projectId)) {
-                buttonFollowProject.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorPrimaryDark)));
+                buttonFollowProject.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.yellow)));
                 isButtonClicked = true;
             } else {
-                buttonFollowProject.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorAccent)));
+                buttonFollowProject.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.white)));
                 isButtonClicked = false;
             }
         }
@@ -332,11 +328,6 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
         }
 
         projectStreetNameAndStreetNumberTextView.setText(project.getStreetNumber() + " " + project.getStreetName());
-        if (project.getLocationComplement() != null) {
-            projectComplementTextView.setText(project.getLocationComplement());
-        } else {
-            projectComplementTextView.setVisibility(View.GONE);
-        }
         projectPostalCodeAndCityTextView.setText(project.getPostalCode() + " " + project.getCity());
         projectCountryTextView.setText(project.getCountry());
     }
