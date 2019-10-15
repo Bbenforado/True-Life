@@ -11,17 +11,37 @@ import com.example.applicationsecond.fragments.UserListFragment;
 
 public class ViewPagerAdapterFollowedProjectsAndAssociations extends FragmentPagerAdapter {
 
-    public ViewPagerAdapterFollowedProjectsAndAssociations(FragmentManager fm) {
+    private boolean isCurrentUsersProfile;
+    @Nullable
+    private String profileId;
+
+    public ViewPagerAdapterFollowedProjectsAndAssociations(FragmentManager fm, boolean isCurrentUsersProfile) {
         super(fm);
+        this.isCurrentUsersProfile = isCurrentUsersProfile;
+    }
+
+    public ViewPagerAdapterFollowedProjectsAndAssociations(FragmentManager fm, boolean isCurrentUsersProfile, String profileId) {
+        super(fm);
+        this.isCurrentUsersProfile = isCurrentUsersProfile;
+        this.profileId = profileId;
     }
 
     @Override
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                return new ActualityListFragment("profileActivity");
+                if (isCurrentUsersProfile) {
+                    return new ActualityListFragment("profileActivity");
+                } else {
+                    return new ActualityListFragment("notCurrentUsersProfile", profileId);
+                }
+
             case 1:
-                return new UserListFragment();
+                if (isCurrentUsersProfile) {
+                    return new UserListFragment(true);
+                } else {
+                    return new UserListFragment(false, profileId);
+                }
                 default:
                     return null;
         }

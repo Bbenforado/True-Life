@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,7 +17,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ViewSwitcher;
 
+import com.bumptech.glide.GenericTransitionOptions;
 import com.bumptech.glide.Glide;
 import com.example.applicationsecond.R;
 import com.example.applicationsecond.activities.AssociationProfileActivity;
@@ -45,15 +50,32 @@ public class UserListFragment extends Fragment {
 
     @BindView(R.id.recycler_view_user_list_fragment)
     RecyclerView recyclerView;
+    @BindView(R.id.view_switcher_user_list_fragment)
+    ViewSwitcher viewSwitcher;
+    //---------------------------------
+    //------------------------------------
     private AdapterRecyclerViewUsers adapter;
     private List<User> users;
     private SharedPreferences preferences;
+    @Nullable
+    private String profileId;
+    private boolean isCurrentUsersProfile;
+    //-----------------------------------------
+    //------------------------------------------
     private static final String APP_PREFERENCES = "appPreferences";
     private static final String RESULTS = "results";
 
 
     public UserListFragment() {
         // Required empty public constructor
+    }
+
+    public UserListFragment(boolean isCurrentUsersProfile, String profileId) {
+        this.isCurrentUsersProfile = isCurrentUsersProfile;
+        this.profileId = profileId;
+    }
+    public UserListFragment(boolean isCurrentUsersProfile) {
+        this.isCurrentUsersProfile = isCurrentUsersProfile;
     }
 
 
@@ -67,9 +89,16 @@ public class UserListFragment extends Fragment {
 
         //retrieveResults();
         //doBasicConfiguration();
-        getDataForUserProfile();
+
+        if (isCurrentUsersProfile) {
+            getDataForUserProfile(Utils.getCurrentUser().getUid());
+        } else {
+            getDataForUserProfile(profileId);
+        }
+
         configureOnLongClickRecyclerView();
         configureOnClickRecyclerView();
+        configureViewSwitcher();
         return result;
     }
 
@@ -124,6 +153,17 @@ public class UserListFragment extends Fragment {
                 });
     }
 
+    private void configureViewSwitcher() {
+        // Declare in and out animations and load them using AnimationUtils class
+        Animation newsAvailable = AnimationUtils.loadAnimation(getActivity().getApplicationContext(), android.R.anim.slide_in_left);
+        Animation noNewsAvailable = AnimationUtils.loadAnimation(getActivity().getApplicationContext(), android.R.anim.slide_out_right);
+        // set the animation type to ViewSwitcher
+        viewSwitcher.setInAnimation(newsAvailable);
+        viewSwitcher.setOutAnimation(noNewsAvailable);
+
+        //displayScreenDependingOfNewsAvailable();
+    }
+
     //--------------------------------------
     //GET DATA
     //----------------------------------------
@@ -138,35 +178,53 @@ public class UserListFragment extends Fragment {
         users = gson.fromJson(json, type);
     }
 
-    private void getDataForUserProfile() {
+    private void getDataForUserProfile(String id) {
         users = new ArrayList<>();
 
-        UserHelper.getUser(Utils.getCurrentUser().getUid()).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        UserHelper.getUser(id).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
 
                     User user = task.getResult().toObject(User.class);
-                    if (user.getAssociationSubscribedId().size() > 0) {
+                    if (user.getAssociationSubscribedId() != null) {
+                        if (user.getAssociationSubscribedId().size() > 0) {
 
-                        for (int i = 0; i < user.getAssociationSubscribedId().size(); i++) {
+                            for (int i = 0; i < user.getAssociationSubscribedId().size(); i++) {
 
-                            UserHelper.getUser(user.getAssociationSubscribedId().get(i)).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                @Override
-                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                    if (task.isSuccessful()) {
+                                UserHelper.getUser(user.getAssociationSubscribedId().get(i)).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                        if (task.isSuccessful()) {
 
-                                        User association = task.getResult().toObject(User.class);
-                                        users.add(association);
-                                        configureRecyclerView();
+                                            User association = task.getResult().toObject(User.class);
+                                            users.add(association);
+                                            configureRecyclerView();
+                                        }
                                     }
-                                }
-                            });
+                                });
+                            }
+                        } else {
+                            displayScreenDependingOfDataAvailable(users);
                         }
+                    } else {
+                        displayScreenDependingOfDataAvailable(users);
                     }
                 }
             }
         });
+    }
+
+    private void displayScreenDependingOfDataAvailable(List<User> users) {
+        if (checkIfThereIsDataToDisplay(users)) {
+            viewSwitcher.setDisplayedChild(0);
+        } else {
+            viewSwitcher.setDisplayedChild(1);
+        }
+    }
+
+    private boolean checkIfThereIsDataToDisplay(List<User> users) {
+        return users.size() > 0;
     }
 
 }

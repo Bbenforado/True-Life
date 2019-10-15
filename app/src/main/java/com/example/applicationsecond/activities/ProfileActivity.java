@@ -66,12 +66,15 @@ public class ProfileActivity extends AppCompatActivity {
     @BindView(R.id.activity_profile_image_view_add_country_city) ImageView imageViewAddCountryCity;
     //-----------------------------------
     private Uri uri;
+    private boolean isCurrentUsersProfile;
+    private String authorId;
     private SharedPreferences preferences;
     //------------------------------------
     private static final String PERMS = Manifest.permission.READ_EXTERNAL_STORAGE;
     private static final int RC_IMAGE_PERMS = 100;
     private static final int RC_CHOOSE_PHOTO = 200;
     public static final String APP_PREFERENCES = "appPreferences";
+    public static final String NOT_CURRENT_USERS_PROFILE = "notCurrentUsersProfile";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,10 +83,20 @@ public class ProfileActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         preferences = getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE);
 
+        Bundle bundle = getIntent().getExtras();
+        authorId = null;
+        if (bundle != null) {
+            authorId = bundle.getString("profileId");
+            displayUserInformation(this, authorId);
+            isCurrentUsersProfile = false;
+            //preferences.edit().putString(NOT_CURRENT_USERS_PROFILE, "true").apply();
+
+        } else {
+            displayUserInformation(this , Utils.getCurrentUser().getUid());
+            isCurrentUsersProfile = true;
+        }
         configureToolbar();
         configureViewPager();
-        displayUserInformation(this );
-
     }
 
     @Override
@@ -110,12 +123,29 @@ public class ProfileActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle("Profile");
+        if (isCurrentUsersProfile) {
+            actionBar.setTitle("Profile");
+        } else {
+            UserHelper.getUser(authorId).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        User user = task.getResult().toObject(User.class);
+                        actionBar.setTitle(user.getUsername());
+                    }
+                }
+            });
+
+        }
         actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
     private void configureViewPager() {
-        viewPager.setAdapter(new ViewPagerAdapterFollowedProjectsAndAssociations(getSupportFragmentManager()));
+        if (isCurrentUsersProfile) {
+            viewPager.setAdapter(new ViewPagerAdapterFollowedProjectsAndAssociations(getSupportFragmentManager(), true));
+        } else {
+            viewPager.setAdapter(new ViewPagerAdapterFollowedProjectsAndAssociations(getSupportFragmentManager(), false, authorId));
+        }
         tabLayout.setupWithViewPager(viewPager);
         tabLayout.setTabMode(TabLayout.MODE_FIXED);
     }
@@ -212,7 +242,6 @@ public class ProfileActivity extends AppCompatActivity {
                             textViewCountryCity.setText(countryInputEditText.getText());
                         }
                         if (!TextUtils.isEmpty(cityInputEditText.getText()) && !TextUtils.isEmpty(countryInputEditText.getText())) {
-                            System.out.println("come here");
                             String finalString = cityInputEditText.getText().toString() + ", " + countryInputEditText.getText().toString();
                             textViewCountryCity.setText(finalString);
                         }
@@ -247,8 +276,8 @@ public class ProfileActivity extends AppCompatActivity {
     //UPDATE UI
     //--------------------------------
 
-    private void displayUserInformation(Context context) {
-        UserHelper.getUser(Utils.getCurrentUser().getUid()).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+    private void displayUserInformation(Context context, String id) {
+        UserHelper.getUser(id).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {

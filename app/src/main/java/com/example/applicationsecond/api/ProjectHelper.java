@@ -62,6 +62,11 @@ public class ProjectHelper {
                 .limit(50);
     }
 
+    public static Query getProjects() {
+        return ProjectHelper.getProjectsCollection()
+                .limit(50);
+    }
+
 
     public static Task<DocumentSnapshot> getProject(String id) {
         return ProjectHelper.getProjectsCollection().document(id).get();

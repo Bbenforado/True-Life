@@ -165,10 +165,27 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
     @OnClick(R.id.project_detail_activity_author_button)
     public void launchAuthorProfileActivity() {
 
+        //check if it s an association or a user
         String authorId = clickedProject.getAuthorId();
-        Intent authorProfileIntent = new Intent(getApplicationContext(), AssociationProfileActivity.class);
-        authorProfileIntent.putExtra("authorId", authorId);
-        startActivity(authorProfileIntent);
+        UserHelper.getUser(authorId).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    User user = task.getResult().toObject(User.class);
+                    if (user.isAssociation()) {
+                        Intent authorProfileIntent = new Intent(getApplicationContext(), AssociationProfileActivity.class);
+                        authorProfileIntent.putExtra("authorId", authorId);
+                        startActivity(authorProfileIntent);
+                    } else {
+                        Intent profileIntent = new Intent(getApplicationContext(), ProfileActivity.class);
+                        profileIntent.putExtra("profileId", authorId);
+                        startActivity(profileIntent);
+                    }
+                }
+            }
+        });
+
+
     }
 
 

@@ -98,8 +98,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         preferences = getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE);
         preferences.edit().putInt(KEY_EDIT_PROJECT, -1).apply();
 
-        System.out.println("key = " + preferences.getInt(KEY_EDIT_PROJECT, -1));
-
         if (!isCurrentUserLogged()) {
             Intent authenticationIntent = new Intent(this, AuthenticationActivity.class);
             startActivity(authenticationIntent);

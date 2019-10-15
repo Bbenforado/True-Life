@@ -67,8 +67,6 @@ public class AssociationProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_association_profile);
 
-        System.out.println("on create asso prof");
-
         ButterKnife.bind(this);
         preferences = getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE);
         currentUserId = Utils.getCurrentUser().getUid();
