@@ -18,18 +18,25 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.applicationsecond.R;
+import com.example.applicationsecond.api.ProjectHelper;
 import com.example.applicationsecond.api.UserHelper;
+import com.example.applicationsecond.models.Project;
 import com.example.applicationsecond.models.User;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.example.applicationsecond.utils.Utils.formatLocation;
 import static com.example.applicationsecond.utils.Utils.getCurrentUser;
@@ -42,6 +49,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
 
 
     private GoogleMap map;
+    private LatLngBounds bounds;
 
     private static final int REQUEST_ID_ACCESS_COURSE_FINE_LOCATION = 100;
 
@@ -126,23 +134,24 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
     }
 
     private void showMyLocation() {
-
-        System.out.println("show my location");
-
         if (getUserLocation(getContext(), this, getActivity()) == null) {
             Toast.makeText(getContext(), "Location not found", Toast.LENGTH_SHORT).show();
         } else {
-
-            System.out.println("here");
             double userLat = getUserLocation(getContext(), this, getActivity()).getLatitude();
             double userLng = getUserLocation(getContext(), this, getActivity()).getLongitude();
 
             LatLng latLng = new LatLng(userLat, userLng);
-
-            System.out.println("latlng = " + latLng);
             map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 13));
             float zoomLevel = 16.0f;
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoomLevel));
+
+            LatLng latLng1 = createNewLatLngForBounds(userLat, userLng, 1000);
+            LatLng latLng2 = createNewLatLngForBounds(userLat, userLng, -1000);
+
+            LatLngBounds.Builder builder = new LatLngBounds.Builder();
+            builder.include(latLng1);
+            builder.include(latLng2);
+            bounds = builder.build();
 
             Marker marker;
             marker = map.addMarker(new MarkerOptions()
@@ -150,6 +159,8 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                     .title("You are here"));
             marker.setTag(-1);
             marker.showInfoWindow();
+
+            getDataToDisplayFollowedProjectsOnTheMap();
         }
     }
 
@@ -180,9 +191,73 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                 if (task.isSuccessful()) {
                     User user = task.getResult().toObject(User.class);
 
-                    
+                    if (user.getProjectsSubscribedId() != null) {
+                        List<String> followedProjectsId = new ArrayList<>();
+                        followedProjectsId.addAll(user.getProjectsSubscribedId());
+
+                        for (int i = 0; i < followedProjectsId.size(); i++) {
+                            ProjectHelper.getProject(followedProjectsId.get(i)).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                    if (task.isSuccessful()) {
+                                        Project project = task.getResult().toObject(Project.class);
+
+                                        if (project.getLatLng() != null) {
+                                            String[] latLong =  project.getLatLng().split(",");
+                                            double latitude = Double.parseDouble(latLong[0]);
+                                            double longitude = Double.parseDouble(latLong[1]);
+
+                                            LatLng latLng = new LatLng(latitude, longitude);
+
+                                            if (bounds.contains(latLng)) {
+                                                showPlaceOnMap(true, project.getId(), latLng);
+                                            }
+                                        }
+                                    }
+                                }
+                            });
+                        }
+                    }
                 }
             }
         });
+    }
+
+    private void showPlaceOnMap(boolean isProject, String id, LatLng latLng) {
+        if (latLng != null) {
+            CameraUpdateFactory.newLatLng(latLng);
+            Marker placeMarker = map.addMarker(new MarkerOptions()
+                    .position(latLng));
+            placeMarker.setTag(id);
+            if (isProject) {
+                placeMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
+            } else {
+                placeMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+            }
+        } else {
+            Toast.makeText(getContext(), "Location not found", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private double getNewLat(double latitude, long meters) {
+        double earth = 6378.137;  //radius of the earth in kilometer
+        double pi = Math.PI;
+        double m = (1 / ((2 * pi / 360) * earth)) / 1000;  //1 meter in degree
+
+        return latitude + (meters * m);
+    }
+
+    private double getNewLng(double longitude, double latitude, long meters) {
+        double earth = 6378.137;  //radius of the earth in kilometer
+        double pi = Math.PI;
+        double m = (1 / ((2 * pi / 360) * earth)) / 1000;  //1 meter in degree
+
+        return longitude + (meters * m) / Math.cos(latitude * (pi / 180));
+    }
+
+    private LatLng createNewLatLngForBounds(double latitude, double longitude, long meters) {
+        double newLat = getNewLat(latitude, meters);
+        double newLng = getNewLng(longitude, latitude, meters);
+        return new LatLng(newLat, newLng);
     }
 }
