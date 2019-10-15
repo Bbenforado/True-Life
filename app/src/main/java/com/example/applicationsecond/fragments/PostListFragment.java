@@ -214,6 +214,7 @@ public class PostListFragment extends Fragment {
                 if (task.isSuccessful()) {
                     User user = task.getResult().toObject(User.class);
                     //get the list of the followed associations
+                    if (user.getAssociationSubscribedId() != null) {
                         if (user.getAssociationSubscribedId().size() > 0) {
                             for (int i = 0; i < user.getAssociationSubscribedId().size(); i++) {
 
@@ -252,6 +253,7 @@ public class PostListFragment extends Fragment {
                                 });
                             }
                         }
+                    }
                     } else {
                         displayScreenDependingOfNewsAvailable();
                     }

@@ -96,7 +96,6 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
         preferences = getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE);
         clickedProject = retrieveClickedProject();
         if (clickedProject.getId() != null) {
-            //getCurrentUserInfoToDisplayButtonState(clickedProject.getId());
             displayFollowButton();
         }
 
@@ -201,6 +200,7 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
             if (clickedProject.getId() != null) {
                 String projectId = clickedProject.getId();
                 ProjectHelper.addSubscriptionToProject(projectId, userId);
+                UserHelper.addProjectsSubscriptions(userId, projectId);
             }
             Toast.makeText(this, "You are taking part in this project! You can contact the team through the chat!", Toast.LENGTH_SHORT).show();
 
@@ -211,6 +211,7 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
             if (clickedProject.getId() != null) {
                 String projectId = clickedProject.getId();
                 ProjectHelper.removeProjectSubscription(projectId, userId);
+                UserHelper.removeProjectSubscription(userId, projectId);
             }
             //change button color
             buttonFollowProject.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorAccent)));
@@ -311,10 +312,14 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                     if (task.isSuccessful()) {
                         User user = task.getResult().toObject(User.class);
-                        Glide.with(context)
-                                .load(user.getUrlPhoto())
-                                .apply(RequestOptions.circleCropTransform())
-                                .into(authorPhotoImageView);
+                        if (user.getUrlPhoto() != null) {
+                            Glide.with(context)
+                                    .load(user.getUrlPhoto())
+                                    .apply(RequestOptions.circleCropTransform())
+                                    .into(authorPhotoImageView);
+                        } else {
+                            authorPhotoImageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_profile));
+                        }
                     }
                 }
             });

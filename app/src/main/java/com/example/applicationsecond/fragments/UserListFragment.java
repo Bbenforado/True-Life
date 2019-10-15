@@ -92,11 +92,11 @@ public class UserListFragment extends Fragment {
 
         if (isCurrentUsersProfile) {
             getDataForUserProfile(Utils.getCurrentUser().getUid());
+            configureOnLongClickRecyclerView();
         } else {
             getDataForUserProfile(profileId);
         }
 
-        configureOnLongClickRecyclerView();
         configureOnClickRecyclerView();
         configureViewSwitcher();
         return result;

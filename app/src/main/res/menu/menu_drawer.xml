@@ -19,6 +19,11 @@
             android:icon="@drawable/ic_project"/>
 
         <item
+            android:id="@+id/users_chats"
+            android:title="Chats"
+            android:icon="@drawable/ic_chat_bubble"/>
+
+        <item
             android:id="@+id/sign_out"
             android:title="Sign out"
             android:icon="@drawable/ic_sign_out"/>

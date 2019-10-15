@@ -34,6 +34,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.applicationsecond.R;
 import com.example.applicationsecond.api.ProjectHelper;
+import com.example.applicationsecond.api.UserHelper;
 import com.example.applicationsecond.fragments.ActualityListFragment;
 import com.example.applicationsecond.models.Project;
 import com.example.applicationsecond.utils.Utils;
@@ -107,8 +108,6 @@ public class AddProjectActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_project);
         ButterKnife.bind(this);
         preferences = getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE);
-
-        System.out.println("key = " + preferences.getInt(KEY_EDIT_PROJECT, -1));
         configureToolbar();
         //check if it s for editing one existing project
         //if 0 it s not
@@ -389,6 +388,7 @@ public class AddProjectActivity extends AppCompatActivity {
                 ProjectHelper.createProject(projectId, title, description, authorId, creation_date, eventDate,false, streetNbr, streetName,
                         complement, postalCode, city, country, latLng);
             }
+            UserHelper.addProjectsSubscriptions(authorId, projectId);
         } else {
             uploadPhotoInFireBaseAndSaveProject(title, description, authorId, creation_date, eventDate, streetNbr, streetName, complement, postalCode,
                     city, country, latLng);
@@ -439,6 +439,7 @@ public class AddProjectActivity extends AppCompatActivity {
             uploadPhotoInFireBaseAndSaveProject(title, description, authorId, creation_date, eventDate, streetNbr, streetName, complement, postalCode,
                     city, country, latLng);
         }
+        UserHelper.addProjectsSubscriptions(authorId, projectId);
     }
 
     private void uploadPhotoInFireBaseAndSaveProject(final String title, final String description, final String authorId, final Date creation_date,

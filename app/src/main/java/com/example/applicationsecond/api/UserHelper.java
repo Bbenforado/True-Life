@@ -36,7 +36,7 @@ public class UserHelper {
     }
 
     //UPDATE
-  /*  public static Task<Void> updateProjectsSubscriptions(String userId, String projectId) {
+    public static Task<Void> addProjectsSubscriptions(String userId, String projectId) {
         return UserHelper.getUsersCollection().document(userId).update("projectsSubscribedId",
                 FieldValue.arrayUnion(projectId));
     }
@@ -44,7 +44,7 @@ public class UserHelper {
     public static Task<Void> removeProjectSubscription(String userId, String projectId) {
         return UserHelper.getUsersCollection().document(userId).update("projectsSubscribedId",
                 FieldValue.arrayRemove(projectId));
-    }*/
+    }
 
     public static Task<Void> updateAssociationSubscriptions(String userId, String associationId) {
         return UserHelper.getUsersCollection().document(userId).update("associationSubscribedId",

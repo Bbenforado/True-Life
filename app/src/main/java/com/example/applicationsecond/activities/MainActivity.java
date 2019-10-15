@@ -211,6 +211,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             case R.id.sign_out:
                 signOut();
+                break;
+            case R.id.users_chats:
+                launchActivity(UsersChatActivity.class);
+                break;
             default:
                 break;
         }
@@ -286,20 +290,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         String postTitle = title.getText().toString();
                         String postContent = content.getText().toString();
                         Date creationDate = new Date();
-                        String authorName = Utils.getCurrentUser().getDisplayName();
-                        PostHelper.createPost(postId, postTitle, postContent, authorName, creationDate);
+                        UserHelper.getUser(Utils.getCurrentUser().getUid()).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    User currentUser = task.getResult().toObject(User.class);
+                                    String authorName = currentUser.getUsername();
+                                    PostHelper.createPost(postId, postTitle, postContent, authorName, creationDate);
 
-                        //save the id of the post in the user
-                        UserHelper.updatePublishedPostIdList(Utils.getCurrentUser().getUid(), postId);
+                                    //save the id of the post in the user
+                                    UserHelper.updatePublishedPostIdList(Utils.getCurrentUser().getUid(), postId);
 
-                        Toast.makeText(getApplication(), "Post published!", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getApplication(), "Post published!", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
 
-                    }
-                })
-                .setNeutralButton("Save for later", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(getApplicationContext(), "Soon you'll be able to save your post to publish it later", Toast.LENGTH_SHORT).show();
+
                     }
                 })
                 .setNegativeButton("Cancel", null)

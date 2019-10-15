@@ -9,12 +9,14 @@ public class Message {
     private Date dateCreated;
     private User userSender;
     private String urlImage;
+    private String chatName;
 
     public Message() { }
 
-    public Message(String message, User userSender) {
+    public Message(String message, User userSender, String chatName) {
         this.message = message;
         this.userSender = userSender;
+        this.chatName = chatName;
     }
 
     public Message(String message, String urlImage, User userSender) {
@@ -36,4 +38,12 @@ public class Message {
     public void setDateCreated(Date dateCreated) { this.dateCreated = dateCreated; }
     public void setUserSender(User userSender) { this.userSender = userSender; }
     public void setUrlImage(String urlImage) { this.urlImage = urlImage; }
+
+    public String getChatName() {
+        return chatName;
+    }
+
+    public void setChatName(String chatName) {
+        this.chatName = chatName;
+    }
 }

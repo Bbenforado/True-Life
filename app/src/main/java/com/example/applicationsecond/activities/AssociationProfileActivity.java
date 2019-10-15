@@ -131,11 +131,14 @@ public class AssociationProfileActivity extends AppCompatActivity {
     //METHODS
     //----------------------------------------
     private void hideFollowButtonIfItsCurrentUserProfile() {
+
+        System.out.println("come here");
         //check if it s current user s profile
         if (currentUserId.equals(authorId)) {
-            followButton.setEnabled(false);
+            followButton.setVisibility(View.GONE);
+            //followButton.setEnabled(false);
             //followButton.setBackground(getResources().getDrawable(R.drawable.ic_heart_disabled));
-            followButton.setImageResource(R.drawable.ic_heart_disabled);
+            //followButton.setImageResource(R.drawable.ic_heart_disabled);
             //textViewFollow.setTextColor(getResources().getColor(R.color.disabledColor));
         } else {
             followButton.setEnabled(true);
@@ -147,16 +150,14 @@ public class AssociationProfileActivity extends AppCompatActivity {
         UserHelper.getUser(currentUserId).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 User user = task.getResult().toObject(User.class);
-                if (user.getAssociationSubscribedId().contains(authorId)) {
-                    //set the color of the button to red
-                    //followButton.setBackground(getResources().getDrawable(R.drawable.ic_heart_red));
-                    followButton.setImageResource(R.drawable.ic_heart_red);
-                    //textViewFollow.setTextColor(getResources().getColor(R.color.red));
-                    isButtonClicked = true;
-                } else {
-                    //followButton.setBackground(getResources().getDrawable(R.drawable.ic_heart));
-                    followButton.setImageResource(R.drawable.ic_heart);
-                    //textViewFollow.setTextColor(defaultColor);
+                if (user.getAssociationSubscribedId() != null) {
+                    if (user.getAssociationSubscribedId().contains(authorId)) {
+                        //set the color of the button to red
+                        followButton.setImageResource(R.drawable.ic_heart_red);
+                        isButtonClicked = true;
+                    } else {
+                        followButton.setImageResource(R.drawable.ic_heart);
+                    }
                 }
             }
         });
