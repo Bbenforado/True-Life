@@ -29,6 +29,7 @@ import com.example.applicationsecond.api.PostHelper;
 import com.example.applicationsecond.api.UserHelper;
 import com.example.applicationsecond.fragments.ActualityListFragment;
 import com.example.applicationsecond.fragments.AddProjectFragment;
+import com.example.applicationsecond.fragments.MapFragment;
 import com.example.applicationsecond.fragments.PostListFragment;
 import com.example.applicationsecond.fragments.SearchFragment;
 import com.example.applicationsecond.models.Post;
@@ -75,6 +76,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private SearchFragment searchFragment;
     private AddProjectFragment addProjectFragment;
     private PostListFragment postListFragment;
+    private MapFragment mapFragment;
     private boolean isCurrentUserAssociation;
     private SharedPreferences preferences;
     private ActionBar actionBar;
@@ -94,6 +96,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         searchFragment = new SearchFragment();
         addProjectFragment = new AddProjectFragment();
         postListFragment = new PostListFragment(false);
+        mapFragment = new MapFragment();
 
         preferences = getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE);
         preferences.edit().putInt(KEY_EDIT_PROJECT, -1).apply();
@@ -155,14 +158,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         if (isCurrentUserAssociation) {
                             displayPostOrProjectDialog();
                         } else {
-                            /*showFragment(addProjectFragment);
-                            actionBar.setTitle("Add a project");*/
                             Intent addProject = new Intent(getApplicationContext(), AddProjectActivity.class);
                             startActivity(addProject);
                         }
                         return true;
                     case R.id.navigation_map:
-                        Toast.makeText(getApplicationContext(), "Clicked on map", Toast.LENGTH_SHORT).show();
+                        showFragment(mapFragment);
                         actionBar.setTitle("Map");
                         return true;
                     case R.id.navigation_search:
