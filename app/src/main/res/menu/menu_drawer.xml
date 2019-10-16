@@ -19,6 +19,12 @@
             android:icon="@drawable/ic_project"/>
 
         <item
+            android:id="@+id/users_posts"
+            android:title="My posts"
+            android:visible="false"
+            android:icon="@drawable/ic_post"/>
+
+        <item
             android:id="@+id/users_chats"
             android:title="Chats"
             android:icon="@drawable/ic_chat_bubble"/>

@@ -24,6 +24,8 @@ import java.text.SimpleDateFormat;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.example.applicationsecond.utils.Utils.capitalizeFirstLetter;
+
 public class ViewHolderProjects extends RecyclerView.ViewHolder {
 
     @BindView(R.id.owner_of_post)
@@ -42,19 +44,19 @@ public class ViewHolderProjects extends RecyclerView.ViewHolder {
 
     public void updateUi(Project project, RequestManager glide) {
         if (project.getDescription().length() > 100) {
-            String newContent = project.getDescription().substring(0, 100) + "...";
+            String newContent = capitalizeFirstLetter(project.getDescription().substring(0, 100) + "...");
             contentOfNewsTextView.setText(newContent);
         } else {
-            contentOfNewsTextView.setText(project.getDescription());
+            contentOfNewsTextView.setText(capitalizeFirstLetter(project.getDescription()));
         }
-        titleTextView.setText(project.getTitle());
+        titleTextView.setText(capitalizeFirstLetter(project.getTitle()));
         if (project.getAuthorId() != null) {
             UserHelper.getUser(project.getAuthorId()).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                     if (task.isSuccessful()) {
                         User user = task.getResult().toObject(User.class);
-                        ownerOfPostTextView.setText(user.getUsername());
+                        ownerOfPostTextView.setText(capitalizeFirstLetter(user.getUsername()));
                         if (user.isAssociation()) {
                             imageViewAssociationIcon.setVisibility(View.VISIBLE);
                         }

@@ -29,6 +29,7 @@ public class PostHelper {
         return PostHelper.getPostsCollection().document(id).get();
     }
 
+
     public static Query getPublishedPosts(String userId) {
         return ProjectHelper.getProjectsCollection()
                 .whereEqualTo("authorId", userId)

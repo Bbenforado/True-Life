@@ -137,4 +137,8 @@ public class Utils {
     public static String formatLocation(Location location) {
         return location.getLatitude() + "," + location.getLongitude();
     }
+
+    public static String capitalizeFirstLetter(String string) {
+        return string.substring(0, 1).toUpperCase() + string.substring(1);
+    }
 }

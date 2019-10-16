@@ -71,24 +71,32 @@
                         android:textSize="16sp"
                         android:textStyle="bold" />
 
-                    <ImageView
-                        android:id="@+id/activity_detail_image_view_followers"
-                        android:layout_width="15dp"
-                        android:layout_height="15dp"
-                        android:layout_marginLeft="20dp"
-                        android:layout_gravity="center"
-                        android:src="@drawable/ic_follower_white"/>
-
-                    <TextView
-                        android:id="@+id/activity_detail_nbr_of_followers"
+                    <LinearLayout
+                        android:id="@+id/detail_activity_layout_nbr_follower"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:textStyle="bold"
-                        android:textColor="@android:color/white"
-                        android:textSize="10dp"
-                        android:layout_marginLeft="5dp"
-                        />
+                        android:clickable="true"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/activity_detail_image_view_followers"
+                            android:layout_width="15dp"
+                            android:layout_height="15dp"
+                            android:layout_marginLeft="20dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_follower_white"/>
+
+                        <TextView
+                            android:id="@+id/activity_detail_nbr_of_followers"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:textStyle="bold"
+                            android:textColor="@android:color/white"
+                            android:textSize="10dp"
+                            android:layout_marginLeft="5dp"
+                            />
+                    </LinearLayout>
                 </LinearLayout>
 
                 <LinearLayout

@@ -110,6 +110,7 @@ public class AssociationProfileActivity extends AppCompatActivity {
         if (isButtonClicked) {
             //change the color of the button
             followButton.setImageResource(R.drawable.ic_heart_red);
+            //followButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.darkColor)));
 
             //create a subscription in user s tuple
             UserHelper.updateAssociationSubscriptions(currentUserId, authorId);
@@ -120,9 +121,7 @@ public class AssociationProfileActivity extends AppCompatActivity {
             //unclick button
             UserHelper.removeAssociationSubscription(currentUserId, authorId);
             //change button color
-            //followButton.setBackground(getResources().getDrawable(R.drawable.ic_heart));
             followButton.setImageResource(R.drawable.ic_heart);
-            //textViewFollow.setTextColor(defaultColor);
             Toast.makeText(this, "You are not following " + authorId + " anymore", Toast.LENGTH_SHORT).show();
         }
     }

@@ -19,6 +19,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
@@ -55,6 +56,7 @@ import java.util.Date;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.example.applicationsecond.utils.Utils.capitalizeFirstLetter;
 import static com.example.applicationsecond.utils.Utils.getCurrentUser;
 import static com.example.applicationsecond.utils.Utils.isCurrentUserLogged;
 
@@ -74,7 +76,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private Toolbar toolbar;
     private ActualityListFragment actualityListFragment;
     private SearchFragment searchFragment;
-    private AddProjectFragment addProjectFragment;
     private PostListFragment postListFragment;
     private MapFragment mapFragment;
     private boolean isCurrentUserAssociation;
@@ -94,7 +95,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         actualityListFragment = new ActualityListFragment("defaultScreen");
         searchFragment = new SearchFragment();
-        addProjectFragment = new AddProjectFragment();
         postListFragment = new PostListFragment(false);
         mapFragment = new MapFragment();
 
@@ -108,8 +108,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else {
             getDataFromCurrentUser();
             //configure
-            doBasicConfiguration();
-            showFragment(actualityListFragment);
+            /*doBasicConfiguration();
+            showFragment(actualityListFragment);*/
         }
     }
 
@@ -182,9 +182,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 R.string.navigation_drawer_close);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
+
     }
 
     private void configureNavigationView() {
+        if (isCurrentUserAssociation) {
+            navigationView.getMenu().findItem(R.id.users_posts).setVisible(true);
+        }
         navigationView.setNavigationItemSelectedListener(this::onNavigationItemSelected);
     }
 
@@ -210,6 +214,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.users_projects:
                 launchActivity(UsersProjectsActivity.class);
                 break;
+            case R.id.users_posts:
+                launchActivity(PostListActivity.class);
+                break;
             case R.id.sign_out:
                 signOut();
                 break;
@@ -229,11 +236,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         startActivity(intent);
     }
 
-    private void displayUsernameOnNavigationView() {
-        if (isCurrentUserLogged()) {
-
-        }
-    }
 
     private void getDataFromCurrentUser() {
         UserHelper.getUser(getCurrentUser().getUid()).addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -243,6 +245,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 isCurrentUserAssociation = currentUser.isAssociation();
                 String id = currentUser.getId();
                 preferences.edit().putString(USER_ID, id).apply();
+
+                doBasicConfiguration();
+                showFragment(actualityListFragment);
             }
         });
     }

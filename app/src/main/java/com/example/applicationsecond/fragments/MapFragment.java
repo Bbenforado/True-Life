@@ -2,6 +2,9 @@ package com.example.applicationsecond.fragments;
 
 
 import android.Manifest;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -18,6 +21,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.applicationsecond.R;
+import com.example.applicationsecond.activities.ProjectDetailActivity;
 import com.example.applicationsecond.api.ProjectHelper;
 import com.example.applicationsecond.api.UserHelper;
 import com.example.applicationsecond.models.Project;
@@ -34,6 +38,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +55,10 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
 
     private GoogleMap map;
     private LatLngBounds bounds;
+    private SharedPreferences preferences;
 
+    public static final String APP_PREFERENCES = "appPreferences";
+    private static final String CLICKED_PROJECT = "clickedProject";
     private static final int REQUEST_ID_ACCESS_COURSE_FINE_LOCATION = 100;
 
     public MapFragment() {
@@ -63,6 +71,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                              Bundle savedInstanceState) {
         View result = inflater.inflate(R.layout.fragment_map, container, false);
 
+        preferences = getActivity().getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map_fragment);
         mapFragment.getMapAsync(this);
 
@@ -89,7 +98,25 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
 
     @Override
     public boolean onMarkerClick(Marker marker) {
-        return false;
+        //int tag = (Integer) marker.getTag();
+        //if this is the user marker
+        if (!marker.getTag().equals("user")) {
+            String id = String.valueOf(marker.getTag());
+            ProjectHelper.getProject(id).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        Project project = task.getResult().toObject(Project.class);
+                        Gson gson = new Gson();
+                        preferences.edit().putString(CLICKED_PROJECT, gson.toJson(project)).apply();
+                        //launch detail activity
+                        Intent intent = new Intent(getContext(), ProjectDetailActivity.class);
+                        startActivity(intent);
+                    }
+                }
+            });
+        }
+        return true;
     }
 
     @Override
@@ -157,7 +184,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
             marker = map.addMarker(new MarkerOptions()
                     .position(latLng)
                     .title("You are here"));
-            marker.setTag(-1);
+            marker.setTag("user");
             marker.showInfoWindow();
 
             getDataToDisplayFollowedProjectsOnTheMap();
@@ -210,6 +237,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                                             LatLng latLng = new LatLng(latitude, longitude);
 
                                             if (bounds.contains(latLng)) {
+                                                //int tag = Integer.parseInt(project.getId());
                                                 showPlaceOnMap(true, project.getId(), latLng);
                                             }
                                         }
@@ -260,4 +288,5 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
         double newLng = getNewLng(longitude, latitude, meters);
         return new LatLng(newLat, newLng);
     }
+
 }

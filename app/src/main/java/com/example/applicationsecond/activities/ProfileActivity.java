@@ -51,6 +51,8 @@ import butterknife.OnClick;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
+import static com.example.applicationsecond.utils.Utils.capitalizeFirstLetter;
+
 public class ProfileActivity extends AppCompatActivity {
 
 
@@ -72,6 +74,7 @@ public class ProfileActivity extends AppCompatActivity {
     private boolean isCurrentUsersProfile;
     private String authorId;
     private int defaultColor;
+    private User currentUser;
     //------------------------------------
     private static final String PERMS = Manifest.permission.READ_EXTERNAL_STORAGE;
     private static final int RC_IMAGE_PERMS = 100;
@@ -93,6 +96,7 @@ public class ProfileActivity extends AppCompatActivity {
             displayUserInformation(this, authorId);
             configurationIfProfileIsNotCurrentUsersProfile();
         } else {
+            getUserFromFireBase(Utils.getCurrentUser().getUid());
             displayUserInformation(this , Utils.getCurrentUser().getUid());
             isCurrentUsersProfile = true;
         }
@@ -186,6 +190,17 @@ public class ProfileActivity extends AppCompatActivity {
     //-------------------------------
     //METHODS
     //---------------------------------
+
+    private void getUserFromFireBase(String id) {
+        UserHelper.getUser(id).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    currentUser = task.getResult().toObject(User.class);
+                }
+            }
+        });
+    }
     private void handleResponseForGallery(int requestCode, int resultCode, Intent data) {
         if (requestCode == RC_CHOOSE_PHOTO) {
             if (resultCode == RESULT_OK) {
@@ -234,13 +249,19 @@ public class ProfileActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_add_country_and_city, null);
+        final TextInputEditText cityInputEditText = view.findViewById(R.id.text_input_new_city);
+        final TextInputEditText countryInputEditText = view.findViewById(R.id.text_input_new_country);
+        if (currentUser.getCity() != null) {
+            cityInputEditText.setText(capitalizeFirstLetter(currentUser.getCity()));
+        }
+        if (currentUser.getCountry() != null) {
+            countryInputEditText.setText(capitalizeFirstLetter(currentUser.getCountry()));
+        }
         builder.setTitle("Add some information:")
                 .setView(view)
                 .setPositiveButton("Save", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        final TextInputEditText cityInputEditText = view.findViewById(R.id.text_input_new_city);
-                        final TextInputEditText countryInputEditText = view.findViewById(R.id.text_input_new_country);
 
                         if (!TextUtils.isEmpty(cityInputEditText.getText())) {
                             UserHelper.updateCity(Utils.getCurrentUser().getUid(), cityInputEditText.getText().toString());

@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,6 +52,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.example.applicationsecond.utils.Utils.capitalizeFirstLetter;
 import static com.example.applicationsecond.utils.Utils.getCurrentUser;
 import static com.example.applicationsecond.utils.Utils.getLatLngOfPlace;
 import static com.example.applicationsecond.utils.Utils.isNetworkAvailable;
@@ -74,6 +76,8 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
     @BindView(R.id.activity_detail_text_view_no_internet) TextView textViewNoInternet;
     @BindView(R.id.activity_detail_image_view_followers) ImageView imageViewFollowers;
     @BindView(R.id.activity_detail_nbr_of_followers) TextView textViewNbrOfFollowers;
+    @BindView(R.id.detail_activity_layout_nbr_follower)
+    LinearLayout layoutNbrFollower;
     //-----------------------------------------
     //-------------------------------------------
     public static final String APP_PREFERENCES = "appPreferences";
@@ -147,7 +151,6 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
     //--------------------------------------
     //CONFIGURATION
     //-----------------------------------------
-
     private void configureToolbar() {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -166,6 +169,12 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
         bundle.putString("chatName", clickedProject.getId());
         chatIntent.putExtras(bundle);
         startActivity(chatIntent);
+    }
+
+    @OnClick(R.id.detail_activity_layout_nbr_follower)
+    public void displayNumberOfFollower() {
+        //display modal bottom sheet that will display a list of follower
+        Toast.makeText(getApplicationContext(), "Soon you ll be able to display the list of the follower for this project", Toast.LENGTH_SHORT).show();
     }
 
     @OnClick(R.id.project_detail_activity_author_button)
@@ -298,8 +307,7 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
             imageViewFollowers.setVisibility(View.GONE);
             textViewNbrOfFollowers.setVisibility(View.GONE);
         }
-
-        projectTitleTextView.setText(project.getTitle());
+        projectTitleTextView.setText(capitalizeFirstLetter(project.getTitle()));
         if (project.getCreationDate() != null) {
             String date = new SimpleDateFormat("dd/MM/yyyy").format(project.getCreationDate());
             projectPublishedDateTextView.setText(date);
@@ -334,10 +342,12 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
                     .into(this.imageView);
         }
 
-        projectStreetNameAndStreetNumberTextView.setText(project.getStreetNumber() + " " + project.getStreetName());
-        projectPostalCodeAndCityTextView.setText(project.getPostalCode() + " " + project.getCity());
-        projectCountryTextView.setText(project.getCountry());
+        projectStreetNameAndStreetNumberTextView.setText(capitalizeFirstLetter(project.getStreetNumber() + " " + project.getStreetName()));
+        projectPostalCodeAndCityTextView.setText(project.getPostalCode() + " " + capitalizeFirstLetter(project.getCity()));
+        projectCountryTextView.setText(capitalizeFirstLetter(project.getCountry()));
     }
+
+
 
     @Override
     public void onMapReady(GoogleMap googleMap) {

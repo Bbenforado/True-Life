@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".activities.PostListActivity">
+
+    <include
+        layout="@layout/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <ViewSwitcher
+        android:id="@+id/view_switcher_post_list_activity"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view_post_list_activity"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </androidx.recyclerview.widget.RecyclerView>
+
+        <TextView
+            android:padding="16dp"
+            android:id="@+id/text_view_post_list_activity_no_post_to_display"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Nothing to display for the moment, maybe check projects in your neighbourghood"/>
+
+    </ViewSwitcher>
+
+
+
+</LinearLayout>
