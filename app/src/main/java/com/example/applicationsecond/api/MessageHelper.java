@@ -32,12 +32,22 @@ public class MessageHelper {
                 .limit(1);
     }*/
 
-    public static Task<DocumentReference> createMessageForChat(String textMessage,
+    /*public static Task<DocumentReference> createMessageForChat(String id, String textMessage,
                                                                String chatName,
                                                                User userSender, long timeInMilliseconds) {
-        Message message = new Message(textMessage, userSender, chatName, timeInMilliseconds);
+        Message message = new Message(id, textMessage, userSender, chatName, timeInMilliseconds);
         return ChatHelper.getChatCollection().document(chatName).collection(COLLECTION_NAME)
                 .add(message);
+    }*/
+    public static Task<Void> createMessageForChat(String id, String textMessage,
+                                                               String chatName,
+                                                               User userSender, long timeInMilliseconds) {
+        Message message = new Message(id, textMessage, userSender, chatName, timeInMilliseconds);
+        return ChatHelper.getChatCollection().document(chatName).collection(COLLECTION_NAME).document(id).set(message);
+    }
+
+    public static Task<Void> deleteMessage(String chatName, String messageId) {
+        return ChatHelper.getChatCollection().document(chatName).collection(COLLECTION_NAME).document(messageId).delete();
     }
 
     /*public static Task<QueryDocumentSnapshot> getLastMessageOfChat(String chatName) {

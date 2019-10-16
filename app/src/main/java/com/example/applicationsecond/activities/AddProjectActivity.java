@@ -82,7 +82,6 @@ public class AddProjectActivity extends AppCompatActivity {
     @BindView(R.id.image_chosen_picture_add_project_activity) ImageView imageView;
     @BindView(R.id.text_edit_street_nbr_add_project_activity) TextInputEditText streetNumberEditText;
     @BindView(R.id.edit_text_street_name_add_project_activity) TextInputEditText streetNameEditText;
-    //@BindView(R.id.edit_text_complement_add_project_activity) TextInputEditText locationComplementEditText;
     @BindView(R.id.text_edit_postal_code_add_project_activity) TextInputEditText postalCodeEditText;
     @BindView(R.id.text_edit_city_add_project_activity) TextInputEditText cityEditText;
     @BindView(R.id.text_edit_country_add_project_activity) TextInputEditText countryEditText;
@@ -118,6 +117,7 @@ public class AddProjectActivity extends AppCompatActivity {
             //update ui with existing data on this project
             projectId = getIntent().getExtras().getString(PROJECT_ID);
             updateUiWithProjectsData(projectId, this);
+            buttonSaveProject.setVisibility(View.GONE);
         } else {
             //display current date on the button to choose date project
             setDateOnButton(buttonEventDate, getCurrentDate());
@@ -339,18 +339,6 @@ public class AddProjectActivity extends AppCompatActivity {
                 buttonEventDate.setText(strDay + "/" + strMonth + "/" + strYear);
                 eventDate = strDay + "/" + strMonth + "/" + strYear;
                 break;
-            /*case R.id.spinner_button_end_date:
-                if (beginDateButton.getText().toString().length() != 0) {
-                    if (isBeginDateBeforeEndDate(dayOfMonth, month, year)) {
-                        endDateButton.setText(strDay + "/" + strMonth + "/" + strYear);
-                        preferences.edit().putString(END_DATE, strYear + strMonth + strDay).apply();
-                    } else {
-                        Toast.makeText(this, "You have to select a date after the begin date...", Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    Toast.makeText(this, "You have to select a begin date first!", Toast.LENGTH_SHORT).show();
-                }
-                break;*/
             default:
                 break;
         }
@@ -545,5 +533,9 @@ public class AddProjectActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void displaySaveForLaterButton() {
+
     }
 }

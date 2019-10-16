@@ -17,6 +17,7 @@
         android:background="@color/yellow"
         android:orientation="vertical">
     <TextView
+        android:id="@+id/search_activity_text_view_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Search projects in your city!"
@@ -31,8 +32,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginTop="35dp"
-        android:paddingBottom="80dp"
+        android:layout_marginTop="15dp"
+        android:paddingBottom="50dp"
         android:paddingLeft="16dp"
         android:paddingRight="16dp">
             <TextView
@@ -46,6 +47,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@android:color/white"
+                android:maxLines="1"
+                android:singleLine="true"
                 android:backgroundTint="@android:color/white"
                 android:layout_marginStart="15dp"
                 android:layout_marginEnd="10dp"/>
@@ -59,7 +62,7 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:textSize="12sp"
-        android:layout_marginTop="180dp"
+        android:layout_marginTop="135dp"
         android:layout_marginStart="20dp"
         android:textColor="@color/yellow"
         app:iconTint="@color/yellow"
@@ -71,6 +74,7 @@
 </RelativeLayout>
 
     <ScrollView
+        android:id="@+id/search_fragment_scroll_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 

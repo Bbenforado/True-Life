@@ -22,6 +22,7 @@ import com.example.applicationsecond.api.MessageHelper;
 import com.example.applicationsecond.api.UserHelper;
 import com.example.applicationsecond.models.Message;
 import com.example.applicationsecond.models.User;
+import com.example.applicationsecond.utils.ItemClickSupport;
 import com.example.applicationsecond.utils.Utils;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -29,7 +30,9 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
 import java.util.Date;
@@ -109,7 +112,10 @@ public class ChatActivity extends AppCompatActivity implements ChatAdapter.Liste
             Date date = new Date();
             long dateInMillis = date.getTime();
 
-            MessageHelper.createMessageForChat(editTextMessage.getText().toString(),
+            CollectionReference ref = FirebaseFirestore.getInstance().collection("chats");
+            String id = ref.document(currentChatName).collection("messages").document().getId();
+
+            MessageHelper.createMessageForChat(id, editTextMessage.getText().toString(),
                     currentChatName, modelCurrentUser, dateInMillis).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {

@@ -46,6 +46,7 @@ public class ChatAdapter extends FirestoreRecyclerAdapter<Message, ChatViewHolde
                 .inflate(R.layout.activity_chat_item, parent, false));
     }
 
+
     @Override
     public void onDataChanged() {
         super.onDataChanged();

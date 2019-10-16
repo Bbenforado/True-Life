@@ -7,4 +7,10 @@
         android:title="Edit"
         app:showAsAction="ifRoom|withText"/>
 
+    <item
+        android:id="@+id/toolbar_detail_project_chat"
+        android:icon="@drawable/ic_chat_white"
+        android:title="Chat"
+        app:showAsAction="ifRoom|withText"/>
+
 </menu>

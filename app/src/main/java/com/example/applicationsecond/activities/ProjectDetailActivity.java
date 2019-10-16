@@ -44,6 +44,8 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -62,7 +64,6 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
     @BindView(R.id.activity_detail_title) TextView projectTitleTextView;
     @BindView(R.id.activity_detail_publish_date) TextView projectPublishedDateTextView;
     @BindView(R.id.activity_detail_event_date) TextView projectEventDateTextView;
-    @BindView(R.id.activity_detail_end_date) TextView projectEndDateTextView;
     @BindView(R.id.activity_detail_description) TextView projectDescriptionTextView;
     @BindView(R.id.activity_detail_street_number_and_name) TextView projectStreetNameAndStreetNumberTextView;
     @BindView(R.id.activity_detail_postal_code_and_city) TextView projectPostalCodeAndCityTextView;
@@ -70,8 +71,6 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
     @BindView(R.id.project_detail_activity_author_button) ImageView authorPhotoImageView;
     @BindView(R.id.image_detail_activity) ImageView imageView;
     @BindView(R.id.map_view_detail_activity) MapView mapView;
-    @BindView(R.id.activity_detail_image_button_chat)
-    ImageButton chatButton;
     @BindView(R.id.activity_detail_text_view_no_internet) TextView textViewNoInternet;
     @BindView(R.id.activity_detail_image_view_followers) ImageView imageViewFollowers;
     @BindView(R.id.activity_detail_nbr_of_followers) TextView textViewNbrOfFollowers;
@@ -117,24 +116,33 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
         if (!clickedProject.getAuthorId().equals(Utils.getCurrentUser().getUid())) {
             menu.findItem(R.id.edit_item).setVisible(false);
         }
+
+        if (!clickedProject.isPublished()) {
+            menu.findItem(R.id.toolbar_detail_project_chat).setVisible(false);
+        }
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.edit_item) {
-            //launch add project activity with fields completed
-            preferences.edit().putInt(KEY_EDIT_PROJECT, 1).apply();
+        switch (item.getItemId()) {
+            case R.id.edit_item:
+                //launch add project activity with fields completed
+                preferences.edit().putInt(KEY_EDIT_PROJECT, 1).apply();
 
-            Intent editIntent = new Intent(getApplicationContext(), AddProjectActivity.class);
-            String projectId = clickedProject.getId();
-            Bundle bundle = new Bundle();
-            bundle.putString(PROJECT_ID, projectId);
-            editIntent.putExtras(bundle);
-            startActivity(editIntent);
-            return true;
+                Intent editIntent = new Intent(getApplicationContext(), AddProjectActivity.class);
+                String projectId = clickedProject.getId();
+                Bundle bundle = new Bundle();
+                bundle.putString(PROJECT_ID, projectId);
+                editIntent.putExtras(bundle);
+                startActivity(editIntent);
+                return true;
+            case R.id.toolbar_detail_project_chat:
+                openChatForTheProject();
+                return true;
+                default:
+                    return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
     }
     //--------------------------------------
     //CONFIGURATION
@@ -151,7 +159,7 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
     //--------------------------------------
     //ACTIONS
     //----------------------------------------
-    @OnClick(R.id.activity_detail_image_button_chat)
+    //@OnClick(R.id.activity_detail_image_button_chat)
     public void openChatForTheProject() {
         Intent chatIntent = new Intent(this, ChatActivity.class);
         Bundle bundle = new Bundle();
@@ -190,7 +198,8 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
         //String userUid = getCurrentUser().getUid();
         if (isButtonClicked) {
             //change the color of the button
-            buttonFollowProject.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.yellow)));
+            buttonFollowProject.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.darkColor)));
+            buttonFollowProject.setImageDrawable(getResources().getDrawable(R.drawable.ic_check_white));
             //create subscription, maybe list of projects Id in user, so, update a field in user
             String userId = Utils.getCurrentUser().getUid();
             if (clickedProject.getId() != null) {
@@ -211,6 +220,7 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
             }
             //change button color
             buttonFollowProject.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.white)));
+            buttonFollowProject.setImageDrawable(getResources().getDrawable(R.drawable.ic_check));
 
             Toast.makeText(this, "You are not part of this project anymore", Toast.LENGTH_SHORT).show();
         }
@@ -235,20 +245,19 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
         //check if user subscribed to this project maybe
         if (user.getProjectsSubscribedId() != null) {
             if (user.getProjectsSubscribedId().contains(projectId)) {
-                buttonFollowProject.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.yellow)));
+                buttonFollowProject.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.darkColor)));
+                buttonFollowProject.setImageDrawable(getResources().getDrawable(R.drawable.ic_check_white));
                 isButtonClicked = true;
             } else {
                 buttonFollowProject.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.white)));
+                buttonFollowProject.setImageDrawable(getResources().getDrawable(R.drawable.ic_check));
                 isButtonClicked = false;
             }
         }
     }
 
     private void displayButtonChat() {
-        if (!clickedProject.isPublished()) {
-            chatButton.setEnabled(false);
-            chatButton.setVisibility(View.GONE);
-        }
+
     }
 
     @SuppressLint("RestrictedApi")
@@ -292,13 +301,11 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
 
         projectTitleTextView.setText(project.getTitle());
         if (project.getCreationDate() != null) {
-            projectPublishedDateTextView.setText(project.getCreationDate().toString());
+            String date = new SimpleDateFormat("dd/MM/yyyy").format(project.getCreationDate());
+            projectPublishedDateTextView.setText(date);
         }
         if (project.getEventDate() != null) {
             projectEventDateTextView.setText(project.getEventDate());
-        }
-        if (project.getEndDate() != null) {
-            projectEndDateTextView.setText(project.getEndDate().toString());
         }
         projectDescriptionTextView.setText(project.getDescription());
         if (project.getAuthorId() != null) {

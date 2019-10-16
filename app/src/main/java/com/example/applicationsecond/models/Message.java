@@ -6,6 +6,7 @@ import java.util.Date;
 
 public class Message {
     private String message;
+    private String id;
     private Date dateCreated;
     private User userSender;
     private String urlImage;
@@ -14,7 +15,8 @@ public class Message {
 
     public Message() { }
 
-    public Message(String message, User userSender, String chatName, long dateInMilliseconds) {
+    public Message(String id, String message, User userSender, String chatName, long dateInMilliseconds) {
+        this.id = id;
         this.message = message;
         this.userSender = userSender;
         this.chatName = chatName;
@@ -55,5 +57,13 @@ public class Message {
 
     public void setDateInMilliseconds(long dateInMilliseconds) {
         this.dateInMilliseconds = dateInMilliseconds;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

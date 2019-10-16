@@ -1,5 +1,8 @@
 package com.example.applicationsecond.adapters;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.view.View;
@@ -7,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -16,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.applicationsecond.R;
+import com.example.applicationsecond.api.MessageHelper;
 import com.example.applicationsecond.models.Message;
 
 import java.text.DateFormat;
@@ -47,10 +52,12 @@ public class ChatViewHolder extends RecyclerView.ViewHolder {
     //-------------------------------------
     private Drawable drawableCurrentUser;
     private Drawable drawableRemoteUser;
+    private Context context;
 
     public ChatViewHolder(@NonNull View itemView) {
         super(itemView);
         ButterKnife.bind(this, itemView);
+        context = itemView.getContext();
         drawableCurrentUser = ContextCompat.getDrawable(itemView.getContext(), R.drawable.bubble_style_user_sender);
         drawableRemoteUser = ContextCompat.getDrawable(itemView.getContext(), R.drawable.bubble_style);
     }
@@ -82,6 +89,30 @@ public class ChatViewHolder extends RecyclerView.ViewHolder {
         //Update Message Bubble Color Background
         textMessageContainer.setBackground(isCurrentUser ? drawableCurrentUser : drawableRemoteUser);
         updateDesignDependingOnUser(isCurrentUser);
+
+        if (isCurrentUser) {
+            textViewMessage.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    //display dialog to delete message
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    builder.setMessage("Do you want to delete this message?")
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    if (message.getId() != null) {
+                                        MessageHelper.deleteMessage(message.getChatName(), message.getId());
+                                    }
+                                }
+                            })
+                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+
+                                }
+                            }).create().show();
+                    return true;
+                }
+            });
+        }
     }
 
     private void updateDesignDependingOnUser(Boolean isSender) {

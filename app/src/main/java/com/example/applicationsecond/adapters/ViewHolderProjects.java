@@ -30,8 +30,6 @@ public class ViewHolderProjects extends RecyclerView.ViewHolder {
     TextView ownerOfPostTextView;
     @BindView(R.id.content_of_news) TextView contentOfNewsTextView;
     @BindView(R.id.title_of_news) TextView titleTextView;
-    @BindView(R.id.text_view_view_more)
-    TextView textViewViewMore;
     @BindView(R.id.date_creation_project_item) TextView dateCreationProjectTextView;
     @BindView(R.id.image_view_verified_fragment_page_item)
     ImageView imageViewAssociationIcon;
