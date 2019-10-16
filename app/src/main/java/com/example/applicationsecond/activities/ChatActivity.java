@@ -32,6 +32,8 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.Query;
 
+import java.util.Date;
+
 import javax.annotation.Nullable;
 
 import butterknife.BindView;
@@ -59,19 +61,31 @@ public class ChatActivity extends AppCompatActivity implements ChatAdapter.Liste
     private ChatAdapter adapter;
     @Nullable private User modelCurrentUser;
     private String currentChatName;
+    private SharedPreferences preferences;
     //---------------------------------------------
     //---------------------------------------------
+    public static final String APP_PREFERENCES = "appPreferences";
+    public static final String LAST_VISIT_TIME = "lastVisitTime";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
         ButterKnife.bind(this);
+        preferences = getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE);
 
         configureToolbar();
         String chatName = getIntent().getExtras().getString("chatName");
         configureRecyclerView(chatName);
         getCurrentUserFromFirestore();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Date date = new Date();
+        String dateString = date.toString();
+        preferences.edit().putString(LAST_VISIT_TIME, dateString).apply();
     }
 
     //---------------------------------------
@@ -92,8 +106,11 @@ public class ChatActivity extends AppCompatActivity implements ChatAdapter.Liste
     public void onClickSendMessage() {
         if (!TextUtils.isEmpty(editTextMessage.getText()) &&
                 modelCurrentUser != null) {
+            Date date = new Date();
+            long dateInMillis = date.getTime();
+
             MessageHelper.createMessageForChat(editTextMessage.getText().toString(),
-                    currentChatName, modelCurrentUser).addOnFailureListener(new OnFailureListener() {
+                    currentChatName, modelCurrentUser, dateInMillis).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
                     Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_SHORT).show();

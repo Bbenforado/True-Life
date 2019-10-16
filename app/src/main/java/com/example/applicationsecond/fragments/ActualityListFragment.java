@@ -85,6 +85,8 @@ public class ActualityListFragment extends Fragment implements AdapterRecyclerVi
     private static final String APP_PREFERENCES = "appPreferences";
     private static final String CLICKED_PROJECT = "clickedProject";
     public static final String ASSOCIATION_ID = "associationId";
+    public static final String KEYWORD = "keyword";
+    public static final String CITY = "city";
 
     public ActualityListFragment() {
         // Required empty public constructor
@@ -147,11 +149,18 @@ public class ActualityListFragment extends Fragment implements AdapterRecyclerVi
                 adapter = new AdapterRecyclerViewProjects(generateOptionsForAdapter(ProjectHelper.getPublishedProjects(assoId)),
                 Glide.with(this), this);
                 break;
+            case "searchResults":
+                String city = preferences.getString(CITY, null).toLowerCase();
+                adapter = new AdapterRecyclerViewProjects(generateOptionsForAdapter(ProjectHelper.getProjectsDependingOnCity(city)),
+                        Glide.with(this), this);
+                break;
+
             case "defaultScreen":
                 /*adapter = new AdapterRecyclerViewProjects(generateOptionsForAdapter(ProjectHelper.getProjectsForOneUser(Utils.getCurrentUser().getUid())),
                         Glide.with(this), this);*/
                 adapter = new AdapterRecyclerViewProjects(generateOptionsForAdapter(ProjectHelper.getProjects()),
                         Glide.with(this), this);
+                break;
 
         }
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));

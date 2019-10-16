@@ -156,6 +156,7 @@ public class ProfileActivity extends AppCompatActivity {
         textViewUsername.setVisibility(View.VISIBLE);
         textViewCountryCity.setEnabled(false);
         textViewCountryCity.setTextColor(defaultColor);
+        imageViewChangeProfilePicture.setVisibility(View.GONE);
     }
 
     //-------------------------------------------------
@@ -309,9 +310,12 @@ public class ProfileActivity extends AppCompatActivity {
                     } else if (user.getCountry() == null && user.getCity() != null) {
                         textViewCountryCity.setText(user.getCity());
                     } else if (user.getCountry() == null && user.getCity() == null) {
-                        //textViewCountryCity.setVisibility(View.GONE);
                         imageViewAddCountryCity.setVisibility(View.VISIBLE);
-                        textViewCountryCity.setText("Add a country and a city");
+                        if (isCurrentUsersProfile) {
+                            textViewCountryCity.setText("Add a country and a city");
+                        } else {
+                            textViewCountryCity.setVisibility(View.GONE);
+                        }
                     }
                 }
             }

@@ -42,6 +42,7 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:orientation="vertical">
                 <TextView
                     android:id="@+id/text_view_association_name_association_profile_activity"
@@ -50,14 +51,13 @@
                     android:text="name of the association"
                     android:textStyle="bold"
                     android:textSize="18sp"
-                    android:layout_marginLeft="15dp"/>
+                    android:layout_marginLeft="25dp"/>
 
                 <TextView
                     android:id="@+id/association_profile_activity_text_view_city_country"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="15dp"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginLeft="25dp"
                     android:text="city, country"
                     android:textSize="10sp"/>
 

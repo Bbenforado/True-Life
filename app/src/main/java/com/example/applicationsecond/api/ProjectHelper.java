@@ -62,9 +62,24 @@ public class ProjectHelper {
                 .limit(50);
     }
 
+    public static Query getProjectsDependingOnCity(String city) {
+        return ProjectHelper.getProjectsCollection()
+                .whereEqualTo("published", true)
+                .whereEqualTo("city", city)
+                .limit(50);
+    }
+
     public static Query getProjects() {
         return ProjectHelper.getProjectsCollection()
                 .limit(50);
+    }
+
+    public static Task<QuerySnapshot> getProjectsOfACity(String city) {
+        return ProjectHelper.getProjectsCollection().whereEqualTo("city", city).get();
+    }
+
+    public static Task<QuerySnapshot> getProjectsDependingOnKeyWords(String keyword) {
+        return ProjectHelper.getProjectsCollection().whereArrayContains("title", keyword).get();
     }
 
 

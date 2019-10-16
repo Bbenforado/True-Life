@@ -136,7 +136,6 @@ public class PostListFragment extends Fragment {
                                                 recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                                                 recyclerView.setAdapter(adapter);
                                             }
-
                                         }
                                     });
                                 }

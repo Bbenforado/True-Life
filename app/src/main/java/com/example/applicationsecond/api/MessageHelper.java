@@ -34,8 +34,8 @@ public class MessageHelper {
 
     public static Task<DocumentReference> createMessageForChat(String textMessage,
                                                                String chatName,
-                                                               User userSender) {
-        Message message = new Message(textMessage, userSender, chatName);
+                                                               User userSender, long timeInMilliseconds) {
+        Message message = new Message(textMessage, userSender, chatName, timeInMilliseconds);
         return ChatHelper.getChatCollection().document(chatName).collection(COLLECTION_NAME)
                 .add(message);
     }

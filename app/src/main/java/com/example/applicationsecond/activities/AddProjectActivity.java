@@ -172,12 +172,10 @@ public class AddProjectActivity extends AppCompatActivity {
         if (preferences.getInt(KEY_EDIT_PROJECT, -1) == 1) {
             updateProjectInFireBase();
             Toast.makeText(this, "Project updated!", Toast.LENGTH_SHORT).show();
-            //finish();
             //launch main activity
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
         } else {
-            //boolean isLocationCompleted = checkIfLocationIsFilled();
             if (fieldsAreCorrectlyFilled()) {
                 saveProjectInFireBase();
                 Toast.makeText(this, "Project published!", Toast.LENGTH_SHORT).show();
@@ -370,7 +368,7 @@ public class AddProjectActivity extends AppCompatActivity {
         String streetNbr = streetNumberEditText.getText().toString();
         String streetName = streetNameEditText.getText().toString();
         String postalCode = postalCodeEditText.getText().toString();
-        String city = cityEditText.getText().toString();
+        String city = cityEditText.getText().toString().toLowerCase();
         String country = countryEditText.getText().toString();
 
         String latLng = Utils.getLatLngOfProject(this, streetNbr, streetName, city, postalCode, country);
@@ -415,7 +413,7 @@ public class AddProjectActivity extends AppCompatActivity {
             postalCode = postalCodeEditText.getText().toString();
         }
         if (!TextUtils.isEmpty(cityEditText.getText())) {
-            city = cityEditText.getText().toString();
+            city = cityEditText.getText().toString().toLowerCase();
         }
         if (!TextUtils.isEmpty(countryEditText.getText())) {
             country = countryEditText.getText().toString();
@@ -470,7 +468,7 @@ public class AddProjectActivity extends AppCompatActivity {
         String streetNumber = streetNumberEditText.getText().toString();
         String streetName = streetNameEditText.getText().toString();
         String postalCode = postalCodeEditText.getText().toString();
-        String city = cityEditText.getText().toString();
+        String city = cityEditText.getText().toString().toLowerCase();
         String country = countryEditText.getText().toString();
 
         ProjectHelper.updateTitle(projectId, title);

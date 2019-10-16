@@ -1,10 +1,12 @@
 package com.example.applicationsecond.adapters;
 
+import android.content.Context;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.request.RequestOptions;
@@ -20,10 +22,12 @@ public class ViewHolderUsers extends RecyclerView.ViewHolder {
     ImageView imageView;
     @BindView(R.id.user_list_fragment_item_username)
     TextView textViewUsername;
+    private Context context;
 
 
     public ViewHolderUsers(@NonNull View itemView) {
         super(itemView);
+        context = itemView.getContext();
         ButterKnife.bind(this, itemView);
     }
 
@@ -32,6 +36,8 @@ public class ViewHolderUsers extends RecyclerView.ViewHolder {
             glide.load(user.getUrlPhoto())
                     .apply(RequestOptions.circleCropTransform())
                     .into(imageView);
+        } else {
+            imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_profile));
         }
 
         textViewUsername.setText(user.getUsername());

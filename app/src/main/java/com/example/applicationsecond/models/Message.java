@@ -10,13 +10,15 @@ public class Message {
     private User userSender;
     private String urlImage;
     private String chatName;
+    private long dateInMilliseconds;
 
     public Message() { }
 
-    public Message(String message, User userSender, String chatName) {
+    public Message(String message, User userSender, String chatName, long dateInMilliseconds) {
         this.message = message;
         this.userSender = userSender;
         this.chatName = chatName;
+        this.dateInMilliseconds = dateInMilliseconds;
     }
 
     public Message(String message, String urlImage, User userSender) {
@@ -45,5 +47,13 @@ public class Message {
 
     public void setChatName(String chatName) {
         this.chatName = chatName;
+    }
+
+    public long getDateInMilliseconds() {
+        return dateInMilliseconds;
+    }
+
+    public void setDateInMilliseconds(long dateInMilliseconds) {
+        this.dateInMilliseconds = dateInMilliseconds;
     }
 }

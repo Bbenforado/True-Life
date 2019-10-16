@@ -34,15 +34,12 @@ public class ViewHolderUsersChats extends RecyclerView.ViewHolder {
     TextView textViewLastMessage;
     @BindView(R.id.user_chats_activity_item_title) TextView textViewTitle;
     @BindView(R.id.user_chats_activity_item_time) TextView textViewTime;
+    @BindView(R.id.user_chats_activity_item_unread_message_text_view) TextView textViewUnreadMessages;
 
     public ViewHolderUsersChats(@NonNull View itemView) {
         super(itemView);
         ButterKnife.bind(this, itemView);
     }
-
-    /*public void updateUi(Message message, RequestManager glide) {
-        System.out.println("UPDATING...");
-    }*/
 
     public void updateUi(Message message, RequestManager glide) {
         textViewLastMessage.setText(message.getMessage());

@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ViewSwitcher;
@@ -30,7 +31,10 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -49,6 +53,11 @@ public class UsersChatActivity extends AppCompatActivity{
     private AdapterUsersChats adapter;
     private List<String> usersChats;
     private List<Message> messageList;
+    private SharedPreferences preferences;
+    private long userLastVisit;
+    //---------------------------------------
+    public static final String APP_PREFERENCES = "appPreferences";
+    public static final String LAST_VISIT_TIME = "lastVisitTime";
 
 
     @Override
@@ -56,6 +65,17 @@ public class UsersChatActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_users_chat);
         ButterKnife.bind(this);
+        preferences = getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE);
+
+        if (preferences.getString(LAST_VISIT_TIME, null) != null) {
+            try {
+                Date date = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").parse(preferences.getString(LAST_VISIT_TIME, null));
+                userLastVisit = date.getTime();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+
 
         configureToolbar();
         configureRecyclerView();
@@ -92,13 +112,17 @@ public class UsersChatActivity extends AppCompatActivity{
                         if (user.getProjectsSubscribedId().size() > 0) {
                             for (int i = 0; i < user.getProjectsSubscribedId().size(); i++) {
                                 Query query = ChatHelper.getChatCollection().document(user.getProjectsSubscribedId().get(i)).collection("messages")
-                                        .orderBy("dateCreated", Query.Direction.DESCENDING)
-                                        .limit(1);
+                                        .orderBy("dateCreated", Query.Direction.DESCENDING);
                                 query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                     @Override
                                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                         if (task.isSuccessful()) {
-                                            if (task.getResult() != null) {
+
+                                            int unreadMessages = task.getResult().getDocuments().size();
+
+                                            System.out.println("unread messages = " + unreadMessages);
+
+                                            if (task.getResult().getDocuments().size() > 0) {
                                                 Message message = task.getResult().getDocuments().get(0).toObject(Message.class);
                                                 messageList.add(message);
                                                 adapter = new AdapterUsersChats(messageList, Glide.with(getApplicationContext()));

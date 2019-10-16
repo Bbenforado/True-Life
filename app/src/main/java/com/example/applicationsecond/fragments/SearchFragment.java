@@ -21,7 +21,9 @@ import android.widget.EditText;
 import com.example.applicationsecond.R;
 import com.example.applicationsecond.activities.MainActivity;
 import com.example.applicationsecond.adapters.AdapterRecyclerViewUsers;
+import com.example.applicationsecond.api.ProjectHelper;
 import com.example.applicationsecond.api.UserHelper;
+import com.example.applicationsecond.models.Project;
 import com.example.applicationsecond.models.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -36,18 +38,21 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
+
 /**
  * A simple {@link Fragment} subclass.
  */
 public class SearchFragment extends Fragment {
 
-    @BindView(R.id.input_username_search_fragment)
-    EditText inputUsername;
+    @BindView(R.id.input_city) EditText inputCity;
     //-----------------------------
     private List<User> users;
     private SharedPreferences preferences;
     public static final String APP_PREFERENCES = "appPreferences";
     public static final String RESULTS = "results";
+    public static final String KEYWORD = "keyword";
+    public static final String CITY = "city";
 
 
 
@@ -69,34 +74,37 @@ public class SearchFragment extends Fragment {
 
     @OnClick(R.id.button_search_fragment)
     public void searchData() {
-        if (!TextUtils.isEmpty(inputUsername.getText().toString())) {
-            UserHelper.getUserForSearchOnName(inputUsername.getText().toString()).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        if (!TextUtils.isEmpty(inputCity.getText().toString())) {
+
+            ActualityListFragment fragment = new ActualityListFragment("searchResults");
+            preferences.edit().putString(CITY, inputCity.getText().toString()).apply();
+            //getActivity().finish();
+            showFragment(fragment);
+
+      /*      ProjectHelper.getProjectsDependingOnKeyWords(inputKeyword.getText().toString()).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                     if (task.isSuccessful()) {
+                        List<Project> projects = new ArrayList<>();
+
                         for (QueryDocumentSnapshot document : task.getResult()) {
-                            User user = document.toObject(User.class);
-                            users = new ArrayList<>();
-                            users.add(user);
+                            Project project = document.toObject(Project.class);
+                            projects.add(project);
                         }
 
-                        //send the result found to the fragment that will display results
-                        Gson gson = new Gson();
-                        preferences.edit().putString(RESULTS, gson.toJson(users)).apply();
-                        UserListFragment fragment = new UserListFragment();
-                        showFragment(fragment);
 
 
                     }
                 }
             });
+        }*/
         }
     }
 
     public void showFragment(Fragment fragment) {
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.replace(R.id.frame_layout_content_main_activity, fragment);
+        transaction.replace(R.id.search_content, fragment);
         transaction.commit();
     }
 

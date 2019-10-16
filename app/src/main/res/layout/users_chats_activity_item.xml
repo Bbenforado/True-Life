@@ -52,14 +52,26 @@
 
 
 
-                <TextView
-                    android:id="@+id/user_chats_activity_item_last_message"
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="15dp"
-                    android:text="message"
-                    android:textStyle="italic"
-                    android:textSize="12sp"/>
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/user_chats_activity_item_last_message"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="15dp"
+                        android:text="message"
+                        android:textStyle="italic"
+                        android:textSize="12sp"/>
+
+                    <TextView
+                        android:id="@+id/user_chats_activity_item_unread_message_text_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+
+                </LinearLayout>
 
             </LinearLayout>
 

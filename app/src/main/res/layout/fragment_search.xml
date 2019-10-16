@@ -7,80 +7,81 @@
     android:orientation="vertical"
     tools:context="fragments.SearchFragment">
 
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <LinearLayout
+        android:id="@+id/id_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/yellow"
+        android:orientation="vertical">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Search projects in your city!"
+        android:textSize="25sp"
+        android:textColor="@android:color/white"
+        android:layout_gravity="center"
+        android:paddingRight="16dp"
+        android:paddingLeft="16dp"
+        android:paddingTop="16dp"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="16dp">
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_weight="1">
-
+        android:layout_marginTop="35dp"
+        android:paddingBottom="80dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp">
             <TextView
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="Country :"/>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
+                android:textColor="@android:color/white"
                 android:text="City :"/>
 
-            <TextView
-                android:layout_width="wrap_content"
+            <EditText
+                android:id="@+id/input_city"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
-                android:text="Key words :"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
-                android:text="Username :"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-            <EditText
-                android:id="@+id/input_username_search_fragment"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-        </LinearLayout>
+                android:textColor="@android:color/white"
+                android:backgroundTint="@android:color/white"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="10dp"/>
+    </LinearLayout>
 
     </LinearLayout>
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/button_search_fragment"
-        style="@style/Widget.AppCompat.Button.Borderless"
-        android:background="@drawable/button_style"
+        style="@style/Widget.MaterialComponents.Button"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
+        android:textSize="12sp"
+        android:layout_marginTop="180dp"
         android:layout_marginStart="20dp"
+        android:textColor="@color/yellow"
+        app:iconTint="@color/yellow"
+        android:backgroundTint="@android:color/white"
         android:layout_marginEnd="20dp"
+        app:icon="@drawable/ic_search_white_tiny"
         android:text="Search"/>
+
+</RelativeLayout>
+
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <FrameLayout
+            android:id="@+id/search_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </FrameLayout>
+
+    </ScrollView>
 
 
 </LinearLayout>
