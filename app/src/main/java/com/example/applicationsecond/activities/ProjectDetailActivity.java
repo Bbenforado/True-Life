@@ -25,6 +25,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.example.applicationsecond.R;
 import com.example.applicationsecond.api.ProjectHelper;
 import com.example.applicationsecond.api.UserHelper;
+import com.example.applicationsecond.fragments.FollowersModalFragment;
 import com.example.applicationsecond.models.Project;
 import com.example.applicationsecond.models.User;
 import com.example.applicationsecond.utils.Utils;
@@ -174,7 +175,8 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
     @OnClick(R.id.detail_activity_layout_nbr_follower)
     public void displayNumberOfFollower() {
         //display modal bottom sheet that will display a list of follower
-        Toast.makeText(getApplicationContext(), "Soon you ll be able to display the list of the follower for this project", Toast.LENGTH_SHORT).show();
+        FollowersModalFragment.newInstance(clickedProject.getId())
+                .show(this.getSupportFragmentManager(), "MODAL");
     }
 
     @OnClick(R.id.project_detail_activity_author_button)
