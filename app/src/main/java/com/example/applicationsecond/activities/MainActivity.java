@@ -124,6 +124,32 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_toolbar, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.toolbar_search:
+                showFragment(searchFragment);
+                actionBar.setTitle("Search");
+                return true;
+            case R.id.toolbar_add:
+                if (isCurrentUserAssociation) {
+                    displayPostOrProjectDialog();
+                } else {
+                    Intent addProject = new Intent(getApplicationContext(), AddProjectActivity.class);
+                    startActivity(addProject);
+                }
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
     //------------------------------------
     //CONFIGURATION
     //--------------------------------------
@@ -154,22 +180,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         showFragment(postListFragment);
                         actionBar.setTitle("Posts");
                         return true;
-                    case R.id.navigation_add:
+               /*     case R.id.navigation_add:
                         if (isCurrentUserAssociation) {
                             displayPostOrProjectDialog();
                         } else {
                             Intent addProject = new Intent(getApplicationContext(), AddProjectActivity.class);
                             startActivity(addProject);
                         }
-                        return true;
+                        return true;*/
                     case R.id.navigation_map:
                         showFragment(mapFragment);
                         actionBar.setTitle("Map");
                         return true;
-                    case R.id.navigation_search:
+               /*     case R.id.navigation_search:
                         showFragment(searchFragment);
                         actionBar.setTitle("Search");
-                        return true;
+                        return true;*/
                 }
                 return false;
             }

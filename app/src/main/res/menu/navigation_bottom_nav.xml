@@ -12,20 +12,20 @@
         android:title="Posts"
         android:icon="@drawable/ic_post"/>
 
-    <item
+    <!--<item
         android:id="@+id/navigation_add"
         android:title="Add"
-        android:icon="@drawable/ic_add"/>
+        android:icon="@drawable/ic_add"/>-->
 
     <item
         android:id="@+id/navigation_map"
         android:title="Map"
         android:icon="@drawable/ic_map"/>
 
-    <item
+   <!-- <item
         android:id="@+id/navigation_search"
         android:title="Search"
-        android:icon="@drawable/search_small"/>
+        android:icon="@drawable/search_small"/>-->
 
 
 
