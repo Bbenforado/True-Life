@@ -18,9 +18,12 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.applicationsecond.R;
 import com.example.applicationsecond.adapters.ChatAdapter;
+import com.example.applicationsecond.api.ChatHelper;
 import com.example.applicationsecond.api.MessageHelper;
+import com.example.applicationsecond.api.ProjectHelper;
 import com.example.applicationsecond.api.UserHelper;
 import com.example.applicationsecond.models.Message;
+import com.example.applicationsecond.models.Project;
 import com.example.applicationsecond.models.User;
 import com.example.applicationsecond.utils.ItemClickSupport;
 import com.example.applicationsecond.utils.Utils;
@@ -34,8 +37,12 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.annotation.Nullable;
 
@@ -112,6 +119,8 @@ public class ChatActivity extends AppCompatActivity implements ChatAdapter.Liste
             Date date = new Date();
             long dateInMillis = date.getTime();
 
+            ChatHelper.createChat(currentChatName);
+
             CollectionReference ref = FirebaseFirestore.getInstance().collection("chats");
             String id = ref.document(currentChatName).collection("messages").document().getId();
 
@@ -120,6 +129,36 @@ public class ChatActivity extends AppCompatActivity implements ChatAdapter.Liste
                 @Override
                 public void onFailure(@NonNull Exception e) {
                     Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            MessageHelper.getLastMessageOfAChat(currentChatName).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            Message message = document.toObject(Message.class);
+                            ChatHelper.updateLastMessage(currentChatName, message);
+                        }
+                    }
+                }
+            });
+
+            ProjectHelper.getProject(currentChatName).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        Project project = task.getResult().toObject(Project.class);
+                        if (project.getUsersWhoSubscribed() != null) {
+                            if (project.getUsersWhoSubscribed().size() > 0) {
+                                List<String> users = new ArrayList<>();
+                                for (int i = 0; i < project.getUsersWhoSubscribed().size(); i++) {
+                                    users.add(project.getUsersWhoSubscribed().get(i));
+                                    ChatHelper.updateInvolvedUsers(currentChatName, users);
+                                }
+                            }
+                        }
+                    }
                 }
             });
             editTextMessage.setText("");

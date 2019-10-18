@@ -70,7 +70,9 @@ public class ChatViewHolder extends RecyclerView.ViewHolder {
         textViewMessage.setText(message.getMessage());
         textViewMessage.setTextAlignment(isCurrentUser ? View.TEXT_ALIGNMENT_TEXT_END : View.TEXT_ALIGNMENT_TEXT_START);
         if (message.getDateCreated() != null) {
-            textViewDate.setText(convertDateToHour(message.getDateCreated()));
+
+            String timeAndSenderName = resizeUsername(message.getUserSender().getUsername()) + ", " + convertDateToHour(message.getDateCreated());
+            textViewDate.setText(timeAndSenderName);
         }
 
         if (message.getUserSender().getUrlPhoto() != null) {
@@ -113,6 +115,13 @@ public class ChatViewHolder extends RecyclerView.ViewHolder {
                 }
             });
         }
+    }
+
+    private String resizeUsername(String username) {
+        if (username.length() >= 10) {
+            username = username.substring(0, 10);
+        }
+        return username;
     }
 
     private void updateDesignDependingOnUser(Boolean isSender) {

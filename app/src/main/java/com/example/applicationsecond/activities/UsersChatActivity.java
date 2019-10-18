@@ -40,7 +40,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class UsersChatActivity extends AppCompatActivity{
+public class UsersChatActivity extends AppCompatActivity implements AdapterUsersChats.Listener{
 
     //----------------------------
     //BINDVIEWS
@@ -82,12 +82,12 @@ public class UsersChatActivity extends AppCompatActivity{
         configureOnClickRecyclerView();
     }
 
-    /*private void configureRecyclerView() {
-        adapter = new AdapterUsersChats(generateOptionsForAdapter(ChatHelper.getAllChat()),
+    private void configureRecyclerView() {
+        adapter = new AdapterUsersChats(generateOptionsForAdapter(ChatHelper.getChatWhereTheUserIsInvolved(Utils.getCurrentUser().getUid())),
                         Glide.with(this), this);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
-    }*/
+    }
 
     //---------------------------------------
     //CONFIGURATION
@@ -100,7 +100,7 @@ public class UsersChatActivity extends AppCompatActivity{
         actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
-    private void configureRecyclerView() {
+  /*  private void configureRecyclerView() {
         UserHelper.getUser(Utils.getCurrentUser().getUid()).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -138,15 +138,15 @@ public class UsersChatActivity extends AppCompatActivity{
                 }
             }
         });
-    }
+    }*/
 
     private void configureOnClickRecyclerView() {
         ItemClickSupport.addTo(recyclerView, R.layout.users_chats_activity_item)
                 .setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
                     @Override
                     public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-                        Message message = adapter.getItem(position);
-                        launchChatActivity(message.getChatName());
+
+                        //launchChatActivity(message.getChatName());
                     }
                 });
     }
@@ -159,15 +159,15 @@ public class UsersChatActivity extends AppCompatActivity{
         startActivity(chatIntent);
     }
 
-    private FirestoreRecyclerOptions<Message> generateOptionsForAdapter(Query query){
-        return new FirestoreRecyclerOptions.Builder<Message>()
-                .setQuery(query, Message.class)
+    private FirestoreRecyclerOptions<Chat> generateOptionsForAdapter(Query query){
+        return new FirestoreRecyclerOptions.Builder<Chat>()
+                .setQuery(query, Chat.class)
                 .setLifecycleOwner(this)
                 .build();
     }
 
-    /*@Override
+    @Override
     public void onDataChanged() {
         viewSwitcher.setDisplayedChild(adapter.getItemCount() == 0? 1 : 0);
-    }*/
+    }
 }

@@ -16,30 +16,24 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 
 import java.util.List;
 
-public class AdapterUsersChats extends RecyclerView.Adapter<ViewHolderUsersChats> {
+public class AdapterUsersChats extends FirestoreRecyclerAdapter<Chat, ViewHolderUsersChats> {
 
 
-   /* public interface Listener {
+    public interface Listener {
         void onDataChanged();
-    }*/
-   private List<Message> messages;
+    }
 
     private RequestManager glide;
-   // private AdapterUsersChats.Listener callback;
+    private AdapterUsersChats.Listener callback;
 
-    /*public AdapterUsersChats(@NonNull FirestoreRecyclerOptions<Message> options, RequestManager glide, Listener callback) {
+    public AdapterUsersChats(@NonNull FirestoreRecyclerOptions<Chat> options, RequestManager glide, Listener callback) {
         super(options);
         this.glide = glide;
         this.callback = callback;
-    }*/
-    public AdapterUsersChats(List<Message> messages, RequestManager glide) {
+    }
+    /*public AdapterUsersChats(List<Message> messages, RequestManager glide) {
         this.messages = messages;
         this.glide = glide;
-    }
-
-    /*@Override
-    protected void onBindViewHolder(@NonNull ViewHolderUsersChats viewHolderUsersChats, int i, @NonNull Message message) {
-        viewHolderUsersChats.updateUi(message, glide);
     }*/
 
     @NonNull
@@ -49,23 +43,28 @@ public class AdapterUsersChats extends RecyclerView.Adapter<ViewHolderUsersChats
         .inflate(R.layout.users_chats_activity_item, parent, false));
     }
 
-    @Override
+    /*@Override
     public void onBindViewHolder(@NonNull ViewHolderUsersChats holder, int position) {
         holder.updateUi(messages.get(position), glide);
-    }
+    }*/
 
-    @Override
+   /* @Override
     public int getItemCount() {
         return messages.size();
     }
 
     public Message getItem(int position) {
         return messages.get(position);
-    }
+    }*/
 
-    /*@Override
+    @Override
     public void onDataChanged() {
         super.onDataChanged();
         this.callback.onDataChanged();
-    }*/
+    }
+
+    @Override
+    protected void onBindViewHolder(@NonNull ViewHolderUsersChats viewHolderUsersChats, int i, @NonNull Chat chat) {
+        viewHolderUsersChats.updateUi(chat, glide);
+    }
 }

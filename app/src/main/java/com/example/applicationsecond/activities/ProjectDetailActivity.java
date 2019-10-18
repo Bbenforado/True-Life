@@ -23,9 +23,11 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.applicationsecond.R;
+import com.example.applicationsecond.api.ChatHelper;
 import com.example.applicationsecond.api.ProjectHelper;
 import com.example.applicationsecond.api.UserHelper;
 import com.example.applicationsecond.fragments.FollowersModalFragment;
+import com.example.applicationsecond.models.Chat;
 import com.example.applicationsecond.models.Project;
 import com.example.applicationsecond.models.User;
 import com.example.applicationsecond.utils.Utils;
@@ -217,6 +219,7 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
                 String projectId = clickedProject.getId();
                 ProjectHelper.addSubscriptionToProject(projectId, userId);
                 UserHelper.addProjectsSubscriptions(userId, projectId);
+                ChatHelper.addInvolvedUser(projectId, userId);
             }
             Toast.makeText(this, "You are taking part in this project! You can contact the team through the chat!", Toast.LENGTH_SHORT).show();
 
@@ -228,6 +231,7 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
                 String projectId = clickedProject.getId();
                 ProjectHelper.removeProjectSubscription(projectId, userId);
                 UserHelper.removeProjectSubscription(userId, projectId);
+                ChatHelper.removeInvolvedUser(projectId, userId);
             }
             //change button color
             buttonFollowProject.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.white)));
