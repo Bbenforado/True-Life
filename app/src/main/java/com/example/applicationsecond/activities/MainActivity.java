@@ -282,9 +282,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 User currentUser = documentSnapshot.toObject(User.class);
-                if (currentUser.getLastChatVisit() != null) {
+                /*if (currentUser.getLastChatVisit() != null) {
                     getUnreadMessages(currentUser.getLastChatVisit());
-                }
+                }*/
                 isCurrentUserAssociation = currentUser.isAssociation();
                 String id = currentUser.getId();
                 preferences.edit().putString(USER_ID, id).apply();

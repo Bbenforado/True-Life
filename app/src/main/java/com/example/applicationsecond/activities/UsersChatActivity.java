@@ -52,10 +52,9 @@ public class UsersChatActivity extends AppCompatActivity implements AdapterUsers
     //------------------------------------
     private AdapterUsersChats adapter;
     private SharedPreferences preferences;
-    private long userLastVisit;
+    private User user;
     //---------------------------------------
     public static final String APP_PREFERENCES = "appPreferences";
-    public static final String LAST_VISIT_TIME = "lastVisitTime";
 
 
     @Override
@@ -64,25 +63,25 @@ public class UsersChatActivity extends AppCompatActivity implements AdapterUsers
         setContentView(R.layout.activity_users_chat);
         ButterKnife.bind(this);
         preferences = getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE);
-
-   /*     if (preferences.getString(LAST_VISIT_TIME, null) != null) {
-            try {
-                Date date = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").parse(preferences.getString(LAST_VISIT_TIME, null));
-                userLastVisit = date.getTime();
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-        }*/
-
-
         configureToolbar();
-        configureRecyclerView();
+        UserHelper.getUser(Utils.getCurrentUser().getUid()).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    user = task.getResult().toObject(User.class);
+                    configureRecyclerView();
+                }
+            }
+        });
+
+
+        //configureRecyclerView();
     }
 
     private void configureRecyclerView() {
         adapter = new AdapterUsersChats(generateOptionsForAdapter(ChatHelper.getChatWhereTheUserIsInvolved(Utils.getCurrentUser().getUid())),
-                        Glide.with(this), this);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+                Glide.with(getApplicationContext()), this);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         recyclerView.setAdapter(adapter);
     }
 

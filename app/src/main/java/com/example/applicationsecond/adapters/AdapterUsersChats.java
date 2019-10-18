@@ -11,6 +11,7 @@ import com.bumptech.glide.RequestManager;
 import com.example.applicationsecond.R;
 import com.example.applicationsecond.models.Chat;
 import com.example.applicationsecond.models.Message;
+import com.example.applicationsecond.models.User;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 
@@ -31,10 +32,6 @@ public class AdapterUsersChats extends FirestoreRecyclerAdapter<Chat, ViewHolder
         this.glide = glide;
         this.callback = callback;
     }
-    /*public AdapterUsersChats(List<Message> messages, RequestManager glide) {
-        this.messages = messages;
-        this.glide = glide;
-    }*/
 
     @NonNull
     @Override
@@ -42,20 +39,6 @@ public class AdapterUsersChats extends FirestoreRecyclerAdapter<Chat, ViewHolder
         return new ViewHolderUsersChats(LayoutInflater.from(parent.getContext())
         .inflate(R.layout.users_chats_activity_item, parent, false));
     }
-
-    /*@Override
-    public void onBindViewHolder(@NonNull ViewHolderUsersChats holder, int position) {
-        holder.updateUi(messages.get(position), glide);
-    }*/
-
-   /* @Override
-    public int getItemCount() {
-        return messages.size();
-    }
-
-    public Message getItem(int position) {
-        return messages.get(position);
-    }*/
 
     @Override
     public void onDataChanged() {

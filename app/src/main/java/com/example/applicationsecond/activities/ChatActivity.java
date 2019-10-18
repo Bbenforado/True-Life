@@ -98,30 +98,59 @@ public class ChatActivity extends AppCompatActivity implements ChatAdapter.Liste
     @Override
     protected void onStop() {
         super.onStop();
-        Date date = new Date();
+      /*  Date date = new Date();
         long dateInMilliseconds = date.getTime();
+
+        System.out.println("on stop");
 
         Map<String, Long> lastChatVisit = new ConcurrentHashMap<>();
         if (modelCurrentUser.getLastChatVisit() != null) {
 
             lastChatVisit = modelCurrentUser.getLastChatVisit();
 
-                for (Map.Entry<String, Long> entry : lastChatVisit.entrySet()) {
-                    if (entry.getKey().equals(currentChatName)) {
+            for (Map.Entry<String, Long> entry : lastChatVisit.entrySet()) {
+                if (entry.getKey().equals(currentChatName)) {
 
-                        entry.setValue(dateInMilliseconds);
-                        UserHelper.updateLastChatVisit(getCurrentUser().getUid(), lastChatVisit);
-                    } else {
-                        lastChatVisit.put(currentChatName, dateInMilliseconds);
-                        UserHelper.updateLastChatVisit(getCurrentUser().getUid(), lastChatVisit);
-                    }
+                    System.out.println("ici");
+
+                    entry.setValue(dateInMilliseconds);
+                    UserHelper.updateLastChatVisit(getCurrentUser().getUid(), lastChatVisit);
+                } else {
+                    lastChatVisit.put(currentChatName, dateInMilliseconds);
+                    UserHelper.updateLastChatVisit(getCurrentUser().getUid(), lastChatVisit);
                 }
+            }
         } else {
             lastChatVisit.put(currentChatName, dateInMilliseconds);
-            //maps.add(lastChatVisit);
+            UserHelper.updateLastChatVisit(getCurrentUser().getUid(), lastChatVisit);
+        }*/
+
+    }
+
+    private void saveTimeOfTheVisit() {
+        Date date = new Date();
+        long dateInMilliseconds = date.getTime();
+
+        System.out.println("on resume");
+
+        Map<String, Long> lastChatVisit = new ConcurrentHashMap<>();
+        if (modelCurrentUser.getLastChatVisit() != null) {
+
+            lastChatVisit = modelCurrentUser.getLastChatVisit();
+
+            for (Map.Entry<String, Long> entry : lastChatVisit.entrySet()) {
+                if (entry.getKey().equals(currentChatName)) {
+                    entry.setValue(dateInMilliseconds);
+                    UserHelper.updateLastChatVisit(getCurrentUser().getUid(), lastChatVisit);
+                } else {
+                    lastChatVisit.put(currentChatName, dateInMilliseconds);
+                    UserHelper.updateLastChatVisit(getCurrentUser().getUid(), lastChatVisit);
+                }
+            }
+        } else {
+            lastChatVisit.put(currentChatName, dateInMilliseconds);
             UserHelper.updateLastChatVisit(getCurrentUser().getUid(), lastChatVisit);
         }
-
     }
 
     //---------------------------------------
@@ -145,7 +174,7 @@ public class ChatActivity extends AppCompatActivity implements ChatAdapter.Liste
             Date date = new Date();
             long dateInMillis = date.getTime();
 
-            ChatHelper.createChat(currentChatName);
+            //ChatHelper.createChat(currentChatName);
 
             CollectionReference ref = FirebaseFirestore.getInstance().collection("chats");
             String id = ref.document(currentChatName).collection("messages").document().getId();
@@ -205,6 +234,8 @@ public class ChatActivity extends AppCompatActivity implements ChatAdapter.Liste
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 modelCurrentUser = documentSnapshot.toObject(User.class);
+
+                saveTimeOfTheVisit();
             }
         });
     }

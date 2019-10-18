@@ -70,7 +70,9 @@
                     <TextView
                         android:id="@+id/user_chats_activity_item_unread_message_text_view"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="30dp"
+                        android:textColor="@color/red"/>
 
                 </LinearLayout>
 

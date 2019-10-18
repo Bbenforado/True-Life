@@ -53,6 +53,6 @@ public class MessageHelper {
     }
 
     public static Task<QuerySnapshot> getUnreadMessage(String chatName, long millis) {
-        return ChatHelper.getChatCollection().document(chatName).collection(COLLECTION_NAME).whereGreaterThanOrEqualTo("dateInMilliseconds", millis).get();
+        return ChatHelper.getChatCollection().document(chatName).collection(COLLECTION_NAME).whereGreaterThan("dateInMilliseconds", millis).get();
     }
 }

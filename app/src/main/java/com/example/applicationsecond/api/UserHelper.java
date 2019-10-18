@@ -44,8 +44,6 @@ public class UserHelper {
     }
 
     public static Task<Void> updateLastChatVisit(String userId, Map<String, Long> lastChatVisit){
-
-
         return UserHelper.getUsersCollection().document(userId).update("lastChatVisit", lastChatVisit);
     }
 

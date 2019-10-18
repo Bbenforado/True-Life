@@ -33,6 +33,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.applicationsecond.R;
+import com.example.applicationsecond.api.ChatHelper;
 import com.example.applicationsecond.api.ProjectHelper;
 import com.example.applicationsecond.api.UserHelper;
 import com.example.applicationsecond.fragments.ActualityListFragment;
@@ -360,12 +361,10 @@ public class AddProjectActivity extends AppCompatActivity {
         String country = countryEditText.getText().toString();
 
         String latLng = Utils.getLatLngOfProject(this, streetNbr, streetName, city, postalCode, country);
-
+        CollectionReference ref = FirebaseFirestore.getInstance().collection("projects");
+        String projectId = ref.document().getId();
         if (imageView.getDrawable() == null) {
             //means there is no photo saved for the project
-            CollectionReference ref = FirebaseFirestore.getInstance().collection("projects");
-            String projectId = ref.document().getId();
-
             if (isPublished) {
                 ProjectHelper.createProject(projectId, title, description, authorId, creation_date, eventDate, true, streetNbr, streetName,
                         postalCode, city, country, latLng);
@@ -374,10 +373,13 @@ public class AddProjectActivity extends AppCompatActivity {
                         postalCode, city, country, latLng);
             }
             UserHelper.addProjectsSubscriptions(authorId, projectId);
+
         } else {
             uploadPhotoInFireBaseAndSaveProject(title, description, authorId, creation_date, eventDate, streetNbr, streetName, postalCode,
                     city, country, latLng);
         }
+        ChatHelper.createChat(projectId);
+        ChatHelper.addInvolvedUser(projectId, authorId);
     }
 
     private void saveProjectInFireBaseForNotPublishedProjects() {
