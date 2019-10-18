@@ -26,6 +26,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.applicationsecond.R;
+import com.example.applicationsecond.api.ChatHelper;
+import com.example.applicationsecond.api.MessageHelper;
 import com.example.applicationsecond.api.PostHelper;
 import com.example.applicationsecond.api.UserHelper;
 import com.example.applicationsecond.fragments.ActualityListFragment;
@@ -33,6 +35,8 @@ import com.example.applicationsecond.fragments.AddProjectFragment;
 import com.example.applicationsecond.fragments.MapFragment;
 import com.example.applicationsecond.fragments.PostListFragment;
 import com.example.applicationsecond.fragments.SearchFragment;
+import com.example.applicationsecond.models.Chat;
+import com.example.applicationsecond.models.Message;
 import com.example.applicationsecond.models.Post;
 import com.example.applicationsecond.models.User;
 import com.example.applicationsecond.utils.Utils;
@@ -49,9 +53,13 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -81,6 +89,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private boolean isCurrentUserAssociation;
     private SharedPreferences preferences;
     private ActionBar actionBar;
+    private Map<String, Long> usersChatsLastVisit;
     //---------------------------------------
     public static final String APP_PREFERENCES = "appPreferences";
     public static final String USER_ID = "userId";
@@ -158,6 +167,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         configureBottomNavigationViewListener();
         configureDrawerLayout();
         configureNavigationView();
+        //getUnreadMessages();
     }
 
     private void configureToolbar() {
@@ -180,22 +190,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         showFragment(postListFragment);
                         actionBar.setTitle("Posts");
                         return true;
-               /*     case R.id.navigation_add:
-                        if (isCurrentUserAssociation) {
-                            displayPostOrProjectDialog();
-                        } else {
-                            Intent addProject = new Intent(getApplicationContext(), AddProjectActivity.class);
-                            startActivity(addProject);
-                        }
-                        return true;*/
                     case R.id.navigation_map:
                         showFragment(mapFragment);
                         actionBar.setTitle("Map");
                         return true;
-               /*     case R.id.navigation_search:
-                        showFragment(searchFragment);
-                        actionBar.setTitle("Search");
-                        return true;*/
                 }
                 return false;
             }
@@ -220,6 +218,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     //-------------------------------------------------
     //-------------------------------------------------
+    private void getUnreadMessages(Map<String, Long> lastChatVisit) {
+            for (Map.Entry<String, Long> entry : lastChatVisit.entrySet()) {
+                MessageHelper.getUnreadMessage(entry.getKey(), entry.getValue()).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Message message = document.toObject(Message.class);
+                                System.out.println("message = " + message.getMessage());
+                            }
+                        }
+                    }
+                });
+            }
+    }
+
     public void showFragment(Fragment fragment) {
         FragmentManager fragmentManager = this.getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
@@ -268,6 +282,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 User currentUser = documentSnapshot.toObject(User.class);
+                if (currentUser.getLastChatVisit() != null) {
+                    getUnreadMessages(currentUser.getLastChatVisit());
+                }
                 isCurrentUserAssociation = currentUser.isAssociation();
                 String id = currentUser.getId();
                 preferences.edit().putString(USER_ID, id).apply();
@@ -290,8 +307,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 displayCreatePostDialog();
                                 break;
                             case 1:
-                                /*showFragment(addProjectFragment);
-                                actionBar.setTitle("Add a project");*/
                                 Intent addProject = new Intent(getApplicationContext(), AddProjectActivity.class);
                                 startActivity(addProject);
                                 break;

@@ -10,11 +10,12 @@ public class Chat {
     private Message lastMessage;
     private Date dateCreated;
     private List<String> involvedUsers;
+    private String id;
 
     public Chat() { }
 
-    public Chat(Message message) {
-        this.lastMessage = message;
+    public Chat(String id) {
+        this.id = id;
     }
 
     // --- GETTERS ---
@@ -37,5 +38,13 @@ public class Chat {
 
     public void setInvolvedUsers(List<String> involvedUsers) {
         this.involvedUsers = involvedUsers;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

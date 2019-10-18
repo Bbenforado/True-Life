@@ -1,6 +1,7 @@
 package com.example.applicationsecond.models;
 
 import java.util.List;
+import java.util.Map;
 
 public class User {
 
@@ -10,6 +11,7 @@ public class User {
     private long idAddress;
     private boolean isAssociation;
     private List<String> projectsSubscribedId;
+    private Map<String, Long> lastChatVisit;
     private List<String> associationSubscribedId;
     private List<String> publishedPostId;
     private String country;
@@ -39,6 +41,7 @@ public class User {
         this.city = city;
         this.country = country;
     }
+
 
     //-------------------------------------
 
@@ -120,5 +123,13 @@ public class User {
 
     public void setCity(String city) {
         this.city = city;
+    }
+
+    public Map<String, Long> getLastChatVisit() {
+        return lastChatVisit;
+    }
+
+    public void setLastChatVisit(Map<String, Long> lastChatVisit) {
+        this.lastChatVisit = lastChatVisit;
     }
 }

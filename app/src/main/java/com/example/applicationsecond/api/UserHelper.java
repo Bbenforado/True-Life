@@ -10,6 +10,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 
 public class UserHelper {
@@ -40,6 +42,17 @@ public class UserHelper {
         return UserHelper.getUsersCollection().document(userId).update("projectsSubscribedId",
                 FieldValue.arrayUnion(projectId));
     }
+
+    public static Task<Void> updateLastChatVisit(String userId, Map<String, Long> lastChatVisit){
+
+
+        return UserHelper.getUsersCollection().document(userId).update("lastChatVisit", lastChatVisit);
+    }
+
+   /* public static Task<Void> saveLastChatVisit(String userId, Map<String, Long> lastChatVisit) {
+        System.out.println("come here");
+        return UserHelper.getUsersCollection().document(userId).update("lastChatVisit", lastChatVisit);
+    }*/
 
     public static Task<Void> removeProjectSubscription(String userId, String projectId) {
         return UserHelper.getUsersCollection().document(userId).update("projectsSubscribedId",

@@ -41,8 +41,13 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.Nullable;
 
@@ -50,6 +55,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.example.applicationsecond.utils.Utils.formatLocation;
 import static com.example.applicationsecond.utils.Utils.getCurrentUser;
 
 public class ChatActivity extends AppCompatActivity implements ChatAdapter.Listener {
@@ -75,7 +81,6 @@ public class ChatActivity extends AppCompatActivity implements ChatAdapter.Liste
     //---------------------------------------------
     //---------------------------------------------
     public static final String APP_PREFERENCES = "appPreferences";
-    public static final String LAST_VISIT_TIME = "lastVisitTime";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,8 +99,29 @@ public class ChatActivity extends AppCompatActivity implements ChatAdapter.Liste
     protected void onStop() {
         super.onStop();
         Date date = new Date();
-        String dateString = date.toString();
-        preferences.edit().putString(LAST_VISIT_TIME, dateString).apply();
+        long dateInMilliseconds = date.getTime();
+
+        Map<String, Long> lastChatVisit = new ConcurrentHashMap<>();
+        if (modelCurrentUser.getLastChatVisit() != null) {
+
+            lastChatVisit = modelCurrentUser.getLastChatVisit();
+
+                for (Map.Entry<String, Long> entry : lastChatVisit.entrySet()) {
+                    if (entry.getKey().equals(currentChatName)) {
+
+                        entry.setValue(dateInMilliseconds);
+                        UserHelper.updateLastChatVisit(getCurrentUser().getUid(), lastChatVisit);
+                    } else {
+                        lastChatVisit.put(currentChatName, dateInMilliseconds);
+                        UserHelper.updateLastChatVisit(getCurrentUser().getUid(), lastChatVisit);
+                    }
+                }
+        } else {
+            lastChatVisit.put(currentChatName, dateInMilliseconds);
+            //maps.add(lastChatVisit);
+            UserHelper.updateLastChatVisit(getCurrentUser().getUid(), lastChatVisit);
+        }
+
     }
 
     //---------------------------------------

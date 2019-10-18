@@ -51,4 +51,8 @@ public class MessageHelper {
     public static Task<QuerySnapshot> getLastMessageOfAChat(String chatName) {
         return ChatHelper.getChatCollection().document(chatName).collection(COLLECTION_NAME).orderBy("dateCreated", Query.Direction.DESCENDING).limit(1).get();
     }
+
+    public static Task<QuerySnapshot> getUnreadMessage(String chatName, long millis) {
+        return ChatHelper.getChatCollection().document(chatName).collection(COLLECTION_NAME).whereGreaterThanOrEqualTo("dateInMilliseconds", millis).get();
+    }
 }

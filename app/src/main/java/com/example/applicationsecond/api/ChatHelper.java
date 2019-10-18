@@ -2,15 +2,14 @@ package com.example.applicationsecond.api;
 
 import com.example.applicationsecond.models.Chat;
 import com.example.applicationsecond.models.Message;
-import com.example.applicationsecond.models.User;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 
-import java.util.Date;
 import java.util.List;
 
 public class ChatHelper {
@@ -35,13 +34,17 @@ public class ChatHelper {
 
     //CREATE
     public static Task<Void> createChat(String id) {
-        Chat chat = new Chat();
+        Chat chat = new Chat(id);
         return ChatHelper.getChatCollection().document(id).set(chat);
     }
 
     //GET
     public static Task<DocumentSnapshot> getChat(String id) {
         return ChatHelper.getChatCollection().document(id).get();
+    }
+
+    public static Task<QuerySnapshot> getChatsOfOneUser(String userId) {
+        return ChatHelper.getChatCollection().whereArrayContains("involvedUsers", userId).get();
     }
 
     public static Task<Void> updateLastMessage(String chatName, Message message) {

@@ -51,8 +51,6 @@ public class UsersChatActivity extends AppCompatActivity implements AdapterUsers
     ViewSwitcher viewSwitcher;
     //------------------------------------
     private AdapterUsersChats adapter;
-    private List<String> usersChats;
-    private List<Message> messageList;
     private SharedPreferences preferences;
     private long userLastVisit;
     //---------------------------------------
@@ -67,19 +65,18 @@ public class UsersChatActivity extends AppCompatActivity implements AdapterUsers
         ButterKnife.bind(this);
         preferences = getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE);
 
-        if (preferences.getString(LAST_VISIT_TIME, null) != null) {
+   /*     if (preferences.getString(LAST_VISIT_TIME, null) != null) {
             try {
                 Date date = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").parse(preferences.getString(LAST_VISIT_TIME, null));
                 userLastVisit = date.getTime();
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-        }
+        }*/
 
 
         configureToolbar();
         configureRecyclerView();
-        configureOnClickRecyclerView();
     }
 
     private void configureRecyclerView() {
@@ -100,56 +97,6 @@ public class UsersChatActivity extends AppCompatActivity implements AdapterUsers
         actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
-  /*  private void configureRecyclerView() {
-        UserHelper.getUser(Utils.getCurrentUser().getUid()).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    User user = task.getResult().toObject(User.class);
-                    messageList = new ArrayList<>();
-
-                    if (user.getProjectsSubscribedId() != null) {
-                        if (user.getProjectsSubscribedId().size() > 0) {
-                            for (int i = 0; i < user.getProjectsSubscribedId().size(); i++) {
-                                Query query = ChatHelper.getChatCollection().document(user.getProjectsSubscribedId().get(i)).collection("messages")
-                                        .orderBy("dateCreated", Query.Direction.DESCENDING);
-                                query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                        if (task.isSuccessful()) {
-
-                                            int unreadMessages = task.getResult().getDocuments().size();
-
-                                            System.out.println("unread messages = " + unreadMessages);
-
-                                            if (task.getResult().getDocuments().size() > 0) {
-                                                Message message = task.getResult().getDocuments().get(0).toObject(Message.class);
-                                                messageList.add(message);
-                                                adapter = new AdapterUsersChats(messageList, Glide.with(getApplicationContext()));
-                                                recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                                                recyclerView.setAdapter(adapter);
-                                            }
-                                        }
-                                    }
-                                });
-                            }
-                        }
-                    }
-                }
-            }
-        });
-    }*/
-
-    private void configureOnClickRecyclerView() {
-        ItemClickSupport.addTo(recyclerView, R.layout.users_chats_activity_item)
-                .setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
-                    @Override
-                    public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-
-                        //launchChatActivity(message.getChatName());
-                    }
-                });
-    }
 
     private void launchChatActivity(String chatName) {
         Intent chatIntent = new Intent(this, ChatActivity.class);

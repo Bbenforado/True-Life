@@ -348,9 +348,15 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
                     .into(this.imageView);
         }
 
-        projectStreetNameAndStreetNumberTextView.setText(capitalizeFirstLetter(project.getStreetNumber() + " " + project.getStreetName()));
-        projectPostalCodeAndCityTextView.setText(project.getPostalCode() + " " + capitalizeFirstLetter(project.getCity()));
-        projectCountryTextView.setText(capitalizeFirstLetter(project.getCountry()));
+        if (project.getStreetNumber() != null && project.getStreetName() != null) {
+            projectStreetNameAndStreetNumberTextView.setText(capitalizeFirstLetter(project.getStreetNumber() + " " + project.getStreetName()));
+        }
+        if (project.getCity() != null) {
+            projectPostalCodeAndCityTextView.setText(project.getPostalCode() + " " + capitalizeFirstLetter(project.getCity()));
+        }
+        if (project.getCountry() != null) {
+            projectCountryTextView.setText(capitalizeFirstLetter(project.getCountry()));
+        }
     }
 
 
