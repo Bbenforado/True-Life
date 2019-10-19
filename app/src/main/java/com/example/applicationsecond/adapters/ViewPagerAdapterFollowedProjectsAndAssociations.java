@@ -38,9 +38,9 @@ public class ViewPagerAdapterFollowedProjectsAndAssociations extends FragmentPag
 
             case 1:
                 if (isCurrentUsersProfile) {
-                    return new UserListFragment(true);
+                    return new UserListFragment(true, false);
                 } else {
-                    return new UserListFragment(false, profileId);
+                    return new UserListFragment(false, profileId, false);
                 }
                 default:
                     return null;

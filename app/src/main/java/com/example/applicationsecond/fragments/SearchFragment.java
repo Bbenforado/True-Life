@@ -23,6 +23,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.applicationsecond.R;
 import com.example.applicationsecond.activities.MainActivity;
@@ -34,6 +35,7 @@ import com.example.applicationsecond.models.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.gson.Gson;
@@ -55,8 +57,9 @@ public class SearchFragment extends Fragment {
     @BindView(R.id.input_city) EditText inputCity;
     @BindView(R.id.search_activity_text_view_title)
     TextView textViewTitle;
-    @BindView(R.id.button_search_fragment)
-    MaterialButton buttonSearch;
+    @BindView(R.id.button_search_projects_fragment)
+    MaterialButton buttonSearchProjects;
+    @BindView(R.id.button_search_users_fragment) MaterialButton buttonSearchUsers;
     @BindView(R.id.id_layout) LinearLayout layout;
     @BindView(R.id.search_fragment_scroll_view)
     ScrollView scrollView;
@@ -66,9 +69,7 @@ public class SearchFragment extends Fragment {
     public static final String APP_PREFERENCES = "appPreferences";
     public static final String RESULTS = "results";
     public static final String KEYWORD = "keyword";
-    public static final String CITY = "city";
-
-
+    private static final String CITY = "city";
 
 
     public SearchFragment() {
@@ -86,45 +87,52 @@ public class SearchFragment extends Fragment {
         return result;
     }
 
-    @OnClick(R.id.button_search_fragment)
-    public void searchData() {
+    @OnClick(R.id.button_search_projects_fragment)
+    public void searchProjectsInAGivenCity() {
         if (!TextUtils.isEmpty(inputCity.getText().toString())) {
+                ActualityListFragment fragment = new ActualityListFragment("searchResults");
+                preferences.edit().putString(CITY, inputCity.getText().toString()).apply();
+                showFragment(fragment);
 
-            ActualityListFragment fragment = new ActualityListFragment("searchResults");
-            preferences.edit().putString(CITY, inputCity.getText().toString()).apply();
-            showFragment(fragment);
-
-            //fromBottomAnimation(layout, 200);
-            //textViewTitle.animate().translationY(-textViewTitle.getHeight());
-            layout.animate().translationY(-textViewTitle.getHeight());
-            buttonSearch.animate().translationY(-textViewTitle.getHeight());
-            scrollView.animate().translationY(-textViewTitle.getHeight());
+                layout.animate().translationY(-textViewTitle.getHeight());
+                buttonSearchProjects.animate().translationY(-textViewTitle.getHeight());
+                buttonSearchUsers.animate().translationY(-textViewTitle.getHeight());
+                scrollView.animate().translationY(-textViewTitle.getHeight());
+            } else {
+                Toast.makeText(getContext(), "You have to fill the city field", Toast.LENGTH_SHORT).show();
         }
     }
-    public void animateLayout(){
-        LinearLayout layout = getActivity().findViewById(R.id.id_layout);
-        layout.animate().translationYBy(1000f).setDuration(50000);
+
+    @OnClick(R.id.button_search_users_fragment)
+    public void searchUsersInAGivenCity() {
+        if (!TextUtils.isEmpty(inputCity.getText().toString())) {
+            users = new ArrayList<>();
+
+            UserHelper.getUserForSearchOnCity(inputCity.getText().toString().toLowerCase()).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+                        for (DocumentSnapshot document : task.getResult()) {
+                            User user = document.toObject(User.class);
+                            users.add(user);
+
+                        }
+                        System.out.println("users = " + users);
+                        Gson gson = new Gson();
+                        preferences.edit().putString(RESULTS, gson.toJson(users)).apply();
+                        UserListFragment fragment = new UserListFragment(false, true);
+                        showFragment(fragment);
+
+                        layout.animate().translationY(-textViewTitle.getHeight());
+                        buttonSearchProjects.animate().translationY(-textViewTitle.getHeight());
+                        buttonSearchUsers.animate().translationY(-textViewTitle.getHeight());
+                        scrollView.animate().translationY(-textViewTitle.getHeight());
+                    }
+                }
+            });
+        } else {
+            Toast.makeText(getContext(), "You have to fill the city field", Toast.LENGTH_SHORT).show();
     }
-
-    private void fromBottomAnimation(View view, int startDelay) {
-        Animation animation = new TranslateAnimation(
-                Animation.RELATIVE_TO_PARENT, 0.0f,
-                Animation.RELATIVE_TO_PARENT, 0.0f,
-                Animation.RELATIVE_TO_PARENT, +1.0f,
-                Animation.RELATIVE_TO_PARENT, 0.0f);
-        animation.setDuration(1000);
-        animation.setInterpolator(new AccelerateInterpolator());
-        animation.setStartOffset(startDelay);
-        view.startAnimation(animation);
-    }
-
-
-    private void setMargins (View view, int left, int top, int right, int bottom) {
-        if (view.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
-            ViewGroup.MarginLayoutParams p = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
-            p.setMargins(left, top, right, bottom);
-            view.requestLayout();
-        }
     }
 
     public void showFragment(Fragment fragment) {

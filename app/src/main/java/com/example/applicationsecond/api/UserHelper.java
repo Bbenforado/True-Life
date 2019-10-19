@@ -33,8 +33,8 @@ public class UserHelper {
         return UserHelper.getUsersCollection().document(id).get();
     }
 
-    public static Task<QuerySnapshot> getUserForSearchOnName(String search) {
-        return UserHelper.getUsersCollection().whereEqualTo("username", search).get();
+    public static Task<QuerySnapshot> getUserForSearchOnCity(String search) {
+        return UserHelper.getUsersCollection().whereEqualTo("city", search).get();
     }
 
     //UPDATE
@@ -46,11 +46,6 @@ public class UserHelper {
     public static Task<Void> updateLastChatVisit(String userId, Map<String, Long> lastChatVisit){
         return UserHelper.getUsersCollection().document(userId).update("lastChatVisit", lastChatVisit);
     }
-
-   /* public static Task<Void> saveLastChatVisit(String userId, Map<String, Long> lastChatVisit) {
-        System.out.println("come here");
-        return UserHelper.getUsersCollection().document(userId).update("lastChatVisit", lastChatVisit);
-    }*/
 
     public static Task<Void> removeProjectSubscription(String userId, String projectId) {
         return UserHelper.getUsersCollection().document(userId).update("projectsSubscribedId",

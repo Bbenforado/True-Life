@@ -67,7 +67,7 @@ public class AuthenticationActivity extends AppCompatActivity {
         password = passwordEditText.getText().toString().trim();
         username = usernameEditText.getText().toString();
         if (!TextUtils.isEmpty(cityEditText.getText())) {
-            city = cityEditText.getText().toString();
+            city = cityEditText.getText().toString().toLowerCase();
         } else {
             city = null;
         }

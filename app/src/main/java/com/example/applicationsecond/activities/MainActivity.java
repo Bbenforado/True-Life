@@ -110,7 +110,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        System.out.println("on create");
 
         actualityListFragment = new ActualityListFragment("defaultScreen");
         searchFragment = new SearchFragment();
@@ -134,7 +133,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onResume() {
         super.onResume();
-        System.out.println("on rsume");
         UserHelper.getUser(getCurrentUser().getUid()).addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
@@ -144,11 +142,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
             }
         });
-    }
-    @Override
-    protected void onStop() {
-        super.onStop();
-        System.out.println("on stop");
     }
 
 
@@ -197,7 +190,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         configureBottomNavigationViewListener();
         configureDrawerLayout();
         configureNavigationView();
-        //getUnreadMessages();
     }
 
     private void configureToolbar() {

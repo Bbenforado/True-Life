@@ -60,6 +60,7 @@ public class UserListFragment extends Fragment {
     @Nullable
     private String profileId;
     private boolean isCurrentUsersProfile;
+    private boolean isFromSearchFragment;
     //-----------------------------------------
     //------------------------------------------
     private static final String APP_PREFERENCES = "appPreferences";
@@ -70,12 +71,14 @@ public class UserListFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public UserListFragment(boolean isCurrentUsersProfile, String profileId) {
+    public UserListFragment(boolean isCurrentUsersProfile, String profileId, boolean isFromSearchFragment) {
         this.isCurrentUsersProfile = isCurrentUsersProfile;
         this.profileId = profileId;
+        this.isFromSearchFragment = isFromSearchFragment;
     }
-    public UserListFragment(boolean isCurrentUsersProfile) {
+    public UserListFragment(boolean isCurrentUsersProfile, boolean isFromSearchFragment) {
         this.isCurrentUsersProfile = isCurrentUsersProfile;
+        this.isFromSearchFragment = isFromSearchFragment;
     }
 
 
@@ -87,14 +90,18 @@ public class UserListFragment extends Fragment {
 
         preferences = getActivity().getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
 
-        //retrieveResults();
-        //doBasicConfiguration();
+        if (isFromSearchFragment){
+            retrieveResults();
+            configureRecyclerView();
 
-        if (isCurrentUsersProfile) {
-            getDataForUserProfile(Utils.getCurrentUser().getUid());
-            configureOnLongClickRecyclerView();
         } else {
-            getDataForUserProfile(profileId);
+
+            if (isCurrentUsersProfile) {
+                getDataForUserProfile(Utils.getCurrentUser().getUid());
+                configureOnLongClickRecyclerView();
+            } else {
+                getDataForUserProfile(profileId);
+            }
         }
 
         configureOnClickRecyclerView();
@@ -105,10 +112,6 @@ public class UserListFragment extends Fragment {
     //----------------------------
     //CONFIGURATION
     //--------------------------------
-    private void doBasicConfiguration() {
-        configureRecyclerView();
-    }
-
     private void configureRecyclerView() {
         adapter = new AdapterRecyclerViewUsers(users, Glide.with(this));
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -135,10 +138,8 @@ public class UserListFragment extends Fragment {
                     builder.setMessage("Do you want to unfollow this association?")
                             .setPositiveButton("Yes", (dialog, id) -> {
                                 //unfollow the association
-
                                 User association = adapter.getUser(position);
                                 String currentUserId = Utils.getCurrentUser().getUid();
-
                                 UserHelper.removeAssociationSubscription(currentUserId, association.getId());
                             })
                             .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -160,14 +161,11 @@ public class UserListFragment extends Fragment {
         // set the animation type to ViewSwitcher
         viewSwitcher.setInAnimation(newsAvailable);
         viewSwitcher.setOutAnimation(noNewsAvailable);
-
-        //displayScreenDependingOfNewsAvailable();
     }
 
     //--------------------------------------
     //GET DATA
     //----------------------------------------
-
     private void retrieveResults() {
         Gson gson = new Gson();
         users = new ArrayList<>();

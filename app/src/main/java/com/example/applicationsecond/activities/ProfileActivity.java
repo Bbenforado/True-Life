@@ -116,11 +116,6 @@ public class ProfileActivity extends AppCompatActivity {
         handleResponseForGallery(requestCode, resultCode, data);
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
-
     //------------------------------
     //CONFIGURATION
     //-----------------------------------
@@ -264,15 +259,16 @@ public class ProfileActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
 
                         if (!TextUtils.isEmpty(cityInputEditText.getText())) {
-                            UserHelper.updateCity(Utils.getCurrentUser().getUid(), cityInputEditText.getText().toString());
-                            textViewCountryCity.setText(cityInputEditText.getText());
+                            UserHelper.updateCity(Utils.getCurrentUser().getUid(), cityInputEditText.getText().toString().toLowerCase());
+                            textViewCountryCity.setText(capitalizeFirstLetter(cityInputEditText.getText().toString()));
                         }
                         if (!TextUtils.isEmpty(countryInputEditText.getText())) {
                             UserHelper.updateCountry(Utils.getCurrentUser().getUid(), countryInputEditText.getText().toString());
-                            textViewCountryCity.setText(countryInputEditText.getText());
+                            textViewCountryCity.setText(capitalizeFirstLetter(countryInputEditText.getText().toString()));
                         }
                         if (!TextUtils.isEmpty(cityInputEditText.getText()) && !TextUtils.isEmpty(countryInputEditText.getText())) {
-                            String finalString = cityInputEditText.getText().toString() + ", " + countryInputEditText.getText().toString();
+                            String finalString = capitalizeFirstLetter(cityInputEditText.getText().toString()) + ", " +
+                                    capitalizeFirstLetter(countryInputEditText.getText().toString());
                             textViewCountryCity.setText(finalString);
                         }
 

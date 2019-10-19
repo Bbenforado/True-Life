@@ -20,7 +20,7 @@
         android:id="@+id/search_activity_text_view_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Search projects in your city!"
+        android:text="Search in your city!"
         android:textSize="25sp"
         android:textColor="@android:color/white"
         android:layout_gravity="center"
@@ -49,6 +49,7 @@
                 android:textColor="@android:color/white"
                 android:maxLines="1"
                 android:singleLine="true"
+                android:maxLength="45"
                 android:inputType="textCapSentences"
                 android:backgroundTint="@android:color/white"
                 android:layout_marginStart="15dp"
@@ -57,20 +58,44 @@
 
     </LinearLayout>
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/button_search_fragment"
-        style="@style/Widget.MaterialComponents.Button"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:textSize="12sp"
-        android:layout_marginTop="135dp"
-        android:layout_marginStart="20dp"
-        android:textColor="@color/yellow"
-        app:iconTint="@color/yellow"
-        android:backgroundTint="@android:color/white"
-        android:layout_marginEnd="20dp"
-        app:icon="@drawable/ic_search_white_tiny"
-        android:text="Search"/>
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_search_projects_fragment"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:textSize="12sp"
+            android:layout_marginTop="135dp"
+            android:layout_marginStart="20dp"
+            android:textColor="@color/yellow"
+            app:iconTint="@color/yellow"
+            android:backgroundTint="@android:color/white"
+            android:layout_marginEnd="20dp"
+            app:icon="@drawable/ic_search_white_tiny"
+            android:text="Projects"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_search_users_fragment"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:textSize="12sp"
+            android:layout_marginTop="135dp"
+            android:layout_marginStart="20dp"
+            android:textColor="@color/yellow"
+            app:iconTint="@color/yellow"
+            android:backgroundTint="@android:color/white"
+            android:layout_marginEnd="20dp"
+            app:icon="@drawable/ic_search_white_tiny"
+            android:text="Users"/>
+
+    </LinearLayout>
 
 </RelativeLayout>
 

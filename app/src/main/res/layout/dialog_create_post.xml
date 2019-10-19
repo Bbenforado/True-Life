@@ -3,14 +3,6 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
-    <!--<androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        app:cardBackgroundColor="@android:color/white"
-        app:cardCornerRadius="2dp"
-        app:cardElevation="2dp">-->
-
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/input_layout_title"
             android:padding="16dp"
@@ -21,6 +13,7 @@
                 android:id="@+id/input_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:maxLength="30"
                 android:hint="Title..." />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -35,6 +28,7 @@
                 android:id="@+id/input_description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:maxLength="300"
                 android:hint="Type text here..." />
 
         </com.google.android.material.textfield.TextInputLayout>
