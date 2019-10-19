@@ -8,6 +8,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
+import androidx.core.view.MenuItemCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -16,13 +17,18 @@ import androidx.fragment.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.PersistableBundle;
+import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.applicationsecond.R;
@@ -64,6 +70,7 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static androidx.core.view.MenuItemCompat.getActionView;
 import static com.example.applicationsecond.utils.Utils.capitalizeFirstLetter;
 import static com.example.applicationsecond.utils.Utils.getCurrentUser;
 import static com.example.applicationsecond.utils.Utils.isCurrentUserLogged;
@@ -90,6 +97,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private SharedPreferences preferences;
     private ActionBar actionBar;
     private Map<String, Long> usersChatsLastVisit;
+    private int counterUnreadMessages;
+    private TextView badgeChatTextView;
     //---------------------------------------
     public static final String APP_PREFERENCES = "appPreferences";
     public static final String USER_ID = "userId";
@@ -101,11 +110,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        System.out.println("on create");
 
         actualityListFragment = new ActualityListFragment("defaultScreen");
         searchFragment = new SearchFragment();
         postListFragment = new PostListFragment(false);
         mapFragment = new MapFragment();
+        counterUnreadMessages = 0;
+        badgeChatTextView = (TextView) navigationView.getMenu().findItem(R.id.users_chats).getActionView();
 
         preferences = getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE);
         preferences.edit().putInt(KEY_EDIT_PROJECT, -1).apply();
@@ -116,11 +128,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             this.finish();
         } else {
             getDataFromCurrentUser();
-            //configure
-            /*doBasicConfiguration();
-            showFragment(actualityListFragment);*/
         }
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        System.out.println("on rsume");
+        UserHelper.getUser(getCurrentUser().getUid()).addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                User currentUser = documentSnapshot.toObject(User.class);
+                if (currentUser.getLastChatVisit() != null) {
+                    getAllUnreadMessagesForAllChats(currentUser.getLastChatVisit());
+                }
+            }
+        });
+    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        System.out.println("on stop");
+    }
+
 
     @Override
     public void onBackPressed() {
@@ -218,20 +248,40 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     //-------------------------------------------------
     //-------------------------------------------------
-    private void getUnreadMessages(Map<String, Long> lastChatVisit) {
+    private void getAllUnreadMessagesForAllChats(Map<String, Long> lastChatVisit) {
             for (Map.Entry<String, Long> entry : lastChatVisit.entrySet()) {
+
                 MessageHelper.getUnreadMessage(entry.getKey(), entry.getValue()).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Message message = document.toObject(Message.class);
-                                System.out.println("message = " + message.getMessage());
+                                if (!message.getUserSender().getId().equals(getCurrentUser().getUid())) {
+                                    counterUnreadMessages = counterUnreadMessages + 1;
+                                }
+                                if (counterUnreadMessages == 0) {
+                                    badgeChatTextView.setVisibility(View.GONE);
+                                } else {
+                                    initializeCountDrawer(counterUnreadMessages);
+                                    badgeChatTextView.setVisibility(View.VISIBLE);
+                                }
                             }
+
                         }
                     }
                 });
             }
+    }
+
+    private void initializeCountDrawer(int unreadMessages) {
+        badgeChatTextView.setGravity(Gravity.CENTER);
+        badgeChatTextView.setTypeface(null, Typeface.BOLD);
+        badgeChatTextView.setTextColor(getResources().getColor(R.color.white));
+        badgeChatTextView.setTextSize(10);
+        badgeChatTextView.setBackground(getResources().getDrawable(R.drawable.text_view_counter_style));
+        badgeChatTextView.setText(String.valueOf(unreadMessages));
+
     }
 
     public void showFragment(Fragment fragment) {
@@ -282,9 +332,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 User currentUser = documentSnapshot.toObject(User.class);
-                /*if (currentUser.getLastChatVisit() != null) {
-                    getUnreadMessages(currentUser.getLastChatVisit());
-                }*/
                 isCurrentUserAssociation = currentUser.isAssociation();
                 String id = currentUser.getId();
                 preferences.edit().putString(USER_ID, id).apply();
@@ -334,26 +381,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                         EditText title = view.findViewById(R.id.input_title);
                         EditText content = view.findViewById(R.id.input_description);
-                        String postTitle = title.getText().toString();
-                        String postContent = content.getText().toString();
-                        Date creationDate = new Date();
-                        UserHelper.getUser(Utils.getCurrentUser().getUid()).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                if (task.isSuccessful()) {
-                                    User currentUser = task.getResult().toObject(User.class);
-                                    String authorName = currentUser.getUsername();
-                                    PostHelper.createPost(postId, postTitle, postContent, authorName, creationDate);
 
-                                    //save the id of the post in the user
-                                    UserHelper.updatePublishedPostIdList(Utils.getCurrentUser().getUid(), postId);
+                        if (!TextUtils.isEmpty(title.getText()) && !TextUtils.isEmpty(content.getText())) {
+                            String postTitle = title.getText().toString();
+                            String postContent = content.getText().toString();
+                            Date creationDate = new Date();
+                            UserHelper.getUser(Utils.getCurrentUser().getUid()).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                    if (task.isSuccessful()) {
+                                        User currentUser = task.getResult().toObject(User.class);
+                                        String authorName = currentUser.getUsername();
+                                        PostHelper.createPost(postId, postTitle, postContent, authorName, creationDate);
 
-                                    Toast.makeText(getApplication(), "Post published!", Toast.LENGTH_SHORT).show();
+                                        //save the id of the post in the user
+                                        UserHelper.updatePublishedPostIdList(Utils.getCurrentUser().getUid(), postId);
+
+                                        Toast.makeText(getApplication(), "Post published!", Toast.LENGTH_SHORT).show();
+                                    }
                                 }
-                            }
-                        });
-
-
+                            });
+                        } else {
+                            Toast.makeText(getApplicationContext(), "You have to fill the fields", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 })
                 .setNegativeButton("Cancel", null)

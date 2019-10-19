@@ -105,7 +105,6 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
         }
 
         configureToolbar();
-        displayButtonChat();
         updateUi(clickedProject, this);
         if (mapView != null) {
             mapView.onCreate(savedInstanceState);
@@ -221,6 +220,8 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
                 UserHelper.addProjectsSubscriptions(userId, projectId);
                 ChatHelper.addInvolvedUser(projectId, userId);
             }
+            int nbrFollower = Integer.parseInt(textViewNbrOfFollowers.getText().toString()) + 1;
+            textViewNbrOfFollowers.setText(String.valueOf(nbrFollower));
             Toast.makeText(this, "You are taking part in this project! You can contact the team through the chat!", Toast.LENGTH_SHORT).show();
 
         } else {
@@ -236,6 +237,8 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
             //change button color
             buttonFollowProject.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.white)));
             buttonFollowProject.setImageDrawable(getResources().getDrawable(R.drawable.ic_check));
+            int nbrFollower = Integer.parseInt(textViewNbrOfFollowers.getText().toString()) - 1;
+            textViewNbrOfFollowers.setText(String.valueOf(nbrFollower));
 
             Toast.makeText(this, "You are not part of this project anymore", Toast.LENGTH_SHORT).show();
         }
@@ -269,10 +272,6 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
                 isButtonClicked = false;
             }
         }
-    }
-
-    private void displayButtonChat() {
-
     }
 
     @SuppressLint("RestrictedApi")

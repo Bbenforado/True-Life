@@ -137,11 +137,11 @@ public class ActualityListFragment extends Fragment implements AdapterRecyclerVi
     private void configureRecyclerView() {
         switch (codeLastActivity) {
             case "profileActivity":
-                adapter = new AdapterRecyclerViewProjects(generateOptionsForAdapter(ProjectHelper.getPublishedProjects(Utils.getCurrentUser().getUid())),
+                adapter = new AdapterRecyclerViewProjects(generateOptionsForAdapter(ProjectHelper.getProjectsForOneUser(Utils.getCurrentUser().getUid())),
                 Glide.with(this), this);
                 break;
             case "notCurrentUsersProfile":
-                adapter = new AdapterRecyclerViewProjects(generateOptionsForAdapter(ProjectHelper.getPublishedProjects(profileId)),
+                adapter = new AdapterRecyclerViewProjects(generateOptionsForAdapter(ProjectHelper.getProjectsForOneUser(profileId)),
                         Glide.with(this), this);
                 break;
             case "associationProfileActivity":

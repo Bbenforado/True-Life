@@ -73,9 +73,6 @@ public class UsersChatActivity extends AppCompatActivity implements AdapterUsers
                 }
             }
         });
-
-
-        //configureRecyclerView();
     }
 
     private void configureRecyclerView() {

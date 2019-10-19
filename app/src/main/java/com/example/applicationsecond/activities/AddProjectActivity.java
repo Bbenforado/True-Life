@@ -170,22 +170,21 @@ public class AddProjectActivity extends AppCompatActivity {
     public void publishProject() {
         isPublished = true;
 
-        if (preferences.getInt(KEY_EDIT_PROJECT, -1) == 1) {
-            updateProjectInFireBase();
-            Toast.makeText(this, "Project updated!", Toast.LENGTH_SHORT).show();
-            //launch main activity
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
-        } else {
-            if (fieldsAreCorrectlyFilled()) {
-                saveProjectInFireBase();
-                Toast.makeText(this, "Project published!", Toast.LENGTH_SHORT).show();
-                //finish();
+        if (fieldsAreCorrectlyFilled()) {
+            if (preferences.getInt(KEY_EDIT_PROJECT, -1) == 1) {
+                updateProjectInFireBase();
+                Toast.makeText(this, "Project updated!", Toast.LENGTH_SHORT).show();
+                //launch main activity
                 Intent intent = new Intent(this, MainActivity.class);
                 startActivity(intent);
             } else {
-                Toast.makeText(this, "You have to give a location for your project or to give a date for event", Toast.LENGTH_SHORT).show();
+                saveProjectInFireBase();
+                Toast.makeText(this, "Project published!", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(this, MainActivity.class);
+                startActivity(intent);
             }
+        }else {
+            Toast.makeText(this, "You have to fill the fields", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -193,11 +192,23 @@ public class AddProjectActivity extends AppCompatActivity {
     public void saveProjectForLater() {
         isPublished = false;
         if (preferences.getInt(KEY_EDIT_PROJECT, -1) == 1) {
-            updateProjectInFireBase();
+            if (fieldsAreCorrectlyFilled()) {
+                updateProjectInFireBase();
+                Toast.makeText(this, "Project updated!", Toast.LENGTH_SHORT).show();
+                finish();
+            } else {
+                Toast.makeText(this, "You have to fill the fields", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            if (!TextUtils.isEmpty(titleEditText.getText()) && !TextUtils.isEmpty(descriptionEditText.getText())) {
+                saveProjectInFireBaseForNotPublishedProjects();
+                Toast.makeText(this, "Project saved for later!", Toast.LENGTH_SHORT).show();
+                finish();
+            } else {
+                Toast.makeText(this, "You have to fill the fields", Toast.LENGTH_SHORT).show();
+            }
         }
-        saveProjectInFireBaseForNotPublishedProjects();
-        Toast.makeText(this, "Project saved for later!", Toast.LENGTH_SHORT).show();
-        finish();
+
     }
 
     @OnClick(R.id.button_add_picture_add_project_activity)
@@ -272,7 +283,8 @@ public class AddProjectActivity extends AppCompatActivity {
     private boolean fieldsAreCorrectlyFilled() {
         return  (!TextUtils.isEmpty(streetNumberEditText.getText()) && !TextUtils.isEmpty(streetNameEditText.getText()) &&
                 !TextUtils.isEmpty(postalCodeEditText.getText()) && !TextUtils.isEmpty(cityEditText.getText()) &&
-                !TextUtils.isEmpty(countryEditText.getText()) && eventDate != null);
+                !TextUtils.isEmpty(countryEditText.getText()) && eventDate != null && !TextUtils.isEmpty(titleEditText.getText())
+                && !TextUtils.isEmpty(descriptionEditText.getText()));
     }
 
     private void displayWrongDateSelectedMessage(View v) {
