@@ -21,7 +21,9 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ViewSwitcher;
 
+import com.bumptech.glide.Glide;
 import com.example.applicationsecond.R;
+import com.example.applicationsecond.adapters.AdapterPostListFragment;
 import com.example.applicationsecond.adapters.AdapterRecyclerViewPosts;
 import com.example.applicationsecond.api.PostHelper;
 import com.example.applicationsecond.api.UserHelper;
@@ -29,11 +31,13 @@ import com.example.applicationsecond.models.Post;
 import com.example.applicationsecond.models.User;
 import com.example.applicationsecond.utils.ItemClickSupport;
 import com.example.applicationsecond.utils.Utils;
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
@@ -55,7 +59,7 @@ public class PostListFragment extends Fragment {
     RecyclerView recyclerView;
     //-----------------------------------
     //-------------------------------------
-    private AdapterRecyclerViewPosts adapter;
+    private AdapterPostListFragment adapter;
     private boolean isNewsToDisplay;
     private List<Post> postList;
     private List<String> publishedPostsId;
@@ -95,7 +99,6 @@ public class PostListFragment extends Fragment {
         postList = new ArrayList<>();
 
         configureRecyclerView();
-        configureOnClickRecyclerView();
         configureViewSwitcher();
 
     }
@@ -115,6 +118,7 @@ public class PostListFragment extends Fragment {
         if (isFromAssociationProfile) {
             preferences = getActivity().getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
             String associationId = preferences.getString(ASSOCIATION_ID, null);
+
             UserHelper.getUser(associationId).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -132,7 +136,7 @@ public class PostListFragment extends Fragment {
                                                 postList.add(post);
 
                                                 displayScreenDependingOfNewsAvailable();
-                                                adapter = new AdapterRecyclerViewPosts(postList);
+                                                adapter = new AdapterPostListFragment(postList);
                                                 recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                                                 recyclerView.setAdapter(adapter);
                                             }
@@ -149,16 +153,6 @@ public class PostListFragment extends Fragment {
         } else {
             getDataToConfigureRecyclerView();
         }
-    }
-
-    private void configureOnClickRecyclerView() {
-        ItemClickSupport.addTo(recyclerView, R.layout.post_list_item)
-                .setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
-                    @Override
-                    public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-
-                    }
-                });
     }
 
     //-------------------------------------
@@ -183,29 +177,6 @@ public class PostListFragment extends Fragment {
 
 
     private void getDataToConfigureRecyclerView() {
-
-        /*CollectionReference collectionReference = FirebaseFirestore.getInstance().collection("posts");
-        collectionReference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    List<Post> posts = new ArrayList<>();
-                    for (DocumentSnapshot document : task.getResult()) {
-                        Post post = document.toObject(Post.class);
-                        posts.add(post);
-                    }
-
-                    System.out.println("list of posts into the on complete = " + posts.size());
-
-                    adapter = new AdapterRecyclerViewPosts(posts);
-                    recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                    recyclerView.setAdapter(adapter);
-
-                } else {
-                    Log.e("TAG", "Error");
-                }
-            }
-        });*/
         //get the current user
         UserHelper.getUser(Utils.getCurrentUser().getUid()).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -235,7 +206,7 @@ public class PostListFragment extends Fragment {
                                                                     postList.add(post);
 
                                                                     displayScreenDependingOfNewsAvailable();
-                                                                    adapter = new AdapterRecyclerViewPosts(postList);
+                                                                    adapter = new AdapterPostListFragment(postList);
                                                                     recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                                                                     recyclerView.setAdapter(adapter);
                                                                 }

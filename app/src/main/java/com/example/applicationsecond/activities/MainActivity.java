@@ -383,8 +383,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                     if (task.isSuccessful()) {
                                         User currentUser = task.getResult().toObject(User.class);
-                                        String authorName = currentUser.getUsername();
-                                        PostHelper.createPost(postId, postTitle, postContent, authorName, creationDate);
+                                        String authorId = currentUser.getId();
+                                        PostHelper.createPost(postId, postTitle, postContent, authorId, creationDate);
 
                                         //save the id of the post in the user
                                         UserHelper.updatePublishedPostIdList(Utils.getCurrentUser().getUid(), postId);

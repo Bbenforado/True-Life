@@ -2,11 +2,13 @@ package com.example.applicationsecond.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
@@ -92,6 +94,7 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
     private SharedPreferences preferences;
     private boolean isButtonClicked;
     private Project clickedProject;
+    private boolean isProjectFinished;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,9 +102,16 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
         setContentView(R.layout.activity_project_detail);
         ButterKnife.bind(this);
         preferences = getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE);
+        isProjectFinished = false;
         clickedProject = retrieveClickedProject();
         if (clickedProject.getId() != null) {
             displayFollowButton();
+        }
+        Date todayDate = new Date();
+        long dateInMilliseconds = todayDate.getTime();
+        if (clickedProject.getEventDate() < dateInMilliseconds) {
+            Toast.makeText(this, "This project is finished!", Toast.LENGTH_SHORT).show();
+            isProjectFinished = true;
         }
 
         configureToolbar();
@@ -120,6 +130,10 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
         //check if the user is the author of the project, if yes
         //if not, hide the item of the toolbar
         if (!clickedProject.getAuthorId().equals(Utils.getCurrentUser().getUid())) {
+            menu.findItem(R.id.edit_item).setVisible(false);
+            menu.findItem(R.id.toolbar_detail_project_delete).setVisible(false);
+        }
+        if (isProjectFinished) {
             menu.findItem(R.id.edit_item).setVisible(false);
         }
 
@@ -145,6 +159,10 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
                 return true;
             case R.id.toolbar_detail_project_chat:
                 openChatForTheProject();
+                return true;
+            case R.id.toolbar_detail_project_delete:
+                //display dialog to ask if user is really sure he wants to delete the project
+                displayDialogToDeleteProject(clickedProject.getId());
                 return true;
                 default:
                     return super.onOptionsItemSelected(item);
@@ -257,6 +275,27 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
 
     //------------------------------------------
     //--------------------------------------------
+    private void displayDialogToDeleteProject(String projectId) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Do you want to delete this project?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ProjectHelper.deleteProject(projectId);
+                        ChatHelper.deleteChat(projectId);
+                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                        startActivity(intent);
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                })
+                .create()
+                .show();
+    }
 
     private void displayColorButton(User user, String projectId) {
 
@@ -317,8 +356,9 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
             String date = new SimpleDateFormat("dd/MM/yyyy").format(project.getCreationDate());
             projectPublishedDateTextView.setText(date);
         }
-        if (project.getEventDate() != null) {
-            projectEventDateTextView.setText(project.getEventDate());
+        if (project.getEventDate() != 0) {
+            String date = new SimpleDateFormat("dd/MM/yyyy").format(project.getCreationDate());
+            projectEventDateTextView.setText(date);
         }
         projectDescriptionTextView.setText(project.getDescription());
         if (project.getAuthorId() != null) {
@@ -375,13 +415,15 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
                         .position(latLngOfAddress));
 
             } else {
-                Toast.makeText(getApplicationContext(), "Location not found", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), "Location not found", Toast.LENGTH_SHORT).show();
+                textViewNoInternet.setText("Location not found");
+                textViewNoInternet.setVisibility(View.VISIBLE);
                 mapView.setVisibility(View.GONE);
             }
         } else {
             textViewNoInternet.setVisibility(View.VISIBLE);
             mapView.setVisibility(View.GONE);
-            Toast.makeText(this, "You don't have internet, try again later", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "You don't have internet, try again later", Toast.LENGTH_SHORT).show();
         }
     }
 }

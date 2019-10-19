@@ -53,6 +53,7 @@ import com.google.gson.Gson;
 
 import java.net.PortUnreachableException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -156,9 +157,13 @@ public class ActualityListFragment extends Fragment implements AdapterRecyclerVi
                 break;
 
             case "defaultScreen":
+
+                //get the date
+                Date todayDate = new Date();
+                long dateInMilliseconds = todayDate.getTime();
                 /*adapter = new AdapterRecyclerViewProjects(generateOptionsForAdapter(ProjectHelper.getProjectsForOneUser(Utils.getCurrentUser().getUid())),
                         Glide.with(this), this);*/
-                adapter = new AdapterRecyclerViewProjects(generateOptionsForAdapter(ProjectHelper.getProjects()),
+                adapter = new AdapterRecyclerViewProjects(generateOptionsForAdapter(ProjectHelper.getFuturesProjectsForOneUser(getCurrentUser().getUid(), dateInMilliseconds)),
                         Glide.with(this), this);
                 break;
 

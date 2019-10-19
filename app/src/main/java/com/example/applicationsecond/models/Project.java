@@ -9,7 +9,7 @@ public class Project {
     private String id;
     private String title;
     private Date creationDate;
-    private String eventDate;
+    private long eventDate;
     private Date endDate;
     private String description;
     private String urlPhoto;
@@ -30,7 +30,7 @@ public class Project {
     }
 
 
-    public Project(String title, Date creationDate, String eventDate, Date endDate,
+    public Project(String title, Date creationDate, long eventDate, Date endDate,
                    String description, String urlPhoto, String idAddress) {
         this.title = title;
         this.creationDate = creationDate;
@@ -48,7 +48,7 @@ public class Project {
         this.creationDate = creationDate;
     }
 
-    public Project(String id, String title, String description, String authorId, Date creationDate, String eventDate,
+    public Project(String id, String title, String description, String authorId, Date creationDate, long eventDate,
                    boolean isPublished, String streetNumber, String streetName,
                    String postalCode, String city, String country, String latLng) {
         this.usersWhoSubscribed = new ArrayList<>();
@@ -69,7 +69,7 @@ public class Project {
     }
 
     public Project(String id, String title, String description, String authorId, Date creationDate,
-                   String eventDate, boolean isPublished, String urlPhoto,
+                   long eventDate, boolean isPublished, String urlPhoto,
                    String streetNumber, String streetName,String postalCode,
                    String city, String country, String latLng) {
         this.usersWhoSubscribed = new ArrayList<>();
@@ -122,11 +122,11 @@ public class Project {
         this.creationDate = creationDate;
     }
 
-    public String getEventDate() {
+    public long getEventDate() {
         return eventDate;
     }
 
-    public void setEventDate(String eventDate) {
+    public void setEventDate(long eventDate) {
         this.eventDate = eventDate;
     }
 

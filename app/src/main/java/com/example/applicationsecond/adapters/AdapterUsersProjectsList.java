@@ -1,50 +1,51 @@
 package com.example.applicationsecond.adapters;
 
-import android.content.Context;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.RequestManager;
-import com.bumptech.glide.request.RequestOptions;
 import com.example.applicationsecond.R;
 import com.example.applicationsecond.models.Project;
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 
-import java.util.List;
+public class AdapterUsersProjectsList extends FirestoreRecyclerAdapter<Project, ViewHolderUsersProjectsList> {
+    public interface Listener {
+        void onDataChanged();
+    }
 
-public class AdapterUsersProjectsList extends RecyclerView.Adapter<ViewHolderUsersProjectsList>{
-
-    private List<Project> projectList;
     private RequestManager glide;
+    private Listener callback;
 
-    public AdapterUsersProjectsList(List<Project> projectList, RequestManager glide) {
-        this.projectList = projectList;
+    /**
+     * Create a new RecyclerView adapter that listens to a Firestore Query.  See {@link
+     * FirestoreRecyclerOptions} for configuration options.
+     *
+     * @param options
+     */
+    public AdapterUsersProjectsList(@NonNull FirestoreRecyclerOptions<Project> options, RequestManager glide, Listener callback) {
+        super(options);
         this.glide = glide;
+        this.callback = callback;
+    }
+
+    @Override
+    protected void onBindViewHolder(@NonNull ViewHolderUsersProjectsList viewHolderUsersProjectsList, int i, @NonNull Project project) {
+        viewHolderUsersProjectsList.updateUi(project, glide);
     }
 
     @NonNull
     @Override
     public ViewHolderUsersProjectsList onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        Context context = parent.getContext();
-        LayoutInflater inflater = LayoutInflater.from(context);
-        View view = inflater.inflate(R.layout.fragment_my_projects_item, parent, false);
-        return new ViewHolderUsersProjectsList(view);
+        return new ViewHolderUsersProjectsList(LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.fragment_my_projects_item, parent, false));
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolderUsersProjectsList holder, int position) {
-        holder.updateUi(projectList.get(position), this.glide);
-    }
-
-    @Override
-    public int getItemCount() {
-        return projectList.size();
-    }
-
-    public Project getItem(int position) {
-        return this.projectList.get(position);
+    public void onDataChanged() {
+        super.onDataChanged();
+        this.callback.onDataChanged();
     }
 }

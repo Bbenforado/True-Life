@@ -1,5 +1,6 @@
 package com.example.applicationsecond.api;
 
+import com.example.applicationsecond.adapters.AdapterRecyclerViewPosts;
 import com.example.applicationsecond.models.Post;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
@@ -9,6 +10,7 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.Date;
+import java.util.List;
 
 public class PostHelper {
 
@@ -19,8 +21,8 @@ public class PostHelper {
     }
 
     //CREATE
-    public static Task<Void> createPost(String id, String title, String content, String authorName, Date dateOfPublication) {
-        Post postToCreate = new Post(id, title, content, authorName, dateOfPublication);
+    public static Task<Void> createPost(String id, String title, String content, String authorId, Date dateOfPublication) {
+        Post postToCreate = new Post(id, title, content, authorId, dateOfPublication);
         return PostHelper.getPostsCollection().document(id).set(postToCreate);
     }
 
@@ -30,10 +32,14 @@ public class PostHelper {
     }
 
 
-    public static Query getPublishedPosts(String userId) {
-        return ProjectHelper.getProjectsCollection()
+    public static Query getUsersPosts(String userId) {
+        return PostHelper.getPostsCollection()
                 .whereEqualTo("authorId", userId)
                 .limit(50);
+    }
+
+    public static Task<Void> deletePost(String postId) {
+        return PostHelper.getPostsCollection().document(postId).delete();
     }
 
 }

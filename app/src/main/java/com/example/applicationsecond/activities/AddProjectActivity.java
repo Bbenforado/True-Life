@@ -57,6 +57,7 @@ import com.google.firebase.storage.UploadTask;
 import java.io.File;
 import java.io.IOException;
 import java.net.PortUnreachableException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -94,7 +95,7 @@ public class AddProjectActivity extends AppCompatActivity {
     private String projectId;
     private Uri uriImageSelected;
     private String currentDate;
-    private String eventDate;
+    private long eventDate;
     //----------------------------------------------
     //-----------------------------------------------
     public static final String APP_PREFERENCES = "appPreferences";
@@ -283,7 +284,7 @@ public class AddProjectActivity extends AppCompatActivity {
     private boolean fieldsAreCorrectlyFilled() {
         return  (!TextUtils.isEmpty(streetNumberEditText.getText()) && !TextUtils.isEmpty(streetNameEditText.getText()) &&
                 !TextUtils.isEmpty(postalCodeEditText.getText()) && !TextUtils.isEmpty(cityEditText.getText()) &&
-                !TextUtils.isEmpty(countryEditText.getText()) && eventDate != null && !TextUtils.isEmpty(titleEditText.getText())
+                !TextUtils.isEmpty(countryEditText.getText()) && eventDate != 0 && !TextUtils.isEmpty(titleEditText.getText())
                 && !TextUtils.isEmpty(descriptionEditText.getText()));
     }
 
@@ -311,8 +312,6 @@ public class AddProjectActivity extends AppCompatActivity {
         int day = calendar.get(Calendar.DAY_OF_MONTH);
         int month = calendar.get(Calendar.MONTH);
         int year = calendar.get(Calendar.YEAR);
-
-
         DatePickerDialog datePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
@@ -343,18 +342,22 @@ public class AddProjectActivity extends AppCompatActivity {
         datePickerDialog.show();
     }
 
-    private  void saveDates(View v, int dayOfMonth, int month, int year) {
+    private  void saveDates(View v, int dayOfMonth, int month, int year){
         String strMonth = addZeroToDate(Integer.toString(month + 1));
         String strDay = addZeroToDate(Integer.toString(dayOfMonth));
         String strYear = Integer.toString(year);
-        switch (v.getId()) {
-            case R.id.spinner_button_event_date_add_project_activity:
-                buttonEventDate.setText(strDay + "/" + strMonth + "/" + strYear);
-                eventDate = strDay + "/" + strMonth + "/" + strYear;
-                break;
-            default:
-                break;
+        String dateStr = strDay + "/" + strMonth + "/" + strYear;
+        buttonEventDate.setText(dateStr);
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        Date date = null;
+        try {
+            date = dateFormat.parse(dateStr);
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
+        eventDate = date.getTime();
+
     }
 
 
@@ -438,7 +441,7 @@ public class AddProjectActivity extends AppCompatActivity {
     }
 
     private void uploadPhotoInFireBaseAndSaveProject(final String title, final String description, final String authorId, final Date creation_date,
-                                                     String eventDate, String streetNumber, String streetName, String postalCode,
+                                                     long eventDate, String streetNumber, String streetName, String postalCode,
                                                      String city, String country, String latLng) {
         String uuid = UUID.randomUUID().toString(); // GENERATE UNIQUE STRING
         StorageReference filePath = FirebaseStorage.getInstance().getReference(uuid);
@@ -517,8 +520,9 @@ public class AddProjectActivity extends AppCompatActivity {
                     if (project.getDescription() != null) {
                         descriptionEditText.setText(project.getDescription());
                     }
-                    if (project.getEventDate() != null) {
-                        buttonEventDate.setText(project.getEventDate());
+                    if (project.getEventDate() != 0) {
+                        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+                        buttonEventDate.setText(formatter.format(project.getEventDate()));
                     }
                     if (project.getStreetNumber() != null) {
                         streetNumberEditText.setText(project.getStreetNumber());
@@ -547,9 +551,5 @@ public class AddProjectActivity extends AppCompatActivity {
                 }
             }
         });
-    }
-
-    private void displaySaveForLaterButton() {
-
     }
 }

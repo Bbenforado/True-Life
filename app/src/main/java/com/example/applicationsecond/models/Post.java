@@ -7,18 +7,18 @@ public class Post {
     private String id;
     private String title;
     private String content;
-    private String authorName;
+    private String authorId;
     private Date dateOfPublication;
 
     public Post() {
 
     }
 
-    public Post(String id, String title, String content, String authorName, Date dateOfPublication) {
+    public Post(String id, String title, String content, String authorId, Date dateOfPublication) {
         this.id = id;
         this.title = title;
         this.content = content;
-        this.authorName = authorName;
+        this.authorId = authorId;
         this.dateOfPublication = dateOfPublication;
     }
 
@@ -55,12 +55,12 @@ public class Post {
         this.content = content;
     }
 
-    public String getAuthorName() {
-        return authorName;
+    public String getAuthorId() {
+        return authorId;
     }
 
-    public void setAuthorName(String authorName) {
-        this.authorName = authorName;
+    public void setAuthorId(String authorId) {
+        this.authorId = authorId;
     }
 
     public Date getDateOfPublication() {

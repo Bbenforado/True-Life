@@ -65,25 +65,8 @@ public class ViewHolderUsersChats extends RecyclerView.ViewHolder {
         if (chat.getLastMessage() != null) {
             Message lastMessage = chat.getLastMessage();
             textViewLastMessage.setText(lastMessage.getMessage());
-
-            if (lastMessage.getUserSender().getUrlPhoto() != null) {
-                glide.load(lastMessage.getUserSender().getUrlPhoto())
-                        .apply(RequestOptions.circleCropTransform())
-                        .into(imageView);
-            }
             textViewTime.setText(convertDateToHour(lastMessage.getDateCreated()));
-            ProjectHelper.getProject(chat.getId()).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    if (task.isSuccessful()) {
-                        Project project = task.getResult().toObject(Project.class);
-                        textViewTitle.setText(giveNewSizeToTitle(project.getTitle()));
-                    }
-                }
-            });
-
             String userId = Utils.getCurrentUser().getUid();
-
             UserHelper.getUser(userId).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -96,11 +79,24 @@ public class ViewHolderUsersChats extends RecyclerView.ViewHolder {
                     }
                 }
             });
-
-
         } else {
+            textViewTime.setText("");
             textViewLastMessage.setText("No message yet, be the first to start the talk!");
         }
+        ProjectHelper.getProject(chat.getId()).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    Project project = task.getResult().toObject(Project.class);
+                    textViewTitle.setText(giveNewSizeToTitle(project.getTitle()));
+                    if (project.getUrlPhoto() != null) {
+                        glide.load(project.getUrlPhoto())
+                            .apply(RequestOptions.circleCropTransform())
+                            .into(imageView);
+                    }
+                }
+            }
+        });
         layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -10,6 +10,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.Date;
@@ -29,7 +30,7 @@ public class ProjectHelper {
         return ProjectHelper.getProjectsCollection().document().set(projectToCreate);
     }*/
 
-    public static Task<Void> createProject(String id, String title, String description, String idAuthor, Date creationDate, String eventDate,
+    public static Task<Void> createProject(String id, String title, String description, String idAuthor, Date creationDate, long eventDate,
                                            boolean isPublished, String streetNumber, String streetName, String postalCode,
                                            String city, String country, String latLng) {
         Project projectToCreate = new Project(id, title, description, idAuthor, creationDate, eventDate, isPublished, streetNumber, streetName,
@@ -37,16 +38,23 @@ public class ProjectHelper {
         return ProjectHelper.getProjectsCollection().document(id).set(projectToCreate);
     }
 
-    public static Task<Void> createProjectWithImage(String id, String title, String description, String idAuthor, Date creationDate, String eventDate,
-                                                    boolean isPublished, String urlPhoto,
-                                                    String streetNumber, String streetName, String postalCode,
+    public static Task<Void> createProjectWithImage(String id, String title, String description, String idAuthor, Date creationDate,
+                                                    long eventDate, boolean isPublished, String urlPhoto,
+                                                    String streetNumber, String streetName,String postalCode,
                                                     String city, String country, String latLng) {
-        Project project = new Project(id, title, description, idAuthor, creationDate, eventDate, isPublished, urlPhoto, streetNumber, streetName,
-                postalCode, city, country, latLng);
+        Project project = new Project(id, title, description, idAuthor, creationDate,
+            eventDate, isPublished, urlPhoto, streetNumber, streetName, postalCode, city, country, latLng);
         return ProjectHelper.getProjectsCollection().document(id).set(project);
     }
 
     //GET
+    public static Query getFuturesProjectsForOneUser(String userId, long date) {
+        return ProjectHelper.getProjectsCollection()
+                .whereEqualTo("published", true)
+                .whereEqualTo("authorId", userId)
+                .whereGreaterThanOrEqualTo("eventDate", date)
+                .limit(50);
+    }
 
     public static Query getPublishedProjects(String userId) {
         return ProjectHelper.getProjectsCollection()
@@ -91,17 +99,25 @@ public class ProjectHelper {
         return ProjectHelper.getProjectsCollection().whereEqualTo("published", true).get();
     }*/
 
-    public static Task<QuerySnapshot> getUsersPublishedProjects(String currentUserId) {
+    /*public static Task<QuerySnapshot> getUsersPublishedProjects(String currentUserId) {
         return ProjectHelper.getProjectsCollection().whereEqualTo("published", true).whereEqualTo("authorId", currentUserId).get();
-    }
-
-    public static Task<QuerySnapshot> getUsersNotPublishedProjects(String userId) {
-        return ProjectHelper.getProjectsCollection().whereEqualTo("published", false).whereEqualTo("authorId", userId).get();
-    }
-
-   /* public static Task<QuerySnapshot> getProjectsForOneUser(String userId) {
-        return ProjectHelper.getProjectsCollection().whereEqualTo("published", true).whereArrayContains("usersWhoSubscribed", userId).get();
     }*/
+
+    public static Query getUsersPublishedProjects(String currentUserId) {
+        return ProjectHelper.getProjectsCollection().whereEqualTo("published", true).whereEqualTo("authorId", currentUserId);
+    }
+
+   /* public static Task<QuerySnapshot> getUsersNotPublishedProjects(String userId) {
+        return ProjectHelper.getProjectsCollection().whereEqualTo("published", false).whereEqualTo("authorId", userId).get();
+    }*/
+
+    public static Query getUsersNotPublishedProjects(String userId) {
+        return ProjectHelper.getProjectsCollection().whereEqualTo("published", false).whereEqualTo("authorId", userId);
+    }
+
+    public static Task<Void> deleteProject(String id) {
+        return ProjectHelper.getProjectsCollection().document(id).delete();
+    }
 
     //UPDATE
     public static Task<Void> addSubscriptionToProject(String projectId, String userId) {
@@ -113,11 +129,6 @@ public class ProjectHelper {
         return ProjectHelper.getProjectsCollection().document(projectId).update("usersWhoSubscribed",
                 FieldValue.arrayRemove(userId));
     }
-
-   /* public static Task<Void> updateProject(String projectId, Map<String, Object> data) {
-        return ProjectHelper.getProjectsCollection().document(projectId).set(data);
-    }*/
-
     public static Task<Void> updateTitle(String projectId, String title) {
         return ProjectHelper.getProjectsCollection().document(projectId).update("title", title);
     }
@@ -132,9 +143,6 @@ public class ProjectHelper {
     public static Task<Void> updateStreetName(String projectId, String streetName) {
         return ProjectHelper.getProjectsCollection().document(projectId).update("streetName", streetName);
     }
-    public static Task<Void> updateComplement(String projectId, String complement) {
-        return ProjectHelper.getProjectsCollection().document(projectId).update("locationComplement", complement);
-    }
     public static Task<Void> updatePostalCode(String projectId, String postalCode) {
         return ProjectHelper.getProjectsCollection().document(projectId).update("postalCode", postalCode);
     }
@@ -144,7 +152,7 @@ public class ProjectHelper {
     public static Task<Void> updateCountry(String projectId, String country) {
         return ProjectHelper.getProjectsCollection().document(projectId).update("country", country);
     }
-    public static Task<Void> updateEventDate(String projectId, String eventDate) {
+    public static Task<Void> updateEventDate(String projectId, long eventDate) {
         return ProjectHelper.getProjectsCollection().document(projectId).update("eventDate", eventDate);
     }
     public static Task<Void> updateUrlPhoto(String projectId, String urlPhoto) {

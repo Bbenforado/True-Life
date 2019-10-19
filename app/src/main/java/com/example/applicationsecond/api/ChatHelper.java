@@ -32,6 +32,10 @@ public class ChatHelper {
                 .limit(50);
     }
 
+    public static Task<Void> deleteChat(String idChat) {
+        return ChatHelper.getChatCollection().document(idChat).delete();
+    }
+
     //CREATE
     public static Task<Void> createChat(String id) {
         Chat chat = new Chat(id);

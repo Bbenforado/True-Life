@@ -1,5 +1,6 @@
 package com.example.applicationsecond.adapters;
 
+import android.content.Context;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -20,6 +21,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -36,10 +38,12 @@ public class ViewHolderProjects extends RecyclerView.ViewHolder {
     @BindView(R.id.image_view_verified_fragment_page_item)
     ImageView imageViewAssociationIcon;
     @BindView(R.id.fragment_page_item_image) ImageView imageView;
+    private Context context;
 
     public ViewHolderProjects(@NonNull View itemView) {
         super(itemView);
         ButterKnife.bind(this, itemView);
+        context = itemView.getContext();
     }
 
     public void updateUi(Project project, RequestManager glide) {
@@ -76,6 +80,15 @@ public class ViewHolderProjects extends RecyclerView.ViewHolder {
                     .apply(RequestOptions.noTransformation())
                     .into(this.imageView);
 
+        }
+
+        Date todayDate = new Date();
+        long dateInMilliseconds = todayDate.getTime();
+        if (project.getEventDate() < dateInMilliseconds) {
+            titleTextView.setTextColor(context.getResources().getColor(R.color.disabledColor));
+            contentOfNewsTextView.setTextColor(context.getResources().getColor(R.color.disabledColor));
+            dateCreationProjectTextView.setTextColor(context.getResources().getColor(R.color.disabledColor));
+            ownerOfPostTextView.setTextColor(context.getResources().getColor(R.color.disabledColor));
         }
 
     }

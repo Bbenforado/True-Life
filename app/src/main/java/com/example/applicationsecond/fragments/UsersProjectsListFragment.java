@@ -3,12 +3,14 @@ package com.example.applicationsecond.fragments;
 
 import android.app.ActivityOptions;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,13 +28,17 @@ import com.example.applicationsecond.R;
 import com.example.applicationsecond.activities.ProjectDetailActivity;
 import com.example.applicationsecond.adapters.AdapterRecyclerViewProjects;
 import com.example.applicationsecond.adapters.AdapterUsersProjectsList;
+import com.example.applicationsecond.api.ChatHelper;
 import com.example.applicationsecond.api.ProjectHelper;
+import com.example.applicationsecond.api.UserHelper;
 import com.example.applicationsecond.models.Post;
 import com.example.applicationsecond.models.Project;
 import com.example.applicationsecond.utils.ItemClickSupport;
 import com.example.applicationsecond.utils.Utils;
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.gson.Gson;
@@ -46,7 +52,7 @@ import butterknife.ButterKnife;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class UsersProjectsListFragment extends Fragment {
+public class UsersProjectsListFragment extends Fragment implements AdapterUsersProjectsList.Listener{
     //------------------------------
     //BIND VIEWS
     //-------------------------------
@@ -57,13 +63,12 @@ public class UsersProjectsListFragment extends Fragment {
     //-----------------------------------
     //-------------------------------------
     private AdapterUsersProjectsList adapter;
-    private List<Project> projectList;
     private Boolean isPublished;
     private SharedPreferences preferences;
     //-----------------------------------------------
     //-------------------------------------------------
     public static final String APP_PREFERENCES = "appPreferences";
-    public static final String CLICKED_PROJECT = "clickedProject";
+    private static final String CLICKED_PROJECT = "clickedProject";
 
     public UsersProjectsListFragment() {
         // Required empty public constructor
@@ -83,13 +88,15 @@ public class UsersProjectsListFragment extends Fragment {
         doBasicConfiguration();
         return result;
     }
-    private void doBasicConfiguration() {
-        projectList = new ArrayList<>();
 
+    //------------------------------------
+    //CONFIGURATION
+    //-----------------------------------------
+    private void doBasicConfiguration() {
         configureRecyclerView();
         configureOnClickRecyclerView();
+        configureOnLongClickRecyclerView();
         configureViewSwitcher();
-
     }
 
     private void configureViewSwitcher() {
@@ -99,8 +106,6 @@ public class UsersProjectsListFragment extends Fragment {
         // set the animation type to ViewSwitcher
         viewSwitcher.setInAnimation(newsAvailable);
         viewSwitcher.setOutAnimation(noNewsAvailable);
-
-        //displayScreenDependingOfNewsAvailable();
     }
 
     private void configureRecyclerView() {
@@ -120,66 +125,65 @@ public class UsersProjectsListFragment extends Fragment {
                         startActivity(intent);
                     }
                 });
-
     }
 
-    private void displayScreenDependingOfNewsAvailable(List<Project> projects) {
-        if (checkIfTheresNewsToDisplay(projects)) {
-            viewSwitcher.setDisplayedChild(0);
-        } else {
-            viewSwitcher.setDisplayedChild(1);
-        }
+    private void configureOnLongClickRecyclerView() {
+        ItemClickSupport.addTo(recyclerView, R.layout.fragment_my_projects_item)
+                .setOnItemLongClickListener(new ItemClickSupport.OnItemLongClickListener() {
+                    @Override
+                    public boolean onItemLongClicked(RecyclerView recyclerView, int position, View v) {
+                        Project project = adapter.getItem(position);
+                        displayDialogToDeleteProject(project.getId());
+                        return true;
+                    }
+                });
     }
 
-    private boolean checkIfTheresNewsToDisplay(List<Project> projects) {
-        return projects.size() > 0;
+    //---------------------------------------
+    //------------------------------------------
+    private void displayDialogToDeleteProject(String projectId) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Do you want to delete this project?")
+               .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                   @Override
+                   public void onClick(DialogInterface dialog, int which) {
+                       ProjectHelper.deleteProject(projectId);
+                       ChatHelper.deleteChat(projectId);
+                   }
+               })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                })
+                .create()
+                .show();
     }
 
     private void getDataToConfigureRecyclerView(String userId) {
         if (isPublished) {
-            ProjectHelper.getUsersPublishedProjects(userId).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    if (task.isSuccessful()) {
-                        List<Project> projects = new ArrayList<>();
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-
-                            Project project = document.toObject(Project.class);
-                            projects.add(project);
-                        }
-
-                        adapter = new AdapterUsersProjectsList(projects, Glide.with(getContext()));
-                        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                        recyclerView.setAdapter(adapter);
-                        displayScreenDependingOfNewsAvailable(projects);
-
-                    } else {
-                        Log.e("TAG", "Error");
-                    }
-                }
-            });
+            adapter = new AdapterUsersProjectsList(generateOptionsForAdapter(ProjectHelper.getUsersPublishedProjects(userId)),
+                    Glide.with(getContext()), this);
+            recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+            recyclerView.setAdapter(adapter);
         } else {
-            ProjectHelper.getUsersNotPublishedProjects(userId).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    if (task.isSuccessful()) {
-                        List<Project> projects = new ArrayList<>();
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-
-                            Project project = document.toObject(Project.class);
-                            projects.add(project);
-                        }
-
-                        adapter = new AdapterUsersProjectsList(projects, Glide.with(getContext()));
-                        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                        recyclerView.setAdapter(adapter);
-                        displayScreenDependingOfNewsAvailable(projects);
-
-                    } else {
-                        Log.e("TAG", "Error");
-                    }
-                }
-            });
+            adapter = new AdapterUsersProjectsList(generateOptionsForAdapter(ProjectHelper.getUsersNotPublishedProjects(userId)),
+                    Glide.with(getContext()), this);
+            recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+            recyclerView.setAdapter(adapter);
         }
+    }
+
+    private FirestoreRecyclerOptions<Project> generateOptionsForAdapter(Query query){
+        return new FirestoreRecyclerOptions.Builder<Project>()
+                .setQuery(query, Project.class)
+                .setLifecycleOwner(this)
+                .build();
+    }
+
+    @Override
+    public void onDataChanged() {
+        viewSwitcher.setDisplayedChild(adapter.getItemCount() == 0? 1 : 0);
     }
 }

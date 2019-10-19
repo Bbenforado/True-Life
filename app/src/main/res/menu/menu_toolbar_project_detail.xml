@@ -13,4 +13,10 @@
         android:title="Chat"
         app:showAsAction="ifRoom|withText"/>
 
+    <item
+        android:id="@+id/toolbar_detail_project_delete"
+        android:icon="@drawable/ic_remove_white"
+        android:title="Delete"
+        app:showAsAction="ifRoom|withText"/>
+
 </menu>
