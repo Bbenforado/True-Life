@@ -69,10 +69,15 @@
 
                     <TextView
                         android:id="@+id/user_chats_activity_item_unread_message_text_view"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:background="@drawable/text_view_counter_style"
                         android:layout_marginLeft="30dp"
-                        android:textColor="@color/red"/>
+                        android:textSize="10sp"
+                        android:visibility="gone"
+                        android:textColor="@color/white"/>
 
                 </LinearLayout>
 

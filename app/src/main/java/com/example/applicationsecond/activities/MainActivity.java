@@ -28,6 +28,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -241,8 +243,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     //-------------------------------------------------
     //-------------------------------------------------
     private void getAllUnreadMessagesForAllChats(Map<String, Long> lastChatVisit) {
+        counterUnreadMessages = 0;
             for (Map.Entry<String, Long> entry : lastChatVisit.entrySet()) {
-
                 MessageHelper.getUnreadMessage(entry.getKey(), entry.getValue()).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -259,10 +261,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                     badgeChatTextView.setVisibility(View.VISIBLE);
                                 }
                             }
-
                         }
                     }
                 });
+                if (counterUnreadMessages == 0) {
+                    badgeChatTextView.setVisibility(View.GONE);
+                }
             }
     }
 
@@ -272,8 +276,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         badgeChatTextView.setTextColor(getResources().getColor(R.color.white));
         badgeChatTextView.setTextSize(10);
         badgeChatTextView.setBackground(getResources().getDrawable(R.drawable.text_view_counter_style));
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(100, 100);
+        params.gravity = Gravity.CENTER;
+        badgeChatTextView.setLayoutParams(params);
         badgeChatTextView.setText(String.valueOf(unreadMessages));
-
     }
 
     public void showFragment(Fragment fragment) {

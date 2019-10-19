@@ -219,25 +219,7 @@ public class AddProjectActivity extends AppCompatActivity {
             EasyPermissions.requestPermissions(this, getString(R.string.popup_title_permission_files_access), RC_IMAGE_PERMS, PERMS);
             return;
         }
-        String[] wayToGetPicture = {"Take from gallery", "Take from camera"};
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setItems(wayToGetPicture, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                switch (which) {
-                    case 0:
-                        chooseImageFromPhone();
-                        break;
-                    case 1:
-                        Toast.makeText(getApplicationContext(), "nothing for the moment", Toast.LENGTH_SHORT).show();
-                        break;
-                    default:
-                        break;
-                }
-            }
-        });
-        AlertDialog dialog = builder.create();
-        dialog.show();
+        chooseImageFromPhone();
     }
 
     @OnClick(R.id.spinner_button_event_date_add_project_activity)

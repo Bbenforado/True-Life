@@ -115,23 +115,19 @@ public class ViewHolderUsersChats extends RecyclerView.ViewHolder {
     }
 
     private void getUnreadMessages(String chatName, Long time) {
+        numberOfUnreadMessages = 0;
         MessageHelper.getUnreadMessage(chatName, time).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
-                    numberOfUnreadMessages = 0;
                     for (QueryDocumentSnapshot document : task.getResult()) {
                         Message message = document.toObject(Message.class);
                         if (!message.getUserSender().getId().equals(Utils.getCurrentUser().getUid())) {
                             numberOfUnreadMessages = numberOfUnreadMessages + 1;
                             textViewUnreadMessages.setVisibility(View.VISIBLE);
                             textViewUnreadMessages.setText(String.valueOf(numberOfUnreadMessages));
-                        } else {
-                            textViewUnreadMessages.setVisibility(View.GONE);
                         }
                     }
-                } else {
-                    textViewUnreadMessages.setVisibility(View.GONE);
                 }
             }
         });

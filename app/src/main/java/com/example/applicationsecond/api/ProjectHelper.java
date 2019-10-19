@@ -51,7 +51,7 @@ public class ProjectHelper {
     public static Query getFuturesProjectsForOneUser(String userId, long date) {
         return ProjectHelper.getProjectsCollection()
                 .whereEqualTo("published", true)
-                .whereEqualTo("authorId", userId)
+                .whereArrayContains("usersWhoSubscribed", userId)
                 .whereGreaterThanOrEqualTo("eventDate", date)
                 .limit(50);
     }
