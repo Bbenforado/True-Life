@@ -24,6 +24,7 @@ import com.example.applicationsecond.models.Project;
 import com.example.applicationsecond.models.User;
 import com.example.applicationsecond.utils.Utils;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -60,8 +61,14 @@ public class ViewHolderUsersChats extends RecyclerView.ViewHolder {
         context = itemView.getContext();
     }
 
-    public void updateUi(Chat chat, RequestManager glide) {
+    public void updateUi(Chat chat, RequestManager glide, Project project) {
         numberOfUnreadMessages = 0;
+        textViewTitle.setText(project.getTitle());
+        if (project.getUrlPhoto() != null) {
+            glide.load(project.getUrlPhoto())
+                    .apply(RequestOptions.circleCropTransform())
+                    .into(imageView);
+        }
         if (chat.getLastMessage() != null) {
             Message lastMessage = chat.getLastMessage();
             textViewLastMessage.setText(lastMessage.getMessage());
@@ -83,20 +90,7 @@ public class ViewHolderUsersChats extends RecyclerView.ViewHolder {
             textViewTime.setText("");
             textViewLastMessage.setText("No message yet, be the first to start the talk!");
         }
-        ProjectHelper.getProject(chat.getId()).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    Project project = task.getResult().toObject(Project.class);
-                    textViewTitle.setText(giveNewSizeToTitle(project.getTitle()));
-                    if (project.getUrlPhoto() != null) {
-                        glide.load(project.getUrlPhoto())
-                            .apply(RequestOptions.circleCropTransform())
-                            .into(imageView);
-                    }
-                }
-            }
-        });
+
         layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

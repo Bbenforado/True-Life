@@ -9,10 +9,6 @@
             android:id="@+id/users_profile"
             android:title="User's profile"
             android:icon="@drawable/ic_profile"/>
-        <item
-            android:id="@+id/settings"
-            android:title="Settings"
-            android:icon="@drawable/ic_setting_toolbar"/>
 
         <item
             android:id="@+id/users_projects"

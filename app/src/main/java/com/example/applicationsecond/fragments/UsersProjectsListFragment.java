@@ -149,6 +149,7 @@ public class UsersProjectsListFragment extends Fragment implements AdapterUsersP
                    public void onClick(DialogInterface dialog, int which) {
                        ProjectHelper.deleteProject(projectId);
                        ChatHelper.deleteChat(projectId);
+                       UserHelper.deleteAnIdInProjectSubscribedId(projectId);
                    }
                })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

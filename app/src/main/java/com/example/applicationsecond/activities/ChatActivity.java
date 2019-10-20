@@ -57,6 +57,7 @@ import butterknife.OnClick;
 
 import static com.example.applicationsecond.utils.Utils.formatLocation;
 import static com.example.applicationsecond.utils.Utils.getCurrentUser;
+import static com.example.applicationsecond.utils.Utils.isNetworkAvailable;
 
 public class ChatActivity extends AppCompatActivity implements ChatAdapter.Listener {
 
@@ -77,79 +78,52 @@ public class ChatActivity extends AppCompatActivity implements ChatAdapter.Liste
     private ChatAdapter adapter;
     @Nullable private User modelCurrentUser;
     private String currentChatName;
-    private SharedPreferences preferences;
     //---------------------------------------------
     //---------------------------------------------
-    public static final String APP_PREFERENCES = "appPreferences";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
         ButterKnife.bind(this);
-        preferences = getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE);
 
         configureToolbar();
         String chatName = getIntent().getExtras().getString("chatName");
-        configureRecyclerView(chatName);
-        getCurrentUserFromFirestore();
+        //if (isNetworkAvailable(this)) {
+            configureRecyclerView(chatName);
+            getCurrentUserFromFirestore();
+        /*} else {
+            Toast.makeText(this, "You don't have internet, please, try again later", Toast.LENGTH_SHORT).show();
+        }*/
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-      /*  Date date = new Date();
-        long dateInMilliseconds = date.getTime();
-
-        System.out.println("on stop");
-
-        Map<String, Long> lastChatVisit = new ConcurrentHashMap<>();
-        if (modelCurrentUser.getLastChatVisit() != null) {
-
-            lastChatVisit = modelCurrentUser.getLastChatVisit();
-
-            for (Map.Entry<String, Long> entry : lastChatVisit.entrySet()) {
-                if (entry.getKey().equals(currentChatName)) {
-
-                    System.out.println("ici");
-
-                    entry.setValue(dateInMilliseconds);
-                    UserHelper.updateLastChatVisit(getCurrentUser().getUid(), lastChatVisit);
-                } else {
-                    lastChatVisit.put(currentChatName, dateInMilliseconds);
-                    UserHelper.updateLastChatVisit(getCurrentUser().getUid(), lastChatVisit);
-                }
-            }
-        } else {
-            lastChatVisit.put(currentChatName, dateInMilliseconds);
-            UserHelper.updateLastChatVisit(getCurrentUser().getUid(), lastChatVisit);
-        }*/
-
     }
 
     private void saveTimeOfTheVisit() {
-        Date date = new Date();
-        long dateInMilliseconds = date.getTime();
+        if (isNetworkAvailable(this)) {
+            Date date = new Date();
+            long dateInMilliseconds = date.getTime();
+            Map<String, Long> lastChatVisit = new ConcurrentHashMap<>();
+            if (modelCurrentUser.getLastChatVisit() != null) {
 
-        System.out.println("on resume");
+                lastChatVisit = modelCurrentUser.getLastChatVisit();
 
-        Map<String, Long> lastChatVisit = new ConcurrentHashMap<>();
-        if (modelCurrentUser.getLastChatVisit() != null) {
-
-            lastChatVisit = modelCurrentUser.getLastChatVisit();
-
-            for (Map.Entry<String, Long> entry : lastChatVisit.entrySet()) {
-                if (entry.getKey().equals(currentChatName)) {
-                    entry.setValue(dateInMilliseconds);
-                    UserHelper.updateLastChatVisit(getCurrentUser().getUid(), lastChatVisit);
-                } else {
-                    lastChatVisit.put(currentChatName, dateInMilliseconds);
-                    UserHelper.updateLastChatVisit(getCurrentUser().getUid(), lastChatVisit);
+                for (Map.Entry<String, Long> entry : lastChatVisit.entrySet()) {
+                    if (entry.getKey().equals(currentChatName)) {
+                        entry.setValue(dateInMilliseconds);
+                        UserHelper.updateLastChatVisit(getCurrentUser().getUid(), lastChatVisit);
+                    } else {
+                        lastChatVisit.put(currentChatName, dateInMilliseconds);
+                        UserHelper.updateLastChatVisit(getCurrentUser().getUid(), lastChatVisit);
+                    }
                 }
+            } else {
+                lastChatVisit.put(currentChatName, dateInMilliseconds);
+                UserHelper.updateLastChatVisit(getCurrentUser().getUid(), lastChatVisit);
             }
-        } else {
-            lastChatVisit.put(currentChatName, dateInMilliseconds);
-            UserHelper.updateLastChatVisit(getCurrentUser().getUid(), lastChatVisit);
         }
     }
 
@@ -169,60 +143,57 @@ public class ChatActivity extends AppCompatActivity implements ChatAdapter.Liste
     //---------------------------------
     @OnClick(R.id.activity_chat_send_button)
     public void onClickSendMessage() {
-        if (!TextUtils.isEmpty(editTextMessage.getText()) &&
-                modelCurrentUser != null) {
-            Date date = new Date();
-            long dateInMillis = date.getTime();
+        if (isNetworkAvailable(this)) {
+            if (!TextUtils.isEmpty(editTextMessage.getText()) &&
+                    modelCurrentUser != null) {
+                Date date = new Date();
+                long dateInMillis = date.getTime();
 
-            //ChatHelper.createChat(currentChatName);
+                CollectionReference ref = FirebaseFirestore.getInstance().collection("chats");
+                String id = ref.document(currentChatName).collection("messages").document().getId();
 
-            CollectionReference ref = FirebaseFirestore.getInstance().collection("chats");
-            String id = ref.document(currentChatName).collection("messages").document().getId();
+                MessageHelper.createMessageForChat(id, editTextMessage.getText().toString(),
+                        currentChatName, modelCurrentUser, dateInMillis).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_SHORT).show();
+                    }
+                });
 
-            MessageHelper.createMessageForChat(id, editTextMessage.getText().toString(),
-                    currentChatName, modelCurrentUser, dateInMillis).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_SHORT).show();
-                }
-            });
-
-            MessageHelper.getLastMessageOfAChat(currentChatName).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    if (task.isSuccessful()) {
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            Message message = document.toObject(Message.class);
-                            ChatHelper.updateLastMessage(currentChatName, message);
+                MessageHelper.getLastMessageOfAChat(currentChatName).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Message message = document.toObject(Message.class);
+                                ChatHelper.updateLastMessage(currentChatName, message);
+                            }
                         }
                     }
-                }
-            });
+                });
 
-            ProjectHelper.getProject(currentChatName).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    if (task.isSuccessful()) {
-                        Project project = task.getResult().toObject(Project.class);
-                        if (project.getUsersWhoSubscribed() != null) {
-                            if (project.getUsersWhoSubscribed().size() > 0) {
-                                List<String> users = new ArrayList<>();
-                                for (int i = 0; i < project.getUsersWhoSubscribed().size(); i++) {
-                                    users.add(project.getUsersWhoSubscribed().get(i));
-                                    ChatHelper.updateInvolvedUsers(currentChatName, users);
+                ProjectHelper.getProject(currentChatName).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            Project project = task.getResult().toObject(Project.class);
+                            if (project.getUsersWhoSubscribed() != null) {
+                                if (project.getUsersWhoSubscribed().size() > 0) {
+                                    List<String> users = new ArrayList<>();
+                                    for (int i = 0; i < project.getUsersWhoSubscribed().size(); i++) {
+                                        users.add(project.getUsersWhoSubscribed().get(i));
+                                        ChatHelper.updateInvolvedUsers(currentChatName, users);
+                                    }
                                 }
                             }
                         }
                     }
-                }
-            });
-            editTextMessage.setText("");
+                });
+                editTextMessage.setText("");
+            }
+        } else {
+            Toast.makeText(this, "You don't have internet, please, try again later", Toast.LENGTH_SHORT).show();
         }
-
-    }
-
-    @OnClick(R.id.activity_chat_add_file_button)
-    public void addFile() {
 
     }
 
@@ -248,7 +219,6 @@ public class ChatActivity extends AppCompatActivity implements ChatAdapter.Liste
         adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override
             public void onItemRangeInserted(int positionStart, int itemCount) {
-                //super.onItemRangeInserted(positionStart, itemCount);
                 recyclerView.smoothScrollToPosition(adapter.getItemCount());
             }
         });

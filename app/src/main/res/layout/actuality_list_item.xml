@@ -50,7 +50,7 @@
                         android:layout_width="20dp"
                         android:layout_height="20dp"
                         android:layout_toRightOf="@+id/owner_of_post"
-                        android:src="@drawable/ic_verified"
+                        android:src="@drawable/ic_asso_yellow"
                         android:paddingBottom="2dp"
                         android:visibility="gone"
                         android:layout_marginLeft="5dp"/>

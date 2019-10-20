@@ -3,19 +3,19 @@
 
     <item
         android:id="@+id/edit_item"
-        android:icon="@drawable/ic_edit_white"
+        android:icon="@drawable/ic_edit_white_android"
         android:title="Edit"
         app:showAsAction="ifRoom|withText"/>
 
     <item
         android:id="@+id/toolbar_detail_project_chat"
-        android:icon="@drawable/ic_chat_white"
+        android:icon="@drawable/ic_chat_white_android"
         android:title="Chat"
         app:showAsAction="ifRoom|withText"/>
 
     <item
         android:id="@+id/toolbar_detail_project_delete"
-        android:icon="@drawable/ic_remove_white"
+        android:icon="@drawable/ic_delete_white_android"
         android:title="Delete"
         app:showAsAction="ifRoom|withText"/>
 

@@ -284,6 +284,7 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
                     public void onClick(DialogInterface dialog, int which) {
                         ProjectHelper.deleteProject(projectId);
                         ChatHelper.deleteChat(projectId);
+                        UserHelper.deleteAnIdInProjectSubscribedId(projectId);
                         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                         startActivity(intent);
                     }
@@ -420,7 +421,6 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
                         .position(latLngOfAddress));
 
             } else {
-                //Toast.makeText(getApplicationContext(), "Location not found", Toast.LENGTH_SHORT).show();
                 textViewNoInternet.setText("Location not found");
                 textViewNoInternet.setVisibility(View.VISIBLE);
                 mapView.setVisibility(View.GONE);
@@ -428,7 +428,6 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
         } else {
             textViewNoInternet.setVisibility(View.VISIBLE);
             mapView.setVisibility(View.GONE);
-            //Toast.makeText(this, "You don't have internet, try again later", Toast.LENGTH_SHORT).show();
         }
     }
 }

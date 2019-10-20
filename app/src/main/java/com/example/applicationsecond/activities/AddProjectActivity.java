@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -72,6 +73,7 @@ import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
 import static com.example.applicationsecond.utils.Utils.addZeroToDate;
+import static com.example.applicationsecond.utils.Utils.isNetworkAvailable;
 
 public class AddProjectActivity extends AppCompatActivity {
 
@@ -127,17 +129,6 @@ public class AddProjectActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
-
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
-
-    @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
@@ -171,43 +162,51 @@ public class AddProjectActivity extends AppCompatActivity {
     public void publishProject() {
         isPublished = true;
 
-        if (fieldsAreCorrectlyFilled()) {
-            if (preferences.getInt(KEY_EDIT_PROJECT, -1) == 1) {
-                updateProjectInFireBase();
-                Toast.makeText(this, "Project updated!", Toast.LENGTH_SHORT).show();
-                //launch main activity
-                Intent intent = new Intent(this, MainActivity.class);
-                startActivity(intent);
+        if (isNetworkAvailable(this)) {
+            if (fieldsAreCorrectlyFilled()) {
+                if (preferences.getInt(KEY_EDIT_PROJECT, -1) == 1) {
+                    updateProjectInFireBase();
+                    Toast.makeText(this, "Project updated!", Toast.LENGTH_SHORT).show();
+                    //launch main activity
+                    Intent intent = new Intent(this, MainActivity.class);
+                    startActivity(intent);
+                } else {
+                    saveProjectInFireBase();
+                    Toast.makeText(this, "Project published!", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(this, MainActivity.class);
+                    startActivity(intent);
+                }
             } else {
-                saveProjectInFireBase();
-                Toast.makeText(this, "Project published!", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(this, MainActivity.class);
-                startActivity(intent);
+                Toast.makeText(this, "You have to fill the fields", Toast.LENGTH_SHORT).show();
             }
-        }else {
-            Toast.makeText(this, "You have to fill the fields", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "You don't have internet, please, try again later", Toast.LENGTH_SHORT).show();
         }
     }
 
     @OnClick(R.id.button_save_for_later_add_project_activity)
     public void saveProjectForLater() {
         isPublished = false;
-        if (preferences.getInt(KEY_EDIT_PROJECT, -1) == 1) {
-            if (fieldsAreCorrectlyFilled()) {
-                updateProjectInFireBase();
-                Toast.makeText(this, "Project updated!", Toast.LENGTH_SHORT).show();
-                finish();
+        if (isNetworkAvailable(this)) {
+            if (preferences.getInt(KEY_EDIT_PROJECT, -1) == 1) {
+                if (fieldsAreCorrectlyFilled()) {
+                    updateProjectInFireBase();
+                    Toast.makeText(this, "Project updated!", Toast.LENGTH_SHORT).show();
+                    finish();
+                } else {
+                    Toast.makeText(this, "You have to fill the fields", Toast.LENGTH_SHORT).show();
+                }
             } else {
-                Toast.makeText(this, "You have to fill the fields", Toast.LENGTH_SHORT).show();
+                if (!TextUtils.isEmpty(titleEditText.getText()) && !TextUtils.isEmpty(descriptionEditText.getText())) {
+                    saveProjectInFireBaseForNotPublishedProjects();
+                    Toast.makeText(this, "Project saved for later!", Toast.LENGTH_SHORT).show();
+                    finish();
+                } else {
+                    Toast.makeText(this, "You have to fill the fields", Toast.LENGTH_SHORT).show();
+                }
             }
         } else {
-            if (!TextUtils.isEmpty(titleEditText.getText()) && !TextUtils.isEmpty(descriptionEditText.getText())) {
-                saveProjectInFireBaseForNotPublishedProjects();
-                Toast.makeText(this, "Project saved for later!", Toast.LENGTH_SHORT).show();
-                finish();
-            } else {
-                Toast.makeText(this, "You have to fill the fields", Toast.LENGTH_SHORT).show();
-            }
+            Toast.makeText(this, "You don't have internet, please, try again later", Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -365,18 +364,25 @@ public class AddProjectActivity extends AppCompatActivity {
             if (isPublished) {
                 ProjectHelper.createProject(projectId, title, description, authorId, creation_date, eventDate, true, streetNbr, streetName,
                         postalCode, city, country, latLng);
-            } else {
+                ChatHelper.createChat(projectId);
+                ChatHelper.addInvolvedUser(projectId, authorId);
+                System.out.println("project id = " + projectId);
+                UserHelper.addProjectsSubscriptions(authorId, projectId);
+            }/* else {
                 ProjectHelper.createProject(projectId, title, description, authorId, creation_date, eventDate,false, streetNbr, streetName,
                         postalCode, city, country, latLng);
-            }
-            UserHelper.addProjectsSubscriptions(authorId, projectId);
+                ChatHelper.createChat(projectId);
+                ChatHelper.addInvolvedUser(projectId, authorId);
+                UserHelper.addProjectsSubscriptions(authorId, projectId);
+            }*/
 
         } else {
             uploadPhotoInFireBaseAndSaveProject(title, description, authorId, creation_date, eventDate, streetNbr, streetName, postalCode,
                     city, country, latLng);
         }
-        ChatHelper.createChat(projectId);
+        /*//ChatHelper.createChat(projectId);
         ChatHelper.addInvolvedUser(projectId, authorId);
+        UserHelper.addProjectsSubscriptions(authorId, projectId);*/
     }
 
     private void saveProjectInFireBaseForNotPublishedProjects() {
@@ -415,11 +421,12 @@ public class AddProjectActivity extends AppCompatActivity {
             String projectId = ref.document().getId();
             ProjectHelper.createProject(projectId, title, description, authorId, creation_date, eventDate, false, streetNbr, streetName,
                         postalCode, city, country, latLng);
+            UserHelper.addProjectsSubscriptions(authorId, projectId);
         } else {
             uploadPhotoInFireBaseAndSaveProject(title, description, authorId, creation_date, eventDate, streetNbr, streetName, postalCode,
                     city, country, latLng);
         }
-        UserHelper.addProjectsSubscriptions(authorId, projectId);
+
     }
 
     private void uploadPhotoInFireBaseAndSaveProject(final String title, final String description, final String authorId, final Date creation_date,
@@ -428,20 +435,28 @@ public class AddProjectActivity extends AppCompatActivity {
         String uuid = UUID.randomUUID().toString(); // GENERATE UNIQUE STRING
         StorageReference filePath = FirebaseStorage.getInstance().getReference(uuid);
 
+        ProgressDialog dialog = ProgressDialog.show(this, "Loading", "Please wait, it can take one minute", true);
+
         filePath.putFile(uriImageSelected).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                filePath.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
                     @Override
-                    public void onSuccess(Uri uri) {
+                    public void onComplete(@NonNull Task<Uri> task) {
+                        dialog.dismiss();
+                        Uri uri = task.getResult();
                         CollectionReference ref = FirebaseFirestore.getInstance().collection("projects");
                         String idProject = ref.document().getId();
                         if (isPublished) {
                             ProjectHelper.createProjectWithImage(idProject, title, description, authorId, creation_date, eventDate, true, uri.toString(),
                                     streetNumber, streetName, postalCode, city, country, latLng);
+                            ChatHelper.createChat(idProject);
+                            ChatHelper.addInvolvedUser(idProject, authorId);
+                            UserHelper.addProjectsSubscriptions(authorId, idProject);
                         } else {
                             ProjectHelper.createProjectWithImage(idProject, title, description, authorId, creation_date, eventDate, false, uri.toString(),
                                     streetNumber, streetName, postalCode, city, country, latLng);
+                            UserHelper.addProjectsSubscriptions(authorId, idProject);
                         }
                     }
                 });

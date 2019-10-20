@@ -83,5 +83,10 @@ public class UserHelper {
         return UserHelper.getUsersCollection().document(userId).update("city", city);
     }
 
+    public static Task<Void> deleteAnIdInProjectSubscribedId(String projectId) {
+        return UserHelper.getUsersCollection().document().update("projectsSubscribedId",
+                FieldValue.arrayRemove(projectId));
+    }
+
 
 }

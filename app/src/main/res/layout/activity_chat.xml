@@ -55,16 +55,6 @@
         android:layout_alignParentBottom="true"
         android:layout_margin="10dip">
 
-        <!-- ADD FILE BUTTON -->
-        <ImageButton
-            android:id="@+id/activity_chat_add_file_button"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_gravity="center"
-            android:adjustViewBounds="true"
-            android:background="@drawable/ic_add"
-            style="@style/Widget.AppCompat.Button.Borderless"/>
-
         <!-- TEXT MESSAGE EDIT TEXT -->
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/activity_chat_message_edit_text"
@@ -83,7 +73,7 @@
             android:id="@+id/activity_chat_send_button"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@drawable/ic_send"
+            android:src="@drawable/ic_send_big"
             android:scaleType="fitCenter"
             android:padding="6dp"
             android:layout_gravity="center_vertical"

@@ -229,17 +229,18 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                                     if (task.isSuccessful()) {
                                         Project project = task.getResult().toObject(Project.class);
 
-                                        if (project.getLatLng() != null) {
-                                            String[] latLong =  project.getLatLng().split(",");
-                                            double latitude = Double.parseDouble(latLong[0]);
-                                            double longitude = Double.parseDouble(latLong[1]);
+                                        if (project.isPublished()) {
+                                            if (project.getLatLng() != null) {
+                                                String[] latLong = project.getLatLng().split(",");
+                                                double latitude = Double.parseDouble(latLong[0]);
+                                                double longitude = Double.parseDouble(latLong[1]);
 
-                                            LatLng latLng = new LatLng(latitude, longitude);
+                                                LatLng latLng = new LatLng(latitude, longitude);
 
-                                            if (bounds.contains(latLng)) {
-                                                //int tag = Integer.parseInt(project.getId());
-                                                showPlaceOnMap(true, project.getId(), latLng);
-                                            }
+                                                if (bounds.contains(latLng)) {
+                                                    showPlaceOnMap(true, project.getId(), latLng);
+                                                }
+                                        }
                                         }
                                     }
                                 }

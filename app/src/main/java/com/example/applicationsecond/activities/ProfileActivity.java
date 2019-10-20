@@ -52,6 +52,8 @@ import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
 import static com.example.applicationsecond.utils.Utils.capitalizeFirstLetter;
+import static com.example.applicationsecond.utils.Utils.getCurrentUser;
+import static com.example.applicationsecond.utils.Utils.isNetworkAvailable;
 
 public class ProfileActivity extends AppCompatActivity {
 
@@ -164,11 +166,15 @@ public class ProfileActivity extends AppCompatActivity {
     @OnClick(R.id.profile_activity_change_picture_image_view)
     @AfterPermissionGranted(RC_IMAGE_PERMS)
     public void changeProfilePicture() {
-        if (!EasyPermissions.hasPermissions(this, PERMS)) {
-            EasyPermissions.requestPermissions(this, getString(R.string.popup_title_permission_files_access), RC_IMAGE_PERMS, PERMS);
-            return;
+        if (isNetworkAvailable(this)) {
+            if (!EasyPermissions.hasPermissions(this, PERMS)) {
+                EasyPermissions.requestPermissions(this, getString(R.string.popup_title_permission_files_access), RC_IMAGE_PERMS, PERMS);
+                return;
+            }
+            chooseImageFromPhone();
+        } else {
+            Toast.makeText(this, "You don't have internet, please, try again later", Toast.LENGTH_SHORT).show();
         }
-        chooseImageFromPhone();
 
     }
 
@@ -231,9 +237,13 @@ public class ProfileActivity extends AppCompatActivity {
                 .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        final TextInputEditText usernameInputEditText = view.findViewById(R.id.text_input_new_username);
-                        userNameButton.setText(usernameInputEditText.getEditableText().toString());
-                        UserHelper.updateUsername(Utils.getCurrentUser().getUid(), usernameInputEditText.getEditableText().toString());
+                        if (isNetworkAvailable(getApplicationContext())) {
+                            final TextInputEditText usernameInputEditText = view.findViewById(R.id.text_input_new_username);
+                            userNameButton.setText(usernameInputEditText.getEditableText().toString());
+                            UserHelper.updateUsername(Utils.getCurrentUser().getUid(), usernameInputEditText.getEditableText().toString());
+                        } else {
+                            Toast.makeText(getApplicationContext(), "You don't have internet, please, try again later", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 })
                 .setNegativeButton("Cancel", null)
@@ -258,18 +268,22 @@ public class ProfileActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
-                        if (!TextUtils.isEmpty(cityInputEditText.getText())) {
-                            UserHelper.updateCity(Utils.getCurrentUser().getUid(), cityInputEditText.getText().toString().toLowerCase());
-                            textViewCountryCity.setText(capitalizeFirstLetter(cityInputEditText.getText().toString()));
-                        }
-                        if (!TextUtils.isEmpty(countryInputEditText.getText())) {
-                            UserHelper.updateCountry(Utils.getCurrentUser().getUid(), countryInputEditText.getText().toString());
-                            textViewCountryCity.setText(capitalizeFirstLetter(countryInputEditText.getText().toString()));
-                        }
-                        if (!TextUtils.isEmpty(cityInputEditText.getText()) && !TextUtils.isEmpty(countryInputEditText.getText())) {
-                            String finalString = capitalizeFirstLetter(cityInputEditText.getText().toString()) + ", " +
-                                    capitalizeFirstLetter(countryInputEditText.getText().toString());
-                            textViewCountryCity.setText(finalString);
+                        if (isNetworkAvailable(getApplicationContext())) {
+                            if (!TextUtils.isEmpty(cityInputEditText.getText())) {
+                                UserHelper.updateCity(Utils.getCurrentUser().getUid(), cityInputEditText.getText().toString().toLowerCase());
+                                textViewCountryCity.setText(capitalizeFirstLetter(cityInputEditText.getText().toString()));
+                            }
+                            if (!TextUtils.isEmpty(countryInputEditText.getText())) {
+                                UserHelper.updateCountry(Utils.getCurrentUser().getUid(), countryInputEditText.getText().toString());
+                                textViewCountryCity.setText(capitalizeFirstLetter(countryInputEditText.getText().toString()));
+                            }
+                            if (!TextUtils.isEmpty(cityInputEditText.getText()) && !TextUtils.isEmpty(countryInputEditText.getText())) {
+                                String finalString = capitalizeFirstLetter(cityInputEditText.getText().toString()) + ", " +
+                                        capitalizeFirstLetter(countryInputEditText.getText().toString());
+                                textViewCountryCity.setText(finalString);
+                            }
+                        } else {
+                            Toast.makeText(getApplicationContext(), "You don't have internet, please, try again later", Toast.LENGTH_SHORT).show();
                         }
 
                     }

@@ -68,6 +68,7 @@ public class PostListFragment extends Fragment {
     private List<String> publishedPostsId;
     private Boolean isFromAssociationProfile;
     private SharedPreferences preferences;
+    private int counterPost;
     //-----------------------------------------------
     //-------------------------------------------------
     public static final String APP_PREFERENCES = "appPreferences";
@@ -115,6 +116,7 @@ public class PostListFragment extends Fragment {
 
     private void configureRecyclerView() {
         if (isFromAssociationProfile) {
+            counterPost = 0;
             preferences = getActivity().getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
             String associationId = preferences.getString(ASSOCIATION_ID, null);
 
@@ -126,6 +128,7 @@ public class PostListFragment extends Fragment {
                         if (asso.getPublishedPostId() != null) {
                             if (asso.getPublishedPostId().size() > 0) {
                                 for (int i = 0; i < asso.getPublishedPostId().size(); i++) {
+                                    counterPost = counterPost + 1;
                                     String id = asso.getPublishedPostId().get(i);
                                     PostHelper.getPost(id).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                         @Override
@@ -136,6 +139,7 @@ public class PostListFragment extends Fragment {
                                                 adapter = new AdapterPostListFragment(postList);
                                                 recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                                                 recyclerView.setAdapter(adapter);
+                                                displayScreenDependingOfPostsAvailable();
                                             }
                                         }
                                     });
@@ -154,7 +158,7 @@ public class PostListFragment extends Fragment {
     //-------------------------------------
     //-------------------------------------
     private void displayScreenDependingOfPostsAvailable() {
-        if (checkIfTheresNewsToDisplay()) {
+        if (counterPost > 0) {
             viewSwitcher.setDisplayedChild(0);
         } else {
             viewSwitcher.setDisplayedChild(1);
@@ -175,6 +179,7 @@ public class PostListFragment extends Fragment {
 
 
     private void getDataToConfigureRecyclerView() {
+        counterPost = 0;
         //get the current user
         UserHelper.getUser(Utils.getCurrentUser().getUid()).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -196,6 +201,7 @@ public class PostListFragment extends Fragment {
                                                 if (association.getPublishedPostId().size() > 0) {
                                                     for (int j = 0; j < association.getPublishedPostId().size(); j++) {
                                                         String id = association.getPublishedPostId().get(j);
+                                                        counterPost = counterPost + 1;
                                                         PostHelper.getPost(id).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                                             @Override
                                                             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -205,6 +211,7 @@ public class PostListFragment extends Fragment {
                                                                     adapter = new AdapterPostListFragment(postList);
                                                                     recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                                                                     recyclerView.setAdapter(adapter);
+                                                                    displayScreenDependingOfPostsAvailable();
                                                                 }
                                                             }
                                                         });

@@ -117,7 +117,6 @@ public class SearchFragment extends Fragment {
                             users.add(user);
 
                         }
-                        System.out.println("users = " + users);
                         Gson gson = new Gson();
                         preferences.edit().putString(RESULTS, gson.toJson(users)).apply();
                         UserListFragment fragment = new UserListFragment(false, true);

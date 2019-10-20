@@ -61,6 +61,7 @@ public class LoginActivity extends AppCompatActivity {
                         }else {
                             Toast.makeText(LoginActivity.this, "couldn't login",
                                     Toast.LENGTH_SHORT).show();
+                            System.out.println("problem = " + task.getException().getMessage());
                         }
                     }
                 });

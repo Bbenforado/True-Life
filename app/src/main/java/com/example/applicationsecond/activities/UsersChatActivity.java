@@ -1,6 +1,5 @@
 package com.example.applicationsecond.activities;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -10,32 +9,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.ViewSwitcher;
 
 import com.bumptech.glide.Glide;
 import com.example.applicationsecond.R;
 import com.example.applicationsecond.adapters.AdapterUsersChats;
 import com.example.applicationsecond.api.ChatHelper;
-import com.example.applicationsecond.api.MessageHelper;
-import com.example.applicationsecond.api.UserHelper;
 import com.example.applicationsecond.models.Chat;
-import com.example.applicationsecond.models.Message;
 import com.example.applicationsecond.models.User;
-import com.example.applicationsecond.utils.ItemClickSupport;
 import com.example.applicationsecond.utils.Utils;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QuerySnapshot;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -51,10 +35,7 @@ public class UsersChatActivity extends AppCompatActivity implements AdapterUsers
     ViewSwitcher viewSwitcher;
     //------------------------------------
     private AdapterUsersChats adapter;
-    private SharedPreferences preferences;
-    private User user;
     //---------------------------------------
-    public static final String APP_PREFERENCES = "appPreferences";
 
 
     @Override
@@ -62,17 +43,8 @@ public class UsersChatActivity extends AppCompatActivity implements AdapterUsers
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_users_chat);
         ButterKnife.bind(this);
-        preferences = getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE);
         configureToolbar();
-        UserHelper.getUser(Utils.getCurrentUser().getUid()).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    user = task.getResult().toObject(User.class);
-                    configureRecyclerView();
-                }
-            }
-        });
+        configureRecyclerView();
     }
 
     private void configureRecyclerView() {
@@ -91,15 +63,6 @@ public class UsersChatActivity extends AppCompatActivity implements AdapterUsers
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("Messages");
         actionBar.setDisplayHomeAsUpEnabled(true);
-    }
-
-
-    private void launchChatActivity(String chatName) {
-        Intent chatIntent = new Intent(this, ChatActivity.class);
-        Bundle bundle = new Bundle();
-        bundle.putString("chatName", chatName);
-        chatIntent.putExtras(bundle);
-        startActivity(chatIntent);
     }
 
     private FirestoreRecyclerOptions<Chat> generateOptionsForAdapter(Query query){

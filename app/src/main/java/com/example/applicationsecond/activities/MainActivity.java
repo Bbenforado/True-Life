@@ -37,6 +37,7 @@ import com.example.applicationsecond.R;
 import com.example.applicationsecond.api.ChatHelper;
 import com.example.applicationsecond.api.MessageHelper;
 import com.example.applicationsecond.api.PostHelper;
+import com.example.applicationsecond.api.ProjectHelper;
 import com.example.applicationsecond.api.UserHelper;
 import com.example.applicationsecond.fragments.ActualityListFragment;
 import com.example.applicationsecond.fragments.AddProjectFragment;
@@ -46,6 +47,7 @@ import com.example.applicationsecond.fragments.SearchFragment;
 import com.example.applicationsecond.models.Chat;
 import com.example.applicationsecond.models.Message;
 import com.example.applicationsecond.models.Post;
+import com.example.applicationsecond.models.Project;
 import com.example.applicationsecond.models.User;
 import com.example.applicationsecond.utils.Utils;
 import com.firebase.ui.auth.AuthUI;
@@ -144,7 +146,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
     }
-
 
     @Override
     public void onBackPressed() {
@@ -294,9 +295,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         switch (id) {
             case R.id.users_profile:
                 launchActivity(ProfileActivity.class);
-                break;
-            case R.id.settings:
-                Toast.makeText(this, "you clicked on settings!", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.users_projects:
                 launchActivity(UsersProjectsActivity.class);

@@ -79,15 +79,12 @@ public class ActualityListFragment extends Fragment implements AdapterRecyclerVi
     private String codeLastActivity;
     @Nullable
     private String profileId;
-  /*  private boolean isNewsToDisplay;
-    private List<Project> projectList;*/
     //-----------------------------------------------
     //-------------------------------------------------
     private static final String APP_PREFERENCES = "appPreferences";
     private static final String CLICKED_PROJECT = "clickedProject";
-    public static final String ASSOCIATION_ID = "associationId";
-    public static final String KEYWORD = "keyword";
-    public static final String CITY = "city";
+    private static final String ASSOCIATION_ID = "associationId";
+    private static final String CITY = "city";
 
     public ActualityListFragment() {
         // Required empty public constructor
@@ -198,11 +195,6 @@ public class ActualityListFragment extends Fragment implements AdapterRecyclerVi
 
     //-------------------------------------
     //-------------------------------------
-    private void launchActivity(Class activity) {
-        Intent intent = new Intent(getContext(), activity);
-        startActivity(intent);
-    }
-
     private FirestoreRecyclerOptions<Project> generateOptionsForAdapter(Query query){
         return new FirestoreRecyclerOptions.Builder<Project>()
                 .setQuery(query, Project.class)

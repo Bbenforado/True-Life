@@ -9,11 +9,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.RequestManager;
 import com.example.applicationsecond.R;
+import com.example.applicationsecond.api.ProjectHelper;
 import com.example.applicationsecond.models.Chat;
 import com.example.applicationsecond.models.Message;
+import com.example.applicationsecond.models.Project;
 import com.example.applicationsecond.models.User;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.util.List;
 
@@ -48,6 +53,15 @@ public class AdapterUsersChats extends FirestoreRecyclerAdapter<Chat, ViewHolder
 
     @Override
     protected void onBindViewHolder(@NonNull ViewHolderUsersChats viewHolderUsersChats, int i, @NonNull Chat chat) {
-        viewHolderUsersChats.updateUi(chat, glide);
+        ProjectHelper.getProject(chat.getId()).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    Project project = task.getResult().toObject(Project.class);
+                    viewHolderUsersChats.updateUi(chat, glide, project);
+                }
+            }
+        });
+
     }
 }

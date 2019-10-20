@@ -40,6 +40,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static com.example.applicationsecond.utils.Utils.capitalizeFirstLetter;
+import static com.example.applicationsecond.utils.Utils.isNetworkAvailable;
 
 public class AssociationProfileActivity extends AppCompatActivity {
 
@@ -57,9 +58,7 @@ public class AssociationProfileActivity extends AppCompatActivity {
     private boolean isButtonClicked;
     private String authorId;
     private String currentUserId;
-    private ColorStateList defaultColor;
     private ActionBar actionBar;
-    private SharedPreferences preferences;
     //--------------------------------------
     public static final String APP_PREFERENCES = "appPreferences";
     public static final String ASSOCIATION_ID = "associationId";
@@ -71,7 +70,7 @@ public class AssociationProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_association_profile);
 
         ButterKnife.bind(this);
-        preferences = getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE);
+        SharedPreferences preferences = getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE);
         currentUserId = Utils.getCurrentUser().getUid();
         Bundle bundle = getIntent().getExtras();
         authorId = null;
@@ -109,39 +108,42 @@ public class AssociationProfileActivity extends AppCompatActivity {
     @OnClick(R.id.follow_button)
     public void followThisAssociation() {
         isButtonClicked = !isButtonClicked;
-        UserHelper.getUser(authorId).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    User user = task.getResult().toObject(User.class);
-                    String username = capitalizeFirstLetter(user.getUsername());
-                    if (isButtonClicked) {
-                        //change the color of the button
+        if (isNetworkAvailable(this)) {
+            UserHelper.getUser(authorId).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        User user = task.getResult().toObject(User.class);
+                        String username = capitalizeFirstLetter(user.getUsername());
+                        if (isButtonClicked) {
+                            //change the color of the button
 
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            followButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_heart_white));
-                            followButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.darkColor)));
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                followButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_heart_white));
+                                followButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.darkColor)));
+                            } else {
+                                followButton.setImageResource(R.drawable.ic_heart_red);
+                            }
+
+                            //create a subscription in user s tuple
+                            UserHelper.updateAssociationSubscriptions(currentUserId, authorId);
+                            Toast.makeText(getApplicationContext(), "You are now following " + username, Toast.LENGTH_SHORT).show();
                         } else {
-                            followButton.setImageResource(R.drawable.ic_heart_red);
+                            //unclick button
+                            UserHelper.removeAssociationSubscription(currentUserId, authorId);
+                            //change button color
+                            followButton.setImageResource(R.drawable.ic_heart);
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                followButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.white)));
+                            }
+                            Toast.makeText(getApplicationContext(), "You are not following " + username + " anymore", Toast.LENGTH_SHORT).show();
                         }
-
-                        //create a subscription in user s tuple
-                        UserHelper.updateAssociationSubscriptions(currentUserId, authorId);
-                        Toast.makeText(getApplicationContext(), "You are now following " + username, Toast.LENGTH_SHORT).show();
-                    } else {
-                        //unclick button
-                        UserHelper.removeAssociationSubscription(currentUserId, authorId);
-                        //change button color
-                        followButton.setImageResource(R.drawable.ic_heart);
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            followButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.white)));
-                        }
-                        Toast.makeText(getApplicationContext(), "You are not following " + username + " anymore", Toast.LENGTH_SHORT).show();
                     }
                 }
-            }
-        });
-
+            });
+        } else {
+            Toast.makeText(this, "You don't have internet, please, try again later", Toast.LENGTH_SHORT).show();
+        }
     }
 
     //----------------------------------------
@@ -158,29 +160,31 @@ public class AssociationProfileActivity extends AppCompatActivity {
 
     private void displayStateOfFollowButtonDependingOnIfTheUserFollowsOrNot(){
         //check if current user is following the association
-        UserHelper.getUser(currentUserId).addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                User user = task.getResult().toObject(User.class);
-                if (user.getAssociationSubscribedId() != null) {
-                    if (user.getAssociationSubscribedId().contains(authorId)) {
-                        //set the color of the button to red
+        if (isNetworkAvailable(this)) {
+            UserHelper.getUser(currentUserId).addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    User user = task.getResult().toObject(User.class);
+                    if (user.getAssociationSubscribedId() != null) {
+                        if (user.getAssociationSubscribedId().contains(authorId)) {
+                            //set the color of the button to red
 
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            followButton.setImageResource(R.drawable.ic_heart_white);
-                            followButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.darkColor)));
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                followButton.setImageResource(R.drawable.ic_heart_white);
+                                followButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.darkColor)));
+                            } else {
+                                followButton.setImageResource(R.drawable.ic_heart_red);
+                            }
+                            isButtonClicked = true;
                         } else {
-                            followButton.setImageResource(R.drawable.ic_heart_red);
-                        }
-                        isButtonClicked = true;
-                    } else {
-                        followButton.setImageResource(R.drawable.ic_heart);
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            followButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.white)));
+                            followButton.setImageResource(R.drawable.ic_heart);
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                followButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.white)));
+                            }
                         }
                     }
                 }
-            }
-        });
+            });
+        }
     }
 
     //------------------------------
@@ -188,32 +192,34 @@ public class AssociationProfileActivity extends AppCompatActivity {
     //-------------------------------
     private void displayAssociationInformation(Context context) {
         if (authorId != null) {
-            UserHelper.getUser(authorId).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    if (task.isSuccessful()) {
-                        User association = task.getResult().toObject(User.class);
-                        if (association.getUrlPhoto() != null) {
-                            Glide.with(context) //SHOWING PREVIEW OF IMAGE
-                                    .load(association.getUrlPhoto())
-                                    .apply(RequestOptions.circleCropTransform())
-                                    .into(imageViewAssociationProfile);
-                        }
+            if (isNetworkAvailable(this)) {
+                UserHelper.getUser(authorId).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            User association = task.getResult().toObject(User.class);
+                            if (association.getUrlPhoto() != null) {
+                                Glide.with(context) //SHOWING PREVIEW OF IMAGE
+                                        .load(association.getUrlPhoto())
+                                        .apply(RequestOptions.circleCropTransform())
+                                        .into(imageViewAssociationProfile);
+                            }
 
-                        textViewAssociationName.setText(capitalizeFirstLetter(association.getUsername()));
-                        actionBar.setTitle(capitalizeFirstLetter(association.getUsername()));
-                        if (association.getCountry() != null && association.getCity() != null) {
-                            textViewCityCountry.setText(capitalizeFirstLetter(association.getCity()) + ", " + capitalizeFirstLetter(association.getCountry()));
-                        } else if (association.getCountry() != null && association.getCity() == null) {
-                            textViewCityCountry.setText(capitalizeFirstLetter(association.getCountry()));
-                        } else if (association.getCountry() == null && association.getCity() != null) {
-                            textViewCityCountry.setText(capitalizeFirstLetter(association.getCity()));
-                        } else if (association.getCountry() == null && association.getCity() == null) {
-                            textViewCityCountry.setVisibility(View.GONE);
+                            textViewAssociationName.setText(capitalizeFirstLetter(association.getUsername()));
+                            actionBar.setTitle(capitalizeFirstLetter(association.getUsername()));
+                            if (association.getCountry() != null && association.getCity() != null) {
+                                textViewCityCountry.setText(capitalizeFirstLetter(association.getCity()) + ", " + capitalizeFirstLetter(association.getCountry()));
+                            } else if (association.getCountry() != null && association.getCity() == null) {
+                                textViewCityCountry.setText(capitalizeFirstLetter(association.getCountry()));
+                            } else if (association.getCountry() == null && association.getCity() != null) {
+                                textViewCityCountry.setText(capitalizeFirstLetter(association.getCity()));
+                            } else if (association.getCountry() == null && association.getCity() == null) {
+                                textViewCityCountry.setVisibility(View.GONE);
+                            }
                         }
                     }
-                }
-            });
+                });
+            }
         }
     }
 }
