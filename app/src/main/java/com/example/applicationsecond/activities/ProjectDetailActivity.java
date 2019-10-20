@@ -5,6 +5,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -298,7 +299,6 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
     }
 
     private void displayColorButton(User user, String projectId) {
-
         //check if user subscribed to this project maybe
         if (user.getProjectsSubscribedId() != null) {
             if (user.getProjectsSubscribedId().contains(projectId)) {
@@ -374,7 +374,7 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
                                     .apply(RequestOptions.circleCropTransform())
                                     .into(authorPhotoImageView);
                         } else {
-                            authorPhotoImageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_profile));
+                            authorPhotoImageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_profile_recolored));
                         }
                     }
                 }
@@ -385,6 +385,11 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
             Glide.with(this)
                     .load(project.getUrlPhoto())
                     .into(this.imageView);
+        } else {
+            imageView.setVisibility(View.GONE);
+            CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) buttonFollowProject.getLayoutParams();
+            params.setAnchorId(R.id.layout_yellow_info);
+            buttonFollowProject.setLayoutParams(params);
         }
 
         if (project.getStreetNumber() != null && project.getStreetName() != null) {

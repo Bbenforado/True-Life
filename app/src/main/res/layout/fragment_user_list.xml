@@ -22,6 +22,8 @@
             android:id="@+id/text_view_user_list_fragment_no_user_to_display"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
             android:text="Nothing to display for the moment"/>
 
     </ViewSwitcher>

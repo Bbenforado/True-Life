@@ -22,7 +22,9 @@
             android:id="@+id/text_view_post_list_fragment_no_post_to_display"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Nothing to display for the moment, maybe check projects in your neibourghood"/>
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:text="Nothing to display for the moment, you can find associations to follow through the searching tool"/>
 
     </ViewSwitcher>
 

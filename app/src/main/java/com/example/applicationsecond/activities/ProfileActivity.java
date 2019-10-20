@@ -315,17 +315,17 @@ public class ProfileActivity extends AppCompatActivity {
                                 .into(imageView);
                     }
                     if (isCurrentUsersProfile) {
-                        userNameButton.setText(user.getUsername());
+                        userNameButton.setText(capitalizeFirstLetter(user.getUsername()));
                     } else {
-                        textViewUsername.setText(user.getUsername());
+                        textViewUsername.setText(capitalizeFirstLetter(user.getUsername()));
                     }
 
                     if (user.getCountry() != null && user.getCity() != null) {
-                        textViewCountryCity.setText(user.getCity() + ", " + user.getCountry());
+                        textViewCountryCity.setText(capitalizeFirstLetter(user.getCity()) + ", " + capitalizeFirstLetter(user.getCountry()));
                     } else if (user.getCountry() != null && user.getCity() == null) {
-                        textViewCountryCity.setText(user.getCountry());
+                        textViewCountryCity.setText(capitalizeFirstLetter(user.getCountry()));
                     } else if (user.getCountry() == null && user.getCity() != null) {
-                        textViewCountryCity.setText(user.getCity());
+                        textViewCountryCity.setText(capitalizeFirstLetter(user.getCity()));
                     } else if (user.getCountry() == null && user.getCity() == null) {
                         imageViewAddCountryCity.setVisibility(View.VISIBLE);
                         if (isCurrentUsersProfile) {

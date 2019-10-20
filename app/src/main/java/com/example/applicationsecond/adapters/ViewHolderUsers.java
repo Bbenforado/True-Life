@@ -37,7 +37,7 @@ public class ViewHolderUsers extends RecyclerView.ViewHolder {
                     .apply(RequestOptions.circleCropTransform())
                     .into(imageView);
         } else {
-            imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_profile));
+            imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_profile_recolored));
         }
 
         textViewUsername.setText(user.getUsername());

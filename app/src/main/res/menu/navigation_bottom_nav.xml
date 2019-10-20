@@ -5,27 +5,17 @@
     <item
         android:id="@+id/navigation_projects"
         android:title="Projects"
-        android:icon="@drawable/ic_news"/>
+        android:icon="@drawable/ic_project"/>
 
     <item
         android:id="@+id/navigation_posts"
         android:title="Posts"
         android:icon="@drawable/ic_post"/>
 
-    <!--<item
-        android:id="@+id/navigation_add"
-        android:title="Add"
-        android:icon="@drawable/ic_add"/>-->
-
     <item
         android:id="@+id/navigation_map"
         android:title="Map"
         android:icon="@drawable/ic_map"/>
-
-   <!-- <item
-        android:id="@+id/navigation_search"
-        android:title="Search"
-        android:icon="@drawable/search_small"/>-->
 
 
 

@@ -22,7 +22,9 @@
             android:id="@+id/text_view_fragment_users_projects_list_no_news_to_display"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Nothing to display for the moment, maybe check projects in your neibourghood"/>
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="Nothing to display for the moment"/>
 
     </ViewSwitcher>
 

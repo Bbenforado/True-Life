@@ -42,7 +42,7 @@ public class FollowerViewHolder extends RecyclerView.ViewHolder {
             glide.load(user.getUrlPhoto()).apply(RequestOptions.circleCropTransform())
                     .into(imageViewUser);
         } else {
-           imageViewUser.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_profile));
+           imageViewUser.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_profile_recolored));
         }
         textViewUsername.setText(user.getUsername());
         if (user.isAssociation()) {

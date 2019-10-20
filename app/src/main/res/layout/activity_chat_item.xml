@@ -23,7 +23,7 @@
             android:id="@+id/activity_chat_item_profile_container_profile_image"
             android:layout_width="50dip"
             android:layout_height="50dip"
-            app:srcCompat="@drawable/ic_profile"/>
+            app:srcCompat="@drawable/ic_profile_recolored"/>
 
     </LinearLayout>
 

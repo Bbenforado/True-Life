@@ -1,6 +1,7 @@
 package com.example.applicationsecond.activities;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -9,6 +10,7 @@ import androidx.viewpager.widget.ViewPager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.ConditionVariable;
 import android.view.View;
@@ -37,11 +39,12 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.example.applicationsecond.utils.Utils.capitalizeFirstLetter;
+
 public class AssociationProfileActivity extends AppCompatActivity {
 
     @BindView(R.id.follow_button)
     ImageButton followButton;
-    //@BindView(R.id.textview_follow) TextView textViewFollow;
     @BindView(R.id.image_view_association_profile_activity)
     ImageView imageViewAssociationProfile;
     @BindView(R.id.text_view_association_name_association_profile_activity) TextView textViewAssociationName;
@@ -91,7 +94,6 @@ public class AssociationProfileActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         actionBar = getSupportActionBar();
-        //actionBar.setTitle();
         actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
@@ -107,38 +109,48 @@ public class AssociationProfileActivity extends AppCompatActivity {
     @OnClick(R.id.follow_button)
     public void followThisAssociation() {
         isButtonClicked = !isButtonClicked;
-        if (isButtonClicked) {
-            //change the color of the button
-            followButton.setImageResource(R.drawable.ic_heart_red);
-            //followButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.darkColor)));
+        UserHelper.getUser(authorId).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    User user = task.getResult().toObject(User.class);
+                    String username = capitalizeFirstLetter(user.getUsername());
+                    if (isButtonClicked) {
+                        //change the color of the button
 
-            //create a subscription in user s tuple
-            UserHelper.updateAssociationSubscriptions(currentUserId, authorId);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            followButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_heart_white));
+                            followButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.darkColor)));
+                        } else {
+                            followButton.setImageResource(R.drawable.ic_heart_red);
+                        }
 
-            //display toast message to tell the user he s now following this association
-            Toast.makeText(this, "You are now following " + authorId, Toast.LENGTH_SHORT).show();
-        } else {
-            //unclick button
-            UserHelper.removeAssociationSubscription(currentUserId, authorId);
-            //change button color
-            followButton.setImageResource(R.drawable.ic_heart);
-            Toast.makeText(this, "You are not following " + authorId + " anymore", Toast.LENGTH_SHORT).show();
-        }
+                        //create a subscription in user s tuple
+                        UserHelper.updateAssociationSubscriptions(currentUserId, authorId);
+                        Toast.makeText(getApplicationContext(), "You are now following " + username, Toast.LENGTH_SHORT).show();
+                    } else {
+                        //unclick button
+                        UserHelper.removeAssociationSubscription(currentUserId, authorId);
+                        //change button color
+                        followButton.setImageResource(R.drawable.ic_heart);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            followButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.white)));
+                        }
+                        Toast.makeText(getApplicationContext(), "You are not following " + username + " anymore", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        });
+
     }
 
     //----------------------------------------
     //METHODS
     //----------------------------------------
     private void hideFollowButtonIfItsCurrentUserProfile() {
-
-        System.out.println("come here");
         //check if it s current user s profile
         if (currentUserId.equals(authorId)) {
             followButton.setVisibility(View.GONE);
-            //followButton.setEnabled(false);
-            //followButton.setBackground(getResources().getDrawable(R.drawable.ic_heart_disabled));
-            //followButton.setImageResource(R.drawable.ic_heart_disabled);
-            //textViewFollow.setTextColor(getResources().getColor(R.color.disabledColor));
         } else {
             followButton.setEnabled(true);
         }
@@ -152,10 +164,19 @@ public class AssociationProfileActivity extends AppCompatActivity {
                 if (user.getAssociationSubscribedId() != null) {
                     if (user.getAssociationSubscribedId().contains(authorId)) {
                         //set the color of the button to red
-                        followButton.setImageResource(R.drawable.ic_heart_red);
+
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            followButton.setImageResource(R.drawable.ic_heart_white);
+                            followButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.darkColor)));
+                        } else {
+                            followButton.setImageResource(R.drawable.ic_heart_red);
+                        }
                         isButtonClicked = true;
                     } else {
                         followButton.setImageResource(R.drawable.ic_heart);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            followButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.white)));
+                        }
                     }
                 }
             }
@@ -179,14 +200,14 @@ public class AssociationProfileActivity extends AppCompatActivity {
                                     .into(imageViewAssociationProfile);
                         }
 
-                        textViewAssociationName.setText(association.getUsername());
-                        actionBar.setTitle(association.getUsername());
+                        textViewAssociationName.setText(capitalizeFirstLetter(association.getUsername()));
+                        actionBar.setTitle(capitalizeFirstLetter(association.getUsername()));
                         if (association.getCountry() != null && association.getCity() != null) {
-                            textViewCityCountry.setText(association.getCity() + ", " + association.getCountry());
+                            textViewCityCountry.setText(capitalizeFirstLetter(association.getCity()) + ", " + capitalizeFirstLetter(association.getCountry()));
                         } else if (association.getCountry() != null && association.getCity() == null) {
-                            textViewCityCountry.setText(association.getCountry());
+                            textViewCityCountry.setText(capitalizeFirstLetter(association.getCountry()));
                         } else if (association.getCountry() == null && association.getCity() != null) {
-                            textViewCityCountry.setText(association.getCity());
+                            textViewCityCountry.setText(capitalizeFirstLetter(association.getCity()));
                         } else if (association.getCountry() == null && association.getCity() == null) {
                             textViewCityCountry.setVisibility(View.GONE);
                         }

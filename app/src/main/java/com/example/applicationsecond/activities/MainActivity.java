@@ -98,7 +98,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private boolean isCurrentUserAssociation;
     private SharedPreferences preferences;
     private ActionBar actionBar;
-    private Map<String, Long> usersChatsLastVisit;
     private int counterUnreadMessages;
     private TextView badgeChatTextView;
     //---------------------------------------

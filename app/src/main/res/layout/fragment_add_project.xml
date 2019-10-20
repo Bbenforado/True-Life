@@ -99,7 +99,6 @@
                 android:layout_height="70dp"
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="15dp"
-                android:src="@drawable/image_cours"
                 android:scaleType="centerCrop"/>
 
 

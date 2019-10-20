@@ -10,4 +10,6 @@
     <color name="darkPurple">#464254</color>
     <color name="white">#ffffff</color>
     <color name="darkColor">#424242</color>
+    <color name="darkGrey">#303030</color>
+    <color name="darkYellow">#ff9900</color>
 </resources>

@@ -49,6 +49,7 @@
                 android:textColor="@android:color/white"
                 android:maxLines="1"
                 android:singleLine="true"
+                android:textCursorDrawable="@null"
                 android:maxLength="45"
                 android:inputType="textCapSentences"
                 android:backgroundTint="@android:color/white"

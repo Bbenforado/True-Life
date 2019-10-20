@@ -35,6 +35,7 @@
                 android:focusable="true" />
 
             <LinearLayout
+                android:id="@+id/layout_yellow_info"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
@@ -224,6 +225,7 @@
                         android:id="@+id/activity_detail_text_view_no_internet"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:gravity="center"
                         android:text="You don't have internet, please try again later"
                         android:layout_centerInParent="true"
                         android:visibility="gone"/>

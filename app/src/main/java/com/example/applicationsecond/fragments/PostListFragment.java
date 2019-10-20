@@ -19,6 +19,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
 import com.bumptech.glide.Glide;
@@ -57,10 +59,11 @@ public class PostListFragment extends Fragment {
     ViewSwitcher viewSwitcher;
     @BindView(R.id.recycler_view_post_list_fragment)
     RecyclerView recyclerView;
+    @BindView(R.id.text_view_post_list_fragment_no_post_to_display)
+    TextView textViewNoPostToDisplay;
     //-----------------------------------
     //-------------------------------------
     private AdapterPostListFragment adapter;
-    private boolean isNewsToDisplay;
     private List<Post> postList;
     private List<String> publishedPostsId;
     private Boolean isFromAssociationProfile;
@@ -97,10 +100,8 @@ public class PostListFragment extends Fragment {
     //-----------------------------
     private void doBasicConfiguration() {
         postList = new ArrayList<>();
-
-        configureRecyclerView();
         configureViewSwitcher();
-
+        configureRecyclerView();
     }
 
     private void configureViewSwitcher() {
@@ -110,8 +111,6 @@ public class PostListFragment extends Fragment {
         // set the animation type to ViewSwitcher
         viewSwitcher.setInAnimation(newsAvailable);
         viewSwitcher.setOutAnimation(noNewsAvailable);
-
-        //displayScreenDependingOfNewsAvailable();
     }
 
     private void configureRecyclerView() {
@@ -134,8 +133,6 @@ public class PostListFragment extends Fragment {
                                             if (task.isSuccessful()) {
                                                 Post post = task.getResult().toObject(Post.class);
                                                 postList.add(post);
-
-                                                displayScreenDependingOfNewsAvailable();
                                                 adapter = new AdapterPostListFragment(postList);
                                                 recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                                                 recyclerView.setAdapter(adapter);
@@ -143,13 +140,12 @@ public class PostListFragment extends Fragment {
                                         }
                                     });
                                 }
-
                             }
                         }
                     }
                 }
             });
-
+            displayScreenDependingOfPostsAvailable();
         } else {
             getDataToConfigureRecyclerView();
         }
@@ -157,12 +153,14 @@ public class PostListFragment extends Fragment {
 
     //-------------------------------------
     //-------------------------------------
-    private void displayScreenDependingOfNewsAvailable() {
-        //isNewsToDisplay = checkIfTheresNewsToDisplay();
+    private void displayScreenDependingOfPostsAvailable() {
         if (checkIfTheresNewsToDisplay()) {
             viewSwitcher.setDisplayedChild(0);
         } else {
             viewSwitcher.setDisplayedChild(1);
+            if (isFromAssociationProfile) {
+                textViewNoPostToDisplay.setText("This association don't have post for the moment");
+            }
         }
     }
 
@@ -204,31 +202,25 @@ public class PostListFragment extends Fragment {
                                                                 if (task.isSuccessful()) {
                                                                     Post post = task.getResult().toObject(Post.class);
                                                                     postList.add(post);
-
-                                                                    displayScreenDependingOfNewsAvailable();
                                                                     adapter = new AdapterPostListFragment(postList);
                                                                     recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                                                                     recyclerView.setAdapter(adapter);
                                                                 }
-
                                                             }
                                                         });
                                                     }
-
                                                 }
                                             }
-
                                         }
                                     }
                                 });
                             }
                         }
                     }
-                    } else {
-                        displayScreenDependingOfNewsAvailable();
-                    }
                 }
+            }
         });
+        displayScreenDependingOfPostsAvailable();
     }
 
 }
