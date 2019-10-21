@@ -20,6 +20,7 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -61,14 +62,13 @@ public class SearchFragment extends Fragment {
     MaterialButton buttonSearchProjects;
     @BindView(R.id.button_search_users_fragment) MaterialButton buttonSearchUsers;
     @BindView(R.id.id_layout) LinearLayout layout;
-    @BindView(R.id.search_fragment_scroll_view)
-    ScrollView scrollView;
+    @BindView(R.id.search_content)
+    FrameLayout frameLayout;
     //-----------------------------
     private List<User> users;
     private SharedPreferences preferences;
     public static final String APP_PREFERENCES = "appPreferences";
     public static final String RESULTS = "results";
-    public static final String KEYWORD = "keyword";
     private static final String CITY = "city";
 
 
@@ -97,7 +97,7 @@ public class SearchFragment extends Fragment {
                 layout.animate().translationY(-textViewTitle.getHeight());
                 buttonSearchProjects.animate().translationY(-textViewTitle.getHeight());
                 buttonSearchUsers.animate().translationY(-textViewTitle.getHeight());
-                scrollView.animate().translationY(-textViewTitle.getHeight());
+                frameLayout.animate().translationY(-textViewTitle.getHeight());
             } else {
                 Toast.makeText(getContext(), "You have to fill the city field", Toast.LENGTH_SHORT).show();
         }
@@ -125,7 +125,7 @@ public class SearchFragment extends Fragment {
                         layout.animate().translationY(-textViewTitle.getHeight());
                         buttonSearchProjects.animate().translationY(-textViewTitle.getHeight());
                         buttonSearchUsers.animate().translationY(-textViewTitle.getHeight());
-                        scrollView.animate().translationY(-textViewTitle.getHeight());
+                        frameLayout.animate().translationY(-textViewTitle.getHeight());
                     }
                 }
             });
