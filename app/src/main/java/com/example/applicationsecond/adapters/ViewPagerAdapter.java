@@ -11,11 +11,6 @@ import com.example.applicationsecond.fragments.UsersProjectsListFragment;
 
 public class ViewPagerAdapter extends FragmentPagerAdapter {
 
-    private boolean isPostActivity;
-
-
-
-
     public ViewPagerAdapter(FragmentManager fm) {
         super(fm);
     }
@@ -30,7 +25,6 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
                 default:
                     return new UsersProjectsListFragment();
         }
-
     }
 
     @Override

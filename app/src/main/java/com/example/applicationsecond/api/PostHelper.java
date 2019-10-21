@@ -20,17 +20,14 @@ public class PostHelper {
         return FirebaseFirestore.getInstance().collection(COLLECTION_NAME);
     }
 
-    //CREATE
     public static Task<Void> createPost(String id, String title, String content, String authorId, Date dateOfPublication) {
         Post postToCreate = new Post(id, title, content, authorId, dateOfPublication);
         return PostHelper.getPostsCollection().document(id).set(postToCreate);
     }
 
-    //GET
     public static Task<DocumentSnapshot> getPost(String id) {
         return PostHelper.getPostsCollection().document(id).get();
     }
-
 
     public static Query getUsersPosts(String userId) {
         return PostHelper.getPostsCollection()

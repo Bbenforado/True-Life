@@ -39,7 +39,6 @@ public class ViewHolderUsersProjectsList extends RecyclerView.ViewHolder {
         titleTextView.setText(project.getTitle());
         if (project.getCreationDate() != null) {
 
-            //formatter la date
             String date = new SimpleDateFormat("dd/MM/yyyy").format(project.getCreationDate());
             creationDateTextView.setText(date);
         }

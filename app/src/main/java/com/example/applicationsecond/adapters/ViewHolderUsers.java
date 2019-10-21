@@ -39,7 +39,6 @@ public class ViewHolderUsers extends RecyclerView.ViewHolder {
         } else {
             imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_profile_recolored));
         }
-
         textViewUsername.setText(user.getUsername());
     }
 }

@@ -83,7 +83,6 @@ public class AssociationProfileActivity extends AppCompatActivity {
         configureViewPager();
         hideFollowButtonIfItsCurrentUserProfile();
         displayStateOfFollowButtonDependingOnIfTheUserFollowsOrNot();
-
     }
 
     //------------------------------
@@ -116,41 +115,39 @@ public class AssociationProfileActivity extends AppCompatActivity {
                         User user = task.getResult().toObject(User.class);
                         String username = capitalizeFirstLetter(user.getUsername());
                         if (isButtonClicked) {
-                            //change the color of the button
-
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                                 followButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_heart_white));
                                 followButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.darkColor)));
                             } else {
                                 followButton.setImageResource(R.drawable.ic_heart_red);
                             }
-
-                            //create a subscription in user s tuple
                             UserHelper.updateAssociationSubscriptions(currentUserId, authorId);
-                            Toast.makeText(getApplicationContext(), "You are now following " + username, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), getResources().getString(R.string.now_following_toast) + " " + username, Toast.LENGTH_SHORT).show();
                         } else {
                             //unclick button
                             UserHelper.removeAssociationSubscription(currentUserId, authorId);
-                            //change button color
                             followButton.setImageResource(R.drawable.ic_heart);
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                                 followButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.white)));
                             }
-                            Toast.makeText(getApplicationContext(), "You are not following " + username + " anymore", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), getResources().getString(R.string.not_following_toast)
+                                    + " " + username + " " + getResources().getString(R.string.anymore_toast), Toast.LENGTH_SHORT).show();
                         }
                     }
                 }
             });
         } else {
-            Toast.makeText(this, "You don't have internet, please, try again later", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getResources().getString(R.string.no_internet_try_again_toast), Toast.LENGTH_SHORT).show();
         }
     }
 
     //----------------------------------------
     //METHODS
     //----------------------------------------
+    /**
+     * check if it s the current users profile that is displayed, if yes, remove follow button
+     */
     private void hideFollowButtonIfItsCurrentUserProfile() {
-        //check if it s current user s profile
         if (currentUserId.equals(authorId)) {
             followButton.setVisibility(View.GONE);
         } else {
@@ -158,16 +155,17 @@ public class AssociationProfileActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Check if user is following the association, and display the color of the follow button
+     * depending of this
+     */
     private void displayStateOfFollowButtonDependingOnIfTheUserFollowsOrNot(){
-        //check if current user is following the association
         if (isNetworkAvailable(this)) {
             UserHelper.getUser(currentUserId).addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     User user = task.getResult().toObject(User.class);
                     if (user.getAssociationSubscribedId() != null) {
                         if (user.getAssociationSubscribedId().contains(authorId)) {
-                            //set the color of the button to red
-
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                                 followButton.setImageResource(R.drawable.ic_heart_white);
                                 followButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.darkColor)));
@@ -199,7 +197,7 @@ public class AssociationProfileActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             User association = task.getResult().toObject(User.class);
                             if (association.getUrlPhoto() != null) {
-                                Glide.with(context) //SHOWING PREVIEW OF IMAGE
+                                Glide.with(context)
                                         .load(association.getUrlPhoto())
                                         .apply(RequestOptions.circleCropTransform())
                                         .into(imageViewAssociationProfile);

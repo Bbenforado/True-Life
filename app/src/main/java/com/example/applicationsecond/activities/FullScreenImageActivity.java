@@ -19,7 +19,6 @@ public class FullScreenImageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_full_screen_image);
 
         url = getIntent().getStringExtra("image_url");
-
         image = findViewById(R.id.full_screen_image);
         Glide.with(this).load(url)
                 .placeholder(R.drawable.ic_launcher_background)

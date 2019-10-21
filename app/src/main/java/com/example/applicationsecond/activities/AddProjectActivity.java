@@ -11,6 +11,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
@@ -73,7 +74,11 @@ import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
 import static com.example.applicationsecond.utils.Utils.addZeroToDate;
+import static com.example.applicationsecond.utils.Utils.getCurrentDate;
+import static com.example.applicationsecond.utils.Utils.getEditTextValue;
 import static com.example.applicationsecond.utils.Utils.isNetworkAvailable;
+import static com.example.applicationsecond.utils.Utils.setDateOnButton;
+import static com.example.applicationsecond.utils.Utils.setValueToEditText;
 
 public class AddProjectActivity extends AppCompatActivity {
 
@@ -96,7 +101,6 @@ public class AddProjectActivity extends AppCompatActivity {
     private SharedPreferences preferences;
     private String projectId;
     private Uri uriImageSelected;
-    private String currentDate;
     private long eventDate;
     //----------------------------------------------
     //-----------------------------------------------
@@ -106,6 +110,7 @@ public class AddProjectActivity extends AppCompatActivity {
     private static final String PERMS = Manifest.permission.READ_EXTERNAL_STORAGE;
     private static final int RC_IMAGE_PERMS = 100;
     private static final int RC_CHOOSE_PHOTO = 200;
+    public static final String COLLECTION_NAME = "projects";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -148,9 +153,9 @@ public class AddProjectActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (preferences.getInt(KEY_EDIT_PROJECT, -1) == 1) {
-            actionBar.setTitle("Edit your project");
+            actionBar.setTitle(getResources().getString(R.string.toolbar_title_edit));
         } else {
-            actionBar.setTitle("Create a project");
+            actionBar.setTitle(getResources().getString(R.string.toolbar_title_create_project));
         }
         actionBar.setDisplayHomeAsUpEnabled(true);
     }
@@ -161,26 +166,21 @@ public class AddProjectActivity extends AppCompatActivity {
     @OnClick(R.id.button_publish_add_project_activity)
     public void publishProject() {
         isPublished = true;
-
         if (isNetworkAvailable(this)) {
             if (fieldsAreCorrectlyFilled()) {
                 if (preferences.getInt(KEY_EDIT_PROJECT, -1) == 1) {
                     updateProjectInFireBase();
-                    Toast.makeText(this, "Project updated!", Toast.LENGTH_SHORT).show();
-                    //launch main activity
-                    Intent intent = new Intent(this, MainActivity.class);
-                    startActivity(intent);
+                    Toast.makeText(this, getResources().getString(R.string.project_updated_toast), Toast.LENGTH_SHORT).show();
+                    launchActivity(MainActivity.class);
                 } else {
                     saveProjectInFireBase();
-                    Toast.makeText(this, "Project published!", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(this, MainActivity.class);
-                    startActivity(intent);
+                    launchActivity(MainActivity.class);
                 }
             } else {
-                Toast.makeText(this, "You have to fill the fields", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getResources().getString(R.string.field_missing), Toast.LENGTH_SHORT).show();
             }
         } else {
-            Toast.makeText(this, "You don't have internet, please, try again later", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getResources().getString(R.string.no_internet_try_again_toast), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -191,24 +191,23 @@ public class AddProjectActivity extends AppCompatActivity {
             if (preferences.getInt(KEY_EDIT_PROJECT, -1) == 1) {
                 if (fieldsAreCorrectlyFilled()) {
                     updateProjectInFireBase();
-                    Toast.makeText(this, "Project updated!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getResources().getString(R.string.project_updated_toast), Toast.LENGTH_SHORT).show();
                     finish();
                 } else {
-                    Toast.makeText(this, "You have to fill the fields", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getResources().getString(R.string.field_missing), Toast.LENGTH_SHORT).show();
                 }
             } else {
                 if (!TextUtils.isEmpty(titleEditText.getText()) && !TextUtils.isEmpty(descriptionEditText.getText())) {
                     saveProjectInFireBaseForNotPublishedProjects();
-                    Toast.makeText(this, "Project saved for later!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getResources().getString(R.string.project_saved_for_later_toast), Toast.LENGTH_SHORT).show();
                     finish();
                 } else {
-                    Toast.makeText(this, "You have to fill the fields", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getResources().getString(R.string.field_missing), Toast.LENGTH_SHORT).show();
                 }
             }
         } else {
-            Toast.makeText(this, "You don't have internet, please, try again later", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getResources().getString(R.string.no_internet_try_again_toast), Toast.LENGTH_SHORT).show();
         }
-
     }
 
     @OnClick(R.id.button_add_picture_add_project_activity)
@@ -231,22 +230,24 @@ public class AddProjectActivity extends AppCompatActivity {
     //----------------------------------------------------
     private void handleResponseForGallery(int requestCode, int resultCode, Intent data) {
         if (requestCode == RC_CHOOSE_PHOTO) {
-            if (resultCode == RESULT_OK) { //SUCCESS
+            if (resultCode == RESULT_OK) {
                 this.uriImageSelected = data.getData();
-                Glide.with(this) //SHOWING PREVIEW OF IMAGE
+                Glide.with(this)
                         .load(this.uriImageSelected)
                         .apply(RequestOptions.circleCropTransform())
                         .into(this.imageView);
-            } else {
-                Toast.makeText(this, "No image chosen", Toast.LENGTH_SHORT).show();
             }
-
         }
     }
 
     //------------------------------------------
     //METHODS
     //-------------------------------------------
+    private void launchActivity(Class activity) {
+        Intent intent = new Intent(this, activity);
+        startActivity(intent);
+    }
+
     private void chooseImageFromPhone(){
         if (!EasyPermissions.hasPermissions(this, PERMS)) {
             EasyPermissions.requestPermissions(this, getString(R.string.popup_title_permission_files_access), RC_IMAGE_PERMS, PERMS);
@@ -270,24 +271,36 @@ public class AddProjectActivity extends AppCompatActivity {
     }
 
     private void displayWrongDateSelectedMessage(View v) {
-        Toast.makeText(getApplicationContext(), "You have to select a current or future date...", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), getResources().getString(R.string.wrong_date_toast), Toast.LENGTH_SHORT).show();
         setDateOnButton((Button)v , getCurrentDate());
     }
 
-    public void setDateOnButton(Button button, String date) {
-        button.setText(date);
-    }
+    /**
+     * save the event date as long (milliseconds since 1 j 1970)
+     */
+    private  void saveDates(View v, int dayOfMonth, int month, int year){
+        String strMonth = addZeroToDate(Integer.toString(month + 1));
+        String strDay = addZeroToDate(Integer.toString(dayOfMonth));
+        String strYear = Integer.toString(year);
+        String dateStr = strDay + "/" + strMonth + "/" + strYear;
+        buttonEventDate.setText(dateStr);
 
-    public String getCurrentDate() {
-        Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yy");
-        currentDate = dateFormat.format(calendar.getTime());
-        return currentDate;
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        Date date = null;
+        try {
+            date = dateFormat.parse(dateStr);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        eventDate = date.getTime();
     }
 
     //------------------------------
     //DIALOGS METHODS
     //------------------------------------
+    /**
+     * show dialog to pick date. Check if dates are current or futures. Save them
+     */
     private void createDatePickerDialog(final View v) {
         final Calendar calendar = Calendar.getInstance();
         int day = calendar.get(Calendar.DAY_OF_MONTH);
@@ -300,7 +313,6 @@ public class AddProjectActivity extends AppCompatActivity {
                 int currentDay = calendar.get(Calendar.DAY_OF_MONTH);
                 int currentMonth = calendar.get(Calendar.MONTH)+1;
                 int currentYear = calendar.get(Calendar.YEAR);
-                //check if selected date is passed or not
                 if (year> currentYear) {
                     saveDates(v, dayOfMonth, month, year);
                 } else if(year == currentYear) {
@@ -323,25 +335,6 @@ public class AddProjectActivity extends AppCompatActivity {
         datePickerDialog.show();
     }
 
-    private  void saveDates(View v, int dayOfMonth, int month, int year){
-        String strMonth = addZeroToDate(Integer.toString(month + 1));
-        String strDay = addZeroToDate(Integer.toString(dayOfMonth));
-        String strYear = Integer.toString(year);
-        String dateStr = strDay + "/" + strMonth + "/" + strYear;
-        buttonEventDate.setText(dateStr);
-
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        Date date = null;
-        try {
-            date = dateFormat.parse(dateStr);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        eventDate = date.getTime();
-
-    }
-
-
     //------------------------------------------
     //FIREBASE METHODS
     //------------------------------------------
@@ -357,10 +350,9 @@ public class AddProjectActivity extends AppCompatActivity {
         String country = countryEditText.getText().toString();
 
         String latLng = Utils.getLatLngOfProject(this, streetNbr, streetName, city, postalCode, country);
-        CollectionReference ref = FirebaseFirestore.getInstance().collection("projects");
+        CollectionReference ref = FirebaseFirestore.getInstance().collection(COLLECTION_NAME);
         String projectId = ref.document().getId();
         if (imageView.getDrawable() == null) {
-            //means there is no photo saved for the project
             if (isPublished) {
                 ProjectHelper.createProject(projectId, title, description, authorId, creation_date, eventDate, true, streetNbr, streetName,
                         postalCode, city, country, latLng);
@@ -379,34 +371,18 @@ public class AddProjectActivity extends AppCompatActivity {
         String description = descriptionEditText.getText().toString();
         String authorId = Utils.getCurrentUser().getUid();
         Date creation_date = new Date();
-        String streetNbr = null;
-        String streetName = null;
-        String postalCode = null;
-        String city = null;
-        String country = null;
+        String streetNbr = getEditTextValue(streetNumberEditText, false);
+        String streetName = getEditTextValue(streetNameEditText, false);
+        String postalCode = getEditTextValue(postalCodeEditText, false);
+        String city = getEditTextValue(cityEditText, true);
+        String country = getEditTextValue(countryEditText, false);
 
-        if (!TextUtils.isEmpty(streetNumberEditText.getText())) {
-            streetNbr = streetNumberEditText.getText().toString();
-        }
-        if (!TextUtils.isEmpty(streetNameEditText.getText())) {
-            streetName = streetNameEditText.getText().toString();
-        }
-        if (!TextUtils.isEmpty(postalCodeEditText.getText())) {
-            postalCode = postalCodeEditText.getText().toString();
-        }
-        if (!TextUtils.isEmpty(cityEditText.getText())) {
-            city = cityEditText.getText().toString().toLowerCase();
-        }
-        if (!TextUtils.isEmpty(countryEditText.getText())) {
-            country = countryEditText.getText().toString();
-        }
         String latLng = null;
         if (checkIfLocationIsFilled()) {
             latLng = Utils.getLatLngOfProject(this, streetNbr, streetName, city, postalCode, country);
         }
         if (imageView.getDrawable() == null) {
-            //means there is no photo saved for the project
-            CollectionReference ref = FirebaseFirestore.getInstance().collection("projects");
+            CollectionReference ref = FirebaseFirestore.getInstance().collection(COLLECTION_NAME);
             String projectId = ref.document().getId();
             ProjectHelper.createProject(projectId, title, description, authorId, creation_date, eventDate, false, streetNbr, streetName,
                         postalCode, city, country, latLng);
@@ -417,75 +393,43 @@ public class AddProjectActivity extends AppCompatActivity {
         }
 
     }
-
+    /**
+     * save the photo in storage firebase, then create a project in firebase with the download url
+     */
     private void uploadPhotoInFireBaseAndSaveProject(final String title, final String description, final String authorId, final Date creation_date,
                                                      long eventDate, String streetNumber, String streetName, String postalCode,
                                                      String city, String country, String latLng) {
         String uuid = UUID.randomUUID().toString(); // GENERATE UNIQUE STRING
         StorageReference filePath = FirebaseStorage.getInstance().getReference(uuid);
+        Toast.makeText(getApplicationContext(), getResources().getString(R.string.project_is_saving_toast), Toast.LENGTH_SHORT).show();
 
-        ProgressDialog dialog = ProgressDialog.show(this, "Loading", "Please wait, it can take one minute", true);
-
-        filePath.putFile(uriImageSelected).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                if(task.isSuccessful()) {
-                    filePath.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Uri> task) {
-                            if (task.isSuccessful()) {
-                                Uri uri = task.getResult();
-                                CollectionReference ref = FirebaseFirestore.getInstance().collection("projects");
-                                String idProject = ref.document().getId();
-                                if (isPublished) {
-                                    dialog.dismiss();
-                                    ProjectHelper.createProjectWithImage(idProject, title, description, authorId, creation_date, eventDate, true, uri.toString(),
-                                            streetNumber, streetName, postalCode, city, country, latLng);
-                                    ChatHelper.createChat(idProject);
-                                    ChatHelper.addInvolvedUser(idProject, authorId);
-                                    UserHelper.addProjectsSubscriptions(authorId, idProject);
-                                    Toast.makeText(getApplicationContext(), "Project is saving, it will appears soon!", Toast.LENGTH_SHORT).show();
-                                } else {
-                                    dialog.dismiss();
-                                    ProjectHelper.createProjectWithImage(idProject, title, description, authorId, creation_date, eventDate, false, uri.toString(),
-                                            streetNumber, streetName, postalCode, city, country, latLng);
-                                    UserHelper.addProjectsSubscriptions(authorId, idProject);
-                                    Toast.makeText(getApplicationContext(), "Project is saving, it will appears soon!", Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        }
-                    });
-                }
-            }
-        });
-
-
-
-         /*       .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+        filePath.putFile(uriImageSelected).addOnCompleteListener(task -> {
+            if(task.isSuccessful()) {
                 filePath.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
                     @Override
                     public void onComplete(@NonNull Task<Uri> task) {
-                        dialog.dismiss();
-                        Uri uri = task.getResult();
-                        CollectionReference ref = FirebaseFirestore.getInstance().collection("projects");
-                        String idProject = ref.document().getId();
-                        if (isPublished) {
-                            ProjectHelper.createProjectWithImage(idProject, title, description, authorId, creation_date, eventDate, true, uri.toString(),
-                                    streetNumber, streetName, postalCode, city, country, latLng);
-                            ChatHelper.createChat(idProject);
-                            ChatHelper.addInvolvedUser(idProject, authorId);
-                            UserHelper.addProjectsSubscriptions(authorId, idProject);
-                        } else {
-                            ProjectHelper.createProjectWithImage(idProject, title, description, authorId, creation_date, eventDate, false, uri.toString(),
-                                    streetNumber, streetName, postalCode, city, country, latLng);
-                            UserHelper.addProjectsSubscriptions(authorId, idProject);
+                        if (task.isSuccessful()) {
+                            Uri uri = task.getResult();
+                            CollectionReference ref = FirebaseFirestore.getInstance().collection(COLLECTION_NAME);
+                            String idProject = ref.document().getId();
+                            if (isPublished) {
+                                ProjectHelper.createProjectWithImage(idProject, title, description, authorId,
+                                        creation_date, eventDate, true, uri.toString(),
+                                        streetNumber, streetName, postalCode, city, country, latLng);
+                                ChatHelper.createChat(idProject);
+                                ChatHelper.addInvolvedUser(idProject, authorId);
+                                UserHelper.addProjectsSubscriptions(authorId, idProject);
+                            } else {
+                                ProjectHelper.createProjectWithImage(idProject, title, description, authorId,
+                                        creation_date, eventDate, false, uri.toString(),
+                                        streetNumber, streetName, postalCode, city, country, latLng);
+                                UserHelper.addProjectsSubscriptions(authorId, idProject);
+                            }
                         }
                     }
                 });
             }
-        });*/
+        });
     }
 
     private void updateProjectInFireBase() {
@@ -509,22 +453,12 @@ public class AddProjectActivity extends AppCompatActivity {
             ProjectHelper.updateIsPublished(projectId, true);
         }
         if (uriImageSelected != null) {
-
             String uuid = UUID.randomUUID().toString(); // GENERATE UNIQUE STRING
             StorageReference filePath = FirebaseStorage.getInstance().getReference(uuid);
 
-            filePath.putFile(uriImageSelected).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            ProjectHelper.updateUrlPhoto(projectId, uri.toString());
-                        }
-                    });
-                }
-            });
-
+            filePath.putFile(uriImageSelected).addOnSuccessListener(taskSnapshot ->
+                    filePath.getDownloadUrl().addOnSuccessListener(uri ->
+                            ProjectHelper.updateUrlPhoto(projectId, uri.toString())));
         }
     }
 
@@ -538,31 +472,23 @@ public class AddProjectActivity extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     Project project = task.getResult().toObject(Project.class);
                     titleEditText.setText(project.getTitle());
-                    if (project.getDescription() != null) {
-                        descriptionEditText.setText(project.getDescription());
-                    }
                     if (project.getEventDate() != 0) {
                         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
                         buttonEventDate.setText(formatter.format(project.getEventDate()));
                     }
-                    if (project.getStreetNumber() != null) {
-                        streetNumberEditText.setText(project.getStreetNumber());
+                    if (project.getDescription() != null) {
+                        descriptionEditText.setText(project.getDescription());
                     }
-                    if (project.getStreetName() != null) {
-                        streetNameEditText.setText(project.getStreetName());
-                    }
-                    if (project.getPostalCode() != null) {
-                        postalCodeEditText.setText(project.getPostalCode());
-                    }
-                    if (project.getCity() != null) {
-                        cityEditText.setText(project.getCity());
-                    }
-                    if (project.getCountry() != null) {
-                        countryEditText.setText(project.getCountry());
-                    }
+
+                    setValueToEditText(project.getStreetNumber(), streetNumberEditText);
+                    setValueToEditText(project.getStreetName(), streetNameEditText);
+                    setValueToEditText(project.getPostalCode(), postalCodeEditText);
+                    setValueToEditText(project.getCity(), cityEditText);
+                    setValueToEditText(project.getCountry(), countryEditText);
+
                     if (project.getUrlPhoto() != null) {
 
-                        buttonAddPicture.setText("Change picture");
+                        buttonAddPicture.setText(getResources().getString(R.string.change_picture));
 
                         Glide.with(context)
                                 .load(project.getUrlPhoto())
@@ -573,4 +499,6 @@ public class AddProjectActivity extends AppCompatActivity {
             }
         });
     }
+
+
 }

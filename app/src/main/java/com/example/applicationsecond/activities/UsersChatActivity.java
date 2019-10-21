@@ -37,7 +37,6 @@ public class UsersChatActivity extends AppCompatActivity implements AdapterUsers
     private AdapterUsersChats adapter;
     //---------------------------------------
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,7 +60,7 @@ public class UsersChatActivity extends AppCompatActivity implements AdapterUsers
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle("Messages");
+        actionBar.setTitle(getResources().getString(R.string.action_bar_title_messages));
         actionBar.setDisplayHomeAsUpEnabled(true);
     }
 

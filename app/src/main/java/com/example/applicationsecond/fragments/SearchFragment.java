@@ -68,14 +68,13 @@ public class SearchFragment extends Fragment {
     private List<User> users;
     private SharedPreferences preferences;
     public static final String APP_PREFERENCES = "appPreferences";
-    public static final String RESULTS = "results";
+    private static final String RESULTS = "results";
     private static final String CITY = "city";
 
 
     public SearchFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -99,7 +98,7 @@ public class SearchFragment extends Fragment {
                 buttonSearchUsers.animate().translationY(-textViewTitle.getHeight());
                 frameLayout.animate().translationY(-textViewTitle.getHeight());
             } else {
-                Toast.makeText(getContext(), "You have to fill the city field", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), getResources().getString(R.string.city_field_missing_toast), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -130,11 +129,11 @@ public class SearchFragment extends Fragment {
                 }
             });
         } else {
-            Toast.makeText(getContext(), "You have to fill the city field", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getResources().getString(R.string.city_field_missing_toast), Toast.LENGTH_SHORT).show();
     }
     }
 
-    public void showFragment(Fragment fragment) {
+    private void showFragment(Fragment fragment) {
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.search_content, fragment);

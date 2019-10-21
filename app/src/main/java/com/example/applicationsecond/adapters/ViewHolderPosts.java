@@ -57,7 +57,6 @@ public class ViewHolderPosts extends RecyclerView.ViewHolder {
                     }
                 }
             });
-
         }
 
         if (post.getDateOfPublication() != null) {
@@ -79,19 +78,17 @@ public class ViewHolderPosts extends RecyclerView.ViewHolder {
 
     private void displayDialogToDeletePost(String postId) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle("Do you want to delete this post?")
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+        builder.setTitle(context.getResources().getString(R.string.delete_post_dialog_title))
+                .setPositiveButton(context.getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         PostHelper.deletePost(postId);
                         UserHelper.removePublishedPostId(Utils.getCurrentUser().getUid(), postId);
                     }
                 })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                .setNegativeButton(context.getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
+                    public void onClick(DialogInterface dialog, int which) {}
                 })
                 .create()
                 .show();

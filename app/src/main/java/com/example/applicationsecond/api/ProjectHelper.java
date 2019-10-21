@@ -24,12 +24,6 @@ public class ProjectHelper {
         return FirebaseFirestore.getInstance().collection(COLLECTION_NAME);
     }
 
-    //CREATE
-    /*public static Task<Void> createProject(String id, String title, String description, String idAuthor, Date creationDate, boolean isPublished) {
-        Project projectToCreate = new Project(id, title, description, idAuthor, creationDate, isPublished);
-        return ProjectHelper.getProjectsCollection().document().set(projectToCreate);
-    }*/
-
     public static Task<Void> createProject(String id, String title, String description, String idAuthor, Date creationDate, long eventDate,
                                            boolean isPublished, String streetNumber, String streetName, String postalCode,
                                            String city, String country, String latLng) {
@@ -47,7 +41,6 @@ public class ProjectHelper {
         return ProjectHelper.getProjectsCollection().document(id).set(project);
     }
 
-    //GET
     public static Query getFuturesProjectsForOneUser(String userId, long date) {
         return ProjectHelper.getProjectsCollection()
                 .whereEqualTo("published", true)
@@ -82,34 +75,13 @@ public class ProjectHelper {
                 .limit(50);
     }
 
-    public static Task<QuerySnapshot> getProjectsOfACity(String city) {
-        return ProjectHelper.getProjectsCollection().whereEqualTo("city", city).get();
-    }
-
-    public static Task<QuerySnapshot> getProjectsDependingOnKeyWords(String keyword) {
-        return ProjectHelper.getProjectsCollection().whereArrayContains("title", keyword).get();
-    }
-
-
     public static Task<DocumentSnapshot> getProject(String id) {
         return ProjectHelper.getProjectsCollection().document(id).get();
     }
 
-    /*public static Task<QuerySnapshot> getPublishedProjects() {
-        return ProjectHelper.getProjectsCollection().whereEqualTo("published", true).get();
-    }*/
-
-    /*public static Task<QuerySnapshot> getUsersPublishedProjects(String currentUserId) {
-        return ProjectHelper.getProjectsCollection().whereEqualTo("published", true).whereEqualTo("authorId", currentUserId).get();
-    }*/
-
     public static Query getUsersPublishedProjects(String currentUserId) {
         return ProjectHelper.getProjectsCollection().whereEqualTo("published", true).whereEqualTo("authorId", currentUserId);
     }
-
-   /* public static Task<QuerySnapshot> getUsersNotPublishedProjects(String userId) {
-        return ProjectHelper.getProjectsCollection().whereEqualTo("published", false).whereEqualTo("authorId", userId).get();
-    }*/
 
     public static Query getUsersNotPublishedProjects(String userId) {
         return ProjectHelper.getProjectsCollection().whereEqualTo("published", false).whereEqualTo("authorId", userId);
@@ -119,7 +91,6 @@ public class ProjectHelper {
         return ProjectHelper.getProjectsCollection().document(id).delete();
     }
 
-    //UPDATE
     public static Task<Void> addSubscriptionToProject(String projectId, String userId) {
         return ProjectHelper.getProjectsCollection().document(projectId).update("usersWhoSubscribed",
                 FieldValue.arrayUnion(userId));
@@ -157,9 +128,6 @@ public class ProjectHelper {
     }
     public static Task<Void> updateUrlPhoto(String projectId, String urlPhoto) {
         return ProjectHelper.getProjectsCollection().document(projectId).update("urlPhoto", urlPhoto);
-    }
-    public static Task<Void> updateLatLng(String projectid, String latLng) {
-        return ProjectHelper.getProjectsCollection().document(projectid).update("latLng", latLng);
     }
     public static Task<Void> updateIsPublished(String projectId, boolean isPublished) {
         return ProjectHelper.getProjectsCollection().document(projectId).update("published", isPublished);

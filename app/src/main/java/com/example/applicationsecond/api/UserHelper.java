@@ -22,13 +22,11 @@ public class UserHelper {
         return FirebaseFirestore.getInstance().collection(COLLECTION_NAME);
     }
 
-    //CREATE
     public static Task<Void> createUser(String id, String username, boolean isAssociation, String city, String country) {
         User userToCreate = new User(id, username, isAssociation, city, country);
         return UserHelper.getUsersCollection().document(id).set(userToCreate);
     }
 
-    //GET
     public static Task<DocumentSnapshot> getUser(String id) {
         return UserHelper.getUsersCollection().document(id).get();
     }
@@ -37,7 +35,6 @@ public class UserHelper {
         return UserHelper.getUsersCollection().whereEqualTo("city", search).get();
     }
 
-    //UPDATE
     public static Task<Void> addProjectsSubscriptions(String userId, String projectId) {
         return UserHelper.getUsersCollection().document(userId).update("projectsSubscribedId",
                 FieldValue.arrayUnion(projectId));
@@ -86,11 +83,4 @@ public class UserHelper {
     public static Task<Void> updateCity(String userId, String city) {
         return UserHelper.getUsersCollection().document(userId).update("city", city);
     }
-
-   /* public static Task<Void> deleteAnIdInProjectSubscribedId(String projectId) {
-        return UserHelper.getUsersCollection().document().update("projectsSubscribedId",
-                FieldValue.arrayRemove(projectId));
-    }*/
-
-
 }

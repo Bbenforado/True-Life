@@ -18,21 +18,6 @@ public class MessageHelper {
                 .limit(50);
     }
 
-    /*public static Query getLastMessageOfChat(String chatName) {
-        return ChatHelper.getChatCollection()
-                .document(chatName)
-                .collection(COLLECTION_NAME)
-                .orderBy("dateCreated")
-                .limit(1);
-    }*/
-
-    /*public static Task<DocumentReference> createMessageForChat(String id, String textMessage,
-                                                               String chatName,
-                                                               User userSender, long timeInMilliseconds) {
-        Message message = new Message(id, textMessage, userSender, chatName, timeInMilliseconds);
-        return ChatHelper.getChatCollection().document(chatName).collection(COLLECTION_NAME)
-                .add(message);
-    }*/
     public static Task<Void> createMessageForChat(String id, String textMessage,
                                                                String chatName,
                                                                User userSender, long timeInMilliseconds) {
@@ -43,10 +28,6 @@ public class MessageHelper {
     public static Task<Void> deleteMessage(String chatName, String messageId) {
         return ChatHelper.getChatCollection().document(chatName).collection(COLLECTION_NAME).document(messageId).delete();
     }
-
-    /*public static Task<QueryDocumentSnapshot> getLastMessageOfChat(String chatName) {
-        return ChatHelper.getChatCollection().document(chatName).collection(COLLECTION_NAME).orderBy("dateCreated").limit(1).get();
-    }*/
 
     public static Task<QuerySnapshot> getLastMessageOfAChat(String chatName) {
         return ChatHelper.getChatCollection().document(chatName).collection(COLLECTION_NAME).orderBy("dateCreated", Query.Direction.DESCENDING).limit(1).get();

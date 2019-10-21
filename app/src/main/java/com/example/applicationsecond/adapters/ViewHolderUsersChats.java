@@ -40,6 +40,8 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.example.applicationsecond.utils.Utils.convertDateToHour;
+
 public class ViewHolderUsersChats extends RecyclerView.ViewHolder {
 
     @BindView(R.id.user_chats_activity_item_image)
@@ -71,12 +73,7 @@ public class ViewHolderUsersChats extends RecyclerView.ViewHolder {
         }
         if (chat.getLastMessage() != null) {
             Message lastMessage = chat.getLastMessage();
-            if (lastMessage.getMessage().length() > 15) {
-                String message = lastMessage.getMessage().substring(0, 15);
-                textViewLastMessage.setText(message);
-            } else {
-                textViewLastMessage.setText(lastMessage.getMessage());
-            }
+            textViewLastMessage.setText(giveNewSizeToTitle(lastMessage.getMessage()));
             textViewTime.setText(convertDateToHour(lastMessage.getDateCreated()));
             String userId = Utils.getCurrentUser().getUid();
             UserHelper.getUser(userId).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -93,16 +90,14 @@ public class ViewHolderUsersChats extends RecyclerView.ViewHolder {
             });
         } else {
             textViewTime.setText("");
-            textViewLastMessage.setText("No message yet, be the first to start the talk!");
+            textViewLastMessage.setText(context.getResources().getString(R.string.no_message_be_first_to_talk));
         }
-
         layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 launchChatActivity(chat.getId());
             }
         });
-
     }
 
     private void launchChatActivity(String chatName) {
@@ -133,11 +128,6 @@ public class ViewHolderUsersChats extends RecyclerView.ViewHolder {
         if (numberOfUnreadMessages == 0) {
             textViewUnreadMessages.setVisibility(View.GONE);
         }
-    }
-
-    private String convertDateToHour(Date date){
-        DateFormat dfTime = new SimpleDateFormat("HH:mm");
-        return dfTime.format(date);
     }
 
     private String giveNewSizeToTitle(String oldString) {

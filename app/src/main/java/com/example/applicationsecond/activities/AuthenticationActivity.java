@@ -28,6 +28,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.example.applicationsecond.utils.Utils.checkIfStringIsNotEmpty;
 import static com.example.applicationsecond.utils.Utils.getCurrentUser;
 
 public class AuthenticationActivity extends AppCompatActivity {
@@ -51,7 +52,6 @@ public class AuthenticationActivity extends AppCompatActivity {
     private String city;
     private String country;
     //----------------------------------------
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,13 +88,13 @@ public class AuthenticationActivity extends AppCompatActivity {
                                   } else {
                                       UserHelper.createUser(getCurrentUser().getUid(), username, false, city, country);
                                   }
-                                  Toast.makeText(getApplicationContext(), "registration successful",
+                                  Toast.makeText(getApplicationContext(), getResources().getString(R.string.registration_successful_toast),
                                           Toast.LENGTH_SHORT).show();
                                   finish();
                                   Intent mainActivityIntent = new Intent(getApplicationContext(), MainActivity.class);
                                   startActivity(mainActivityIntent);
                               } else {
-                                  Toast.makeText(getApplicationContext(), "Couldn't register, try again",
+                                  Toast.makeText(getApplicationContext(), getResources().getString(R.string.registration_failed_toast),
                                           Toast.LENGTH_SHORT).show();
                               }
                           } catch (Exception e) {
@@ -103,7 +103,7 @@ public class AuthenticationActivity extends AppCompatActivity {
                       }
                   });
       } else {
-          Toast.makeText(getApplicationContext(), "Fields are not all completed!", Toast.LENGTH_SHORT).show();
+          Toast.makeText(getApplicationContext(), getResources().getString(R.string.field_missing), Toast.LENGTH_SHORT).show();
       }
     }
 
@@ -114,9 +114,8 @@ public class AuthenticationActivity extends AppCompatActivity {
 
     @OnClick(R.id.button_login_authentication_activity)
     public void login() {
-        Intent loginItent = new Intent(this, LoginActivity.class);
-        startActivity(loginItent);
-
+        Intent loginIntent = new Intent(this, LoginActivity.class);
+        startActivity(loginIntent);
     }
 
     private void configureSwitchButton() {
@@ -125,16 +124,11 @@ public class AuthenticationActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 if (isChecked) {
                     isAssociation = true;
-
                 } else {
                     isAssociation = false;
                 }
             }
         });
-    }
-
-    private boolean checkIfStringIsNotEmpty(String value) {
-        return !TextUtils.isEmpty(value);
     }
 
     private boolean checkAllFieldsAreCompleted() {

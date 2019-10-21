@@ -38,7 +38,6 @@ public class AdapterRecyclerViewProjects extends FirestoreRecyclerAdapter<Projec
         holder.updateUi(project, this.glide);
     }
 
-
     @Override
     public void onDataChanged() {
         super.onDataChanged();

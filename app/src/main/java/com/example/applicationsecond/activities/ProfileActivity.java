@@ -90,7 +90,6 @@ public class ProfileActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         defaultColor = textViewCountryCity.getTextColors().getDefaultColor();
-
         Bundle bundle = getIntent().getExtras();
         authorId = null;
         if (bundle != null) {
@@ -127,18 +126,17 @@ public class ProfileActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (isCurrentUsersProfile) {
-            actionBar.setTitle("Profile");
+            actionBar.setTitle(getResources().getString(R.string.action_bar_title_profile));
         } else {
             UserHelper.getUser(authorId).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                     if (task.isSuccessful()) {
                         User user = task.getResult().toObject(User.class);
-                        actionBar.setTitle(user.getUsername());
+                        actionBar.setTitle(capitalizeFirstLetter(user.getUsername()));
                     }
                 }
             });
-
         }
         actionBar.setDisplayHomeAsUpEnabled(true);
     }
@@ -153,6 +151,10 @@ public class ProfileActivity extends AppCompatActivity {
         tabLayout.setTabMode(TabLayout.MODE_FIXED);
     }
 
+    /**
+     * if it s not current user s profile, display another way the username and the country and city
+     * disabled the button and remove them.
+     */
     private void configurationIfProfileIsNotCurrentUsersProfile() {
         userNameButton.setVisibility(View.GONE);
         textViewUsername.setVisibility(View.VISIBLE);
@@ -174,9 +176,8 @@ public class ProfileActivity extends AppCompatActivity {
             }
             chooseImageFromPhone();
         } else {
-            Toast.makeText(this, "You don't have internet, please, try again later", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getResources().getString(R.string.no_internet_try_again_toast), Toast.LENGTH_SHORT).show();
         }
-
     }
 
     @OnClick(R.id.profile_activity_username_button)
@@ -192,17 +193,6 @@ public class ProfileActivity extends AppCompatActivity {
     //-------------------------------
     //METHODS
     //---------------------------------
-
-    private void getUserFromFireBase(String id) {
-        UserHelper.getUser(id).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    currentUser = task.getResult().toObject(User.class);
-                }
-            }
-        });
-    }
     private void handleResponseForGallery(int requestCode, int resultCode, Intent data) {
         if (requestCode == RC_CHOOSE_PHOTO) {
             if (resultCode == RESULT_OK) {
@@ -211,12 +201,8 @@ public class ProfileActivity extends AppCompatActivity {
                         .load(this.uri)
                         .apply(RequestOptions.circleCropTransform())
                         .into(this.imageView);
-
                 uploadPhotoInFireBase();
-            } else {
-                Toast.makeText(this, "No image chosen", Toast.LENGTH_SHORT).show();
             }
-
         }
     }
 
@@ -229,13 +215,30 @@ public class ProfileActivity extends AppCompatActivity {
         startActivityForResult(i, RC_CHOOSE_PHOTO);
     }
 
+    //------------------------------------
+    //GET DATA
+    //-------------------------------------------
+    private void getUserFromFireBase(String id) {
+        UserHelper.getUser(id).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    currentUser = task.getResult().toObject(User.class);
+                }
+            }
+        });
+    }
+
+    //--------------------------------------
+    //DIALOG METHODS
+    //--------------------------------------------
     private void displayDialogToChangeUsername() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_profile_activity_change_username, null);
-        builder.setTitle("Change user name")
+        builder.setTitle(getResources().getString(R.string.change_username_dialog_title))
                 .setView(view)
-                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                .setPositiveButton(getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if (isNetworkAvailable(getApplicationContext())) {
@@ -243,11 +246,11 @@ public class ProfileActivity extends AppCompatActivity {
                             userNameButton.setText(usernameInputEditText.getEditableText().toString());
                             UserHelper.updateUsername(Utils.getCurrentUser().getUid(), usernameInputEditText.getEditableText().toString());
                         } else {
-                            Toast.makeText(getApplicationContext(), "You don't have internet, please, try again later", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), getResources().getString(R.string.no_internet_try_again_toast), Toast.LENGTH_SHORT).show();
                         }
                     }
                 })
-                .setNegativeButton("Cancel", null)
+                .setNegativeButton(getResources().getString(R.string.cancel), null)
                 .show();
     }
 
@@ -263,9 +266,9 @@ public class ProfileActivity extends AppCompatActivity {
         if (currentUser.getCountry() != null) {
             countryInputEditText.setText(capitalizeFirstLetter(currentUser.getCountry()));
         }
-        builder.setTitle("Add some information:")
+        builder.setTitle(getResources().getString(R.string.add_info_dialog_title))
                 .setView(view)
-                .setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                .setPositiveButton(getResources().getString(R.string.save), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
@@ -284,12 +287,11 @@ public class ProfileActivity extends AppCompatActivity {
                                 textViewCountryCity.setText(finalString);
                             }
                         } else {
-                            Toast.makeText(getApplicationContext(), "You don't have internet, please, try again later", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), getResources().getString(R.string.no_internet_try_again_toast), Toast.LENGTH_SHORT).show();
                         }
-
                     }
                 })
-                .setNegativeButton("Cancel", null)
+                .setNegativeButton(getResources().getString(R.string.cancel), null)
                 .show();
     }
 
@@ -297,76 +299,55 @@ public class ProfileActivity extends AppCompatActivity {
     //FIREBASE
     //--------------------------------------
     private void uploadPhotoInFireBase() {
-        ProgressDialog dialog = ProgressDialog.show(this, "Loading", "Please wait, it can take one minute", true);
-        String uuid = UUID.randomUUID().toString(); // GENERATE UNIQUE STRING
+        ProgressDialog dialog = ProgressDialog.show(this, getResources().getString(R.string.loading),
+                getResources().getString(R.string.please_wait_message), true);
+        String uuid = UUID.randomUUID().toString();
         StorageReference filePath = FirebaseStorage.getInstance().getReference(uuid);
 
-        filePath.putFile(uri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                if (task.isSuccessful()) {
-                    filePath.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Uri> task) {
-                            if (task.isSuccessful()) {
-                                dialog.dismiss();
-                                Uri uri = task.getResult();
-                                UserHelper.updateUrlPhoto(Utils.getCurrentUser().getUid(), uri.toString());
-                            }
-                        }
-                    });
-                }
-            }
-        });
-
-           /*     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                    @Override
-                    public void onSuccess(Uri uri) {
+        filePath.putFile(uri).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                filePath.getDownloadUrl().addOnCompleteListener(task1 -> {
+                    if (task1.isSuccessful()) {
+                        dialog.dismiss();
+                        Uri uri = task1.getResult();
                         UserHelper.updateUrlPhoto(Utils.getCurrentUser().getUid(), uri.toString());
                     }
                 });
             }
-        });*/
+        });
     }
 
     //-------------------------------
     //UPDATE UI
     //--------------------------------
-
     private void displayUserInformation(Context context, String id) {
-        UserHelper.getUser(id).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    User user = task.getResult().toObject(User.class);
-                    if (user.getUrlPhoto() != null) {
-                        Glide.with(context)
-                                .load(user.getUrlPhoto())
-                                .apply(RequestOptions.circleCropTransform())
-                                .into(imageView);
-                    }
-                    if (isCurrentUsersProfile) {
-                        userNameButton.setText(capitalizeFirstLetter(user.getUsername()));
-                    } else {
-                        textViewUsername.setText(capitalizeFirstLetter(user.getUsername()));
-                    }
+        UserHelper.getUser(id).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                User user = task.getResult().toObject(User.class);
+                if (user.getUrlPhoto() != null) {
+                    Glide.with(context)
+                            .load(user.getUrlPhoto())
+                            .apply(RequestOptions.circleCropTransform())
+                            .into(imageView);
+                }
+                if (isCurrentUsersProfile) {
+                    userNameButton.setText(capitalizeFirstLetter(user.getUsername()));
+                } else {
+                    textViewUsername.setText(capitalizeFirstLetter(user.getUsername()));
+                }
 
-                    if (user.getCountry() != null && user.getCity() != null) {
-                        textViewCountryCity.setText(capitalizeFirstLetter(user.getCity()) + ", " + capitalizeFirstLetter(user.getCountry()));
-                    } else if (user.getCountry() != null && user.getCity() == null) {
-                        textViewCountryCity.setText(capitalizeFirstLetter(user.getCountry()));
-                    } else if (user.getCountry() == null && user.getCity() != null) {
-                        textViewCountryCity.setText(capitalizeFirstLetter(user.getCity()));
-                    } else if (user.getCountry() == null && user.getCity() == null) {
-                        imageViewAddCountryCity.setVisibility(View.VISIBLE);
-                        if (isCurrentUsersProfile) {
-                            textViewCountryCity.setText("Add a country and a city");
-                        } else {
-                            textViewCountryCity.setVisibility(View.GONE);
-                        }
+                if (user.getCountry() != null && user.getCity() != null) {
+                    textViewCountryCity.setText(capitalizeFirstLetter(user.getCity()) + ", " + capitalizeFirstLetter(user.getCountry()));
+                } else if (user.getCountry() != null && user.getCity() == null) {
+                    textViewCountryCity.setText(capitalizeFirstLetter(user.getCountry()));
+                } else if (user.getCountry() == null && user.getCity() != null) {
+                    textViewCountryCity.setText(capitalizeFirstLetter(user.getCity()));
+                } else if (user.getCountry() == null && user.getCity() == null) {
+                    imageViewAddCountryCity.setVisibility(View.VISIBLE);
+                    if (isCurrentUsersProfile) {
+                        textViewCountryCity.setText(getResources().getString(R.string.add_country_city_text_view));
+                    } else {
+                        textViewCountryCity.setVisibility(View.GONE);
                     }
                 }
             }

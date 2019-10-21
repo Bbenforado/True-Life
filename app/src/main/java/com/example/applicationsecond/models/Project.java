@@ -10,7 +10,6 @@ public class Project {
     private String title;
     private Date creationDate;
     private long eventDate;
-    private Date endDate;
     private String description;
     private String urlPhoto;
     private String idAddress;
@@ -24,21 +23,8 @@ public class Project {
     private String country;
     private String latLng;
 
-
     public Project() {
 
-    }
-
-
-    public Project(String title, Date creationDate, long eventDate, Date endDate,
-                   String description, String urlPhoto, String idAddress) {
-        this.title = title;
-        this.creationDate = creationDate;
-        this.eventDate = eventDate;
-        this.endDate = endDate;
-        this.description = description;
-        this.urlPhoto = urlPhoto;
-        this.idAddress = idAddress;
     }
 
     public Project(String title, String description, String authorId, Date creationDate) {
@@ -128,14 +114,6 @@ public class Project {
 
     public void setEventDate(long eventDate) {
         this.eventDate = eventDate;
-    }
-
-    public Date getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
     }
 
     public String getDescription() {

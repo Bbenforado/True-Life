@@ -52,11 +52,10 @@ import static com.example.applicationsecond.utils.Utils.getUserLocation;
  */
 public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickListener, OnMapReadyCallback, LocationListener {
 
-
     private GoogleMap map;
     private LatLngBounds bounds;
     private SharedPreferences preferences;
-
+    //--------------------------------------------
     public static final String APP_PREFERENCES = "appPreferences";
     private static final String CLICKED_PROJECT = "clickedProject";
     private static final int REQUEST_ID_ACCESS_COURSE_FINE_LOCATION = 100;
@@ -64,7 +63,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
     public MapFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -96,9 +94,12 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
         }
     }
 
+    /**
+     * get the tag of the clicked marker, if it s users marker, nothing happens but if it s
+     * a project marker, display the detail of the project
+     */
     @Override
     public boolean onMarkerClick(Marker marker) {
-        //int tag = (Integer) marker.getTag();
         //if this is the user marker
         if (!marker.getTag().equals("user")) {
             String id = String.valueOf(marker.getTag());
@@ -160,9 +161,12 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
         showMyLocation();
     }
 
+    /**
+     * get the user location and show it on map with marker
+     */
     private void showMyLocation() {
         if (getUserLocation(getContext(), this, getActivity()) == null) {
-            Toast.makeText(getContext(), "Location not found", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getResources().getString(R.string.location_not_found), Toast.LENGTH_SHORT).show();
         } else {
             double userLat = getUserLocation(getContext(), this, getActivity()).getLatitude();
             double userLng = getUserLocation(getContext(), this, getActivity()).getLongitude();
@@ -183,7 +187,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
             Marker marker;
             marker = map.addMarker(new MarkerOptions()
                     .position(latLng)
-                    .title("You are here"));
+                    .title(getResources().getString(R.string.user_marker_title)));
             marker.setTag("user");
             marker.showInfoWindow();
 
@@ -252,6 +256,9 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
         });
     }
 
+    /**
+     * create a marker and show it on the map
+     */
     private void showPlaceOnMap(boolean isProject, String id, LatLng latLng) {
         if (latLng != null) {
             CameraUpdateFactory.newLatLng(latLng);
@@ -264,7 +271,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                 placeMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
             }
         } else {
-            Toast.makeText(getContext(), "Location not found", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getResources().getString(R.string.location_not_found), Toast.LENGTH_SHORT).show();
         }
     }
 

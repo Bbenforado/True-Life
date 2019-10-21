@@ -8,14 +8,11 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.provider.ContactsContract;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,36 +22,17 @@ import android.widget.ViewSwitcher;
 
 import com.bumptech.glide.Glide;
 import com.example.applicationsecond.R;
-import com.example.applicationsecond.activities.ProfileActivity;
 import com.example.applicationsecond.activities.ProjectDetailActivity;
 import com.example.applicationsecond.adapters.AdapterRecyclerViewProjects;
 import com.example.applicationsecond.api.ProjectHelper;
-import com.example.applicationsecond.callbacks.MyCallback;
-import com.example.applicationsecond.models.Message;
-import com.example.applicationsecond.models.Post;
 import com.example.applicationsecond.models.Project;
 import com.example.applicationsecond.utils.ItemClickSupport;
 import com.example.applicationsecond.utils.Utils;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.gson.Gson;
 
-import java.net.PortUnreachableException;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -99,7 +77,6 @@ public class ActualityListFragment extends Fragment implements AdapterRecyclerVi
         this.profileId = profileId;
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -128,10 +105,15 @@ public class ActualityListFragment extends Fragment implements AdapterRecyclerVi
         // set the animation type to ViewSwitcher
         viewSwitcher.setInAnimation(newsAvailable);
         viewSwitcher.setOutAnimation(noNewsAvailable);
-
-        //displayScreenDependingOfNewsAvailable();
     }
 
+    /**
+     * query the data depending on from where this fragment is launched.
+     * if it s for default screen, we query projects that the user follows
+     * if it s from profile activity, we query published projects the user is following
+     * if it s from association profile, we query published projects by this association
+     * if it s from the search activity, we query the projects depending on the city
+     */
     private void configureRecyclerView() {
         switch (codeLastActivity) {
             case "profileActivity":
@@ -154,12 +136,8 @@ public class ActualityListFragment extends Fragment implements AdapterRecyclerVi
                 break;
 
             case "defaultScreen":
-
-                //get the date
                 Date todayDate = new Date();
                 long dateInMilliseconds = todayDate.getTime();
-                /*adapter = new AdapterRecyclerViewProjects(generateOptionsForAdapter(ProjectHelper.getProjectsForOneUser(Utils.getCurrentUser().getUid())),
-                        Glide.with(this), this);*/
                 adapter = new AdapterRecyclerViewProjects(generateOptionsForAdapter(ProjectHelper.getFuturesProjectsForOneUser(getCurrentUser().getUid(), dateInMilliseconds)),
                         Glide.with(this), this);
                 break;
@@ -192,7 +170,6 @@ public class ActualityListFragment extends Fragment implements AdapterRecyclerVi
                     }
                 });
     }
-
     //-------------------------------------
     //-------------------------------------
     private FirestoreRecyclerOptions<Project> generateOptionsForAdapter(Query query){

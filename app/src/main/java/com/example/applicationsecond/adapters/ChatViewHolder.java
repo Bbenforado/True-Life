@@ -31,6 +31,9 @@ import java.util.Date;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.example.applicationsecond.utils.Utils.convertDateToHour;
+import static com.example.applicationsecond.utils.Utils.resizeUsername;
+
 public class ChatViewHolder extends RecyclerView.ViewHolder {
 
     //-----------------------------------
@@ -64,7 +67,6 @@ public class ChatViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void updateWithMessage(Message message, String currentUserId, RequestManager glide) {
-
         //check if current user is the sender
         Boolean isCurrentUser = message.getUserSender().getId().equals(currentUserId);
 
@@ -97,33 +99,21 @@ public class ChatViewHolder extends RecyclerView.ViewHolder {
             textViewMessage.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    //display dialog to delete message
                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                    builder.setMessage("Do you want to delete this message?")
-                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    if (message.getId() != null) {
-                                        MessageHelper.deleteMessage(message.getChatName(), message.getId());
-                                        ChatHelper.removeMessageId(message.getChatName(), message.getId());
-                                    }
+                    builder.setMessage(v.getContext().getResources().getString(R.string.delete_message_dialog_title))
+                            .setPositiveButton(v.getContext().getResources().getString(R.string.yes), (dialog, id) -> {
+                                if (message.getId() != null) {
+                                    MessageHelper.deleteMessage(message.getChatName(), message.getId());
+                                    ChatHelper.removeMessageId(message.getChatName(), message.getId());
                                 }
                             })
-                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-
-                                }
+                            .setNegativeButton(v.getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {}
                             }).create().show();
                     return true;
                 }
             });
         }
-    }
-
-    private String resizeUsername(String username) {
-        if (username.length() >= 10) {
-            username = username.substring(0, 10);
-        }
-        return username;
     }
 
     private void updateDesignDependingOnUser(Boolean isSender) {
@@ -148,10 +138,5 @@ public class ChatViewHolder extends RecyclerView.ViewHolder {
                 RelativeLayout.ALIGN_RIGHT, R.id.activity_chat_item_message_container_text_message_container);
         cardViewImageSent.setLayoutParams(paramsImageView);
         rootView.requestLayout();
-    }
-
-    private String convertDateToHour(Date date){
-        DateFormat dfTime = new SimpleDateFormat("HH:mm");
-        return dfTime.format(date);
     }
 }

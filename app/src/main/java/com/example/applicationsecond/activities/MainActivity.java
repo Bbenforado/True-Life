@@ -1,14 +1,12 @@
 package com.example.applicationsecond.activities;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
-import androidx.core.view.MenuItemCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -19,9 +17,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -29,58 +25,42 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.applicationsecond.R;
-import com.example.applicationsecond.api.ChatHelper;
 import com.example.applicationsecond.api.MessageHelper;
 import com.example.applicationsecond.api.PostHelper;
-import com.example.applicationsecond.api.ProjectHelper;
 import com.example.applicationsecond.api.UserHelper;
 import com.example.applicationsecond.fragments.ActualityListFragment;
-import com.example.applicationsecond.fragments.AddProjectFragment;
 import com.example.applicationsecond.fragments.MapFragment;
 import com.example.applicationsecond.fragments.PostListFragment;
 import com.example.applicationsecond.fragments.SearchFragment;
-import com.example.applicationsecond.models.Chat;
 import com.example.applicationsecond.models.Message;
-import com.example.applicationsecond.models.Post;
-import com.example.applicationsecond.models.Project;
 import com.example.applicationsecond.models.User;
 import com.example.applicationsecond.utils.Utils;
 import com.firebase.ui.auth.AuthUI;
-import com.firebase.ui.auth.ErrorCodes;
-import com.firebase.ui.auth.IdpResponse;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
-import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static androidx.core.view.MenuItemCompat.getActionView;
-import static com.example.applicationsecond.utils.Utils.capitalizeFirstLetter;
 import static com.example.applicationsecond.utils.Utils.getCurrentUser;
 import static com.example.applicationsecond.utils.Utils.isCurrentUserLogged;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
-
 
     //BIND VIEWS
     //-------------------------------
@@ -106,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public static final String APP_PREFERENCES = "appPreferences";
     public static final String USER_ID = "userId";
     public static final String KEY_EDIT_PROJECT = "keyEditproject";
-
+    public static final String COLLECTION_NAME_POSTS = "posts";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -169,7 +149,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         switch (item.getItemId()) {
             case R.id.toolbar_search:
                 showFragment(searchFragment);
-                actionBar.setTitle("Search");
+                actionBar.setTitle(getResources().getString(R.string.action_bar_title_search));
                 return true;
             case R.id.toolbar_add:
                 if (isCurrentUserAssociation) {
@@ -182,6 +162,32 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+        int id = menuItem.getItemId();
+        switch (id) {
+            case R.id.users_profile:
+                launchActivity(ProfileActivity.class);
+                break;
+            case R.id.users_projects:
+                launchActivity(UsersProjectsActivity.class);
+                break;
+            case R.id.users_posts:
+                launchActivity(PostListActivity.class);
+                break;
+            case R.id.sign_out:
+                signOut();
+                break;
+            case R.id.users_chats:
+                launchActivity(UsersChatActivity.class);
+                break;
+            default:
+                break;
+        }
+        drawerLayout.closeDrawer(GravityCompat.START);
+        return true;
     }
 
     //------------------------------------
@@ -198,7 +204,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         actionBar = getSupportActionBar();
-        actionBar.setTitle("Projects");
+        actionBar.setTitle(getResources().getString(R.string.action_bar_title_projects));
     }
 
     private void configureBottomNavigationViewListener() {
@@ -208,15 +214,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 switch (menuItem.getItemId()) {
                     case R.id.navigation_projects:
                         showFragment(actualityListFragment);
-                        actionBar.setTitle("Projects");
+                        actionBar.setTitle(getResources().getString(R.string.action_bar_title_projects));
                         return true;
                     case R.id.navigation_posts:
                         showFragment(postListFragment);
-                        actionBar.setTitle("Posts");
+                        actionBar.setTitle(getResources().getString(R.string.action_bar_title_posts));
                         return true;
                     case R.id.navigation_map:
                         showFragment(mapFragment);
-                        actionBar.setTitle("Map");
+                        actionBar.setTitle(getResources().getString(R.string.action_bar_title_map));
                         return true;
                 }
                 return false;
@@ -241,6 +247,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     //-------------------------------------------------
+    //GET DATA
     //-------------------------------------------------
     private void getAllUnreadMessagesForAllChats(Map<String, Long> lastChatVisit) {
         counterUnreadMessages = 0;
@@ -270,6 +277,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
     }
 
+    private void getDataFromCurrentUser() {
+        UserHelper.getUser(getCurrentUser().getUid()).addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                User currentUser = documentSnapshot.toObject(User.class);
+                isCurrentUserAssociation = currentUser.isAssociation();
+                String id = currentUser.getId();
+                preferences.edit().putString(USER_ID, id).apply();
+
+                doBasicConfiguration();
+                showFragment(actualityListFragment);
+            }
+        });
+    }
+
+    //--------------------------------------------------
+    //METHODS
+    //------------------------------------------------------
+    /**
+     * set the params for the text view that displays the number of unread messages beside "chat" in navigation drawer
+     */
     private void initializeCountDrawer(int unreadMessages) {
         badgeChatTextView.setGravity(Gravity.CENTER);
         badgeChatTextView.setTypeface(null, Typeface.BOLD);
@@ -289,58 +317,37 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         transaction.commitAllowingStateLoss();
     }
 
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-        int id = menuItem.getItemId();
-        switch (id) {
-            case R.id.users_profile:
-                launchActivity(ProfileActivity.class);
-                break;
-            case R.id.users_projects:
-                launchActivity(UsersProjectsActivity.class);
-                break;
-            case R.id.users_posts:
-                launchActivity(PostListActivity.class);
-                break;
-            case R.id.sign_out:
-                signOut();
-                break;
-            case R.id.users_chats:
-                launchActivity(UsersChatActivity.class);
-                break;
-            default:
-                break;
-        }
-        drawerLayout.closeDrawer(GravityCompat.START);
-
-        return true;
-    }
-
     private void launchActivity(Class activity) {
         Intent intent = new Intent(this, activity);
         startActivity(intent);
     }
 
-
-    private void getDataFromCurrentUser() {
-        UserHelper.getUser(getCurrentUser().getUid()).addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                User currentUser = documentSnapshot.toObject(User.class);
-                isCurrentUserAssociation = currentUser.isAssociation();
-                String id = currentUser.getId();
-                preferences.edit().putString(USER_ID, id).apply();
-
-                doBasicConfiguration();
-                showFragment(actualityListFragment);
-            }
-        });
+    private void signOut() {
+        AuthUI.getInstance()
+                .signOut(this)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Intent intent = new Intent(getApplicationContext(), AuthenticationActivity.class);
+                            startActivity(intent);
+                            finish();
+                        }
+                    }
+                });
     }
 
+    //------------------------------------------
+    //DIALOG METHODS
+    //----------------------------------------------
+    /**
+     * diaplay a dialog that ask to the user if he wants to create a post or a project
+     * available only for associations
+     */
     private void displayPostOrProjectDialog() {
         String[] choices = {"Post", "Project"};
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("What do you want to create?")
+        builder.setTitle(getResources().getString(R.string.dialog_create_post_or_project_title))
                 .setItems(choices, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -365,13 +372,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_create_post, null);
-        builder.setTitle("Publish a post :")
+        builder.setTitle(getResources().getString(R.string.dialog_publish_post_title))
                 .setView(view)
-                .setPositiveButton("Publish", new DialogInterface.OnClickListener() {
+                .setPositiveButton(getResources().getString(R.string.publish), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
-                        CollectionReference ref = FirebaseFirestore.getInstance().collection("posts");
+                        CollectionReference ref = FirebaseFirestore.getInstance().collection(COLLECTION_NAME_POSTS);
                         String postId = ref.document().getId();
 
                         EditText title = view.findViewById(R.id.input_title);
@@ -388,36 +395,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                         User currentUser = task.getResult().toObject(User.class);
                                         String authorId = currentUser.getId();
                                         PostHelper.createPost(postId, postTitle, postContent, authorId, creationDate);
-
                                         //save the id of the post in the user
                                         UserHelper.updatePublishedPostIdList(Utils.getCurrentUser().getUid(), postId);
-
-                                        Toast.makeText(getApplication(), "Post published!", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getApplication(), getResources().getString(R.string.post_published_toast), Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             });
                         } else {
-                            Toast.makeText(getApplicationContext(), "You have to fill the fields", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), getResources().getString(R.string.field_missing), Toast.LENGTH_SHORT).show();
                         }
                     }
                 })
-                .setNegativeButton("Cancel", null)
+                .setNegativeButton(getResources().getString(R.string.cancel), null)
                 .show();
     }
-
-    private void signOut() {
-        AuthUI.getInstance()
-                .signOut(this)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            Intent intent = new Intent(getApplicationContext(), AuthenticationActivity.class);
-                            startActivity(intent);
-                            finish();
-                        }
-                    }
-                });
-    }
-
 }

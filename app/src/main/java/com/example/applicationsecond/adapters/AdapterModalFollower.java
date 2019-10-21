@@ -44,12 +44,4 @@ public class AdapterModalFollower extends RecyclerView.Adapter<FollowerViewHolde
         return followers.size();
     }
 
-    public User getFollower(int position) {
-        return followers.get(position);
-    }
-
-    public void update(List<User> followers) {
-        this.followers = followers;
-        this.notifyDataSetChanged();
-    }
 }

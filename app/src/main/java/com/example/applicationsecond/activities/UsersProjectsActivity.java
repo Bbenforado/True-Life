@@ -42,7 +42,7 @@ public class UsersProjectsActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle("My projects");
+        actionBar.setTitle(getResources().getString(R.string.action_bar_title_my_projects));
         actionBar.setDisplayHomeAsUpEnabled(true);
     }
 }

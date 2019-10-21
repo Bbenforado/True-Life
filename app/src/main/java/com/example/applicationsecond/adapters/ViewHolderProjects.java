@@ -69,19 +69,20 @@ public class ViewHolderProjects extends RecyclerView.ViewHolder {
             });
 
         }
-
         if (project.getCreationDate() != null) {
             String date = new SimpleDateFormat("dd/MM/yyyy").format(project.getCreationDate());
             dateCreationProjectTextView.setText(date);
         }
-
         if (project.getUrlPhoto() != null) {
             glide.load(project.getUrlPhoto())
                     .apply(RequestOptions.noTransformation())
                     .into(this.imageView);
 
         }
+        displayDependingOnIfProjectIsFinished(project);
+    }
 
+    private void displayDependingOnIfProjectIsFinished(Project project) {
         Date todayDate = new Date();
         long dateInMilliseconds = todayDate.getTime();
         if (project.getEventDate() < dateInMilliseconds) {
@@ -90,6 +91,5 @@ public class ViewHolderProjects extends RecyclerView.ViewHolder {
             dateCreationProjectTextView.setTextColor(context.getResources().getColor(R.color.disabledColor));
             ownerOfPostTextView.setTextColor(context.getResources().getColor(R.color.disabledColor));
         }
-
     }
 }

@@ -81,7 +81,6 @@ public class UserListFragment extends Fragment {
         this.isFromSearchFragment = isFromSearchFragment;
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -135,14 +134,13 @@ public class UserListFragment extends Fragment {
                 .setOnItemLongClickListener((recyclerView, position, v) -> {
                     //display dialog which ask if user wants to unfollow the association
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                    builder.setMessage("Do you want to unfollow this association?")
-                            .setPositiveButton("Yes", (dialog, id) -> {
-                                //unfollow the association
+                    builder.setMessage(getResources().getString(R.string.unfollow_association))
+                            .setPositiveButton(getResources().getString(R.string.yes), (dialog, id) -> {
                                 User association = adapter.getUser(position);
                                 String currentUserId = Utils.getCurrentUser().getUid();
                                 UserHelper.removeAssociationSubscription(currentUserId, association.getId());
                             })
-                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            .setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
                                     // User cancelled the dialog
                                 }
@@ -176,20 +174,19 @@ public class UserListFragment extends Fragment {
         users = gson.fromJson(json, type);
     }
 
+    /**
+     * get the followed associations by the user
+     */
     private void getDataForUserProfile(String id) {
         users = new ArrayList<>();
-
         UserHelper.getUser(id).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
-
                     User user = task.getResult().toObject(User.class);
                     if (user.getAssociationSubscribedId() != null) {
                         if (user.getAssociationSubscribedId().size() > 0) {
-
                             for (int i = 0; i < user.getAssociationSubscribedId().size(); i++) {
-
                                 UserHelper.getUser(user.getAssociationSubscribedId().get(i)).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                     @Override
                                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -213,6 +210,9 @@ public class UserListFragment extends Fragment {
         });
     }
 
+    //---------------------------------
+    //METHODS
+    //------------------------------------
     private void displayScreenDependingOfDataAvailable(List<User> users) {
         if (checkIfThereIsDataToDisplay(users)) {
             viewSwitcher.setDisplayedChild(0);

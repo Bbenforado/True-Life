@@ -20,25 +20,13 @@ public class ChatHelper {
         return FirebaseFirestore.getInstance().collection(COLLECTION_NAME);
     }
 
-    public static Query getAllChat() {
-        return ChatHelper.getChatCollection()
-                .orderBy("dateCreated")
-                .limit(50);
-    }
-
     public static Query getChatWhereTheUserIsInvolved(String userId) {
         return ChatHelper.getChatCollection()
                 .whereArrayContains("involvedUsers", userId)
                 .limit(50);
     }
 
-    public static Task<Void> deleteMessagesOfChat(String chatName, String idMessage) {
-        System.out.println("come here");
-        return ChatHelper.getChatCollection().document(chatName).collection(COLLECTION_NAME).document(idMessage).delete();
-    }
-
     public static Task<Void> deleteChat(String idChat) {
-        System.out.println("delete chat");
         return ChatHelper.getChatCollection().document(idChat).delete();
     }
 
@@ -49,19 +37,13 @@ public class ChatHelper {
         return ChatHelper.getChatCollection().document(chatName).update("messagesId", FieldValue.arrayRemove(messageId));
     }
 
-    //CREATE
     public static Task<Void> createChat(String id) {
         Chat chat = new Chat(id);
         return ChatHelper.getChatCollection().document(id).set(chat);
     }
 
-    //GET
     public static Task<DocumentSnapshot> getChat(String id) {
         return ChatHelper.getChatCollection().document(id).get();
-    }
-
-    public static Task<QuerySnapshot> getChatsOfOneUser(String userId) {
-        return ChatHelper.getChatCollection().whereArrayContains("involvedUsers", userId).get();
     }
 
     public static Task<Void> updateLastMessage(String chatName, Message message) {

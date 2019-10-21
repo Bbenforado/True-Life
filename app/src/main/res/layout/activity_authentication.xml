@@ -76,7 +76,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Register"
-        android:background="#000"
+        android:background="@color/yellow"
         android:textColor="#fff"
         android:layout_gravity="center"
         android:layout_marginTop="40dp"/>
@@ -85,7 +85,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Already have an account? Login"
-        android:background="#000"
+        android:background="@color/yellow"
         android:textColor="#fff"
         android:padding="10dp"
         android:layout_gravity="center"

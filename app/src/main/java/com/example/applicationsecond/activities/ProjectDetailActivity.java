@@ -84,8 +84,7 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
     @BindView(R.id.activity_detail_text_view_no_internet) TextView textViewNoInternet;
     @BindView(R.id.activity_detail_image_view_followers) ImageView imageViewFollowers;
     @BindView(R.id.activity_detail_nbr_of_followers) TextView textViewNbrOfFollowers;
-    @BindView(R.id.detail_activity_layout_nbr_follower)
-    LinearLayout layoutNbrFollower;
+    @BindView(R.id.detail_activity_layout_nbr_follower) LinearLayout layoutNbrFollower;
     //-----------------------------------------
     //-------------------------------------------
     public static final String APP_PREFERENCES = "appPreferences";
@@ -113,7 +112,7 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
         Date todayDate = new Date();
         long dateInMilliseconds = todayDate.getTime();
         if (clickedProject.getEventDate() < dateInMilliseconds) {
-            Toast.makeText(this, "This project is finished!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getResources().getString(R.string.project_finished_toast), Toast.LENGTH_SHORT).show();
             isProjectFinished = true;
         }
 
@@ -123,7 +122,6 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
             mapView.onCreate(savedInstanceState);
             mapView.getMapAsync(this);
         }
-
     }
 
     @Override
@@ -150,9 +148,7 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.edit_item:
-                //launch add project activity with fields completed
                 preferences.edit().putInt(KEY_EDIT_PROJECT, 1).apply();
-
                 Intent editIntent = new Intent(getApplicationContext(), AddProjectActivity.class);
                 String projectId = clickedProject.getId();
                 Bundle bundle = new Bundle();
@@ -164,13 +160,38 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
                 openChatForTheProject();
                 return true;
             case R.id.toolbar_detail_project_delete:
-                //display dialog to ask if user is really sure he wants to delete the project
                 displayDialogToDeleteProject(clickedProject.getId());
                 return true;
                 default:
                     return super.onOptionsItemSelected(item);
         }
     }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        MapsInitializer.initialize(getApplicationContext());
+        if (isNetworkAvailable(getApplicationContext())) {
+
+            if (clickedProject.getLatLng() != null) {
+
+                String latLng = clickedProject.getLatLng();
+                LatLng latLngOfAddress = getLatLngOfPlace(latLng);
+                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLngOfAddress, 16);
+                googleMap.animateCamera(cameraUpdate);
+                googleMap.addMarker(new MarkerOptions()
+                        .position(latLngOfAddress));
+
+            } else {
+                textViewNoInternet.setText(getResources().getString(R.string.location_not_found));
+                textViewNoInternet.setVisibility(View.VISIBLE);
+                mapView.setVisibility(View.GONE);
+            }
+        } else {
+            textViewNoInternet.setVisibility(View.VISIBLE);
+            mapView.setVisibility(View.GONE);
+        }
+    }
+
     //--------------------------------------
     //CONFIGURATION
     //-----------------------------------------
@@ -185,15 +206,6 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
     //--------------------------------------
     //ACTIONS
     //----------------------------------------
-    //@OnClick(R.id.activity_detail_image_button_chat)
-    public void openChatForTheProject() {
-        Intent chatIntent = new Intent(this, ChatActivity.class);
-        Bundle bundle = new Bundle();
-        bundle.putString("chatName", clickedProject.getId());
-        chatIntent.putExtras(bundle);
-        startActivity(chatIntent);
-    }
-
     @OnClick(R.id.detail_activity_layout_nbr_follower)
     public void displayNumberOfFollower() {
         //display modal bottom sheet that will display a list of follower
@@ -203,7 +215,6 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
 
     @OnClick(R.id.project_detail_activity_author_button)
     public void launchAuthorProfileActivity() {
-
         //check if it s an association or a user
         String authorId = clickedProject.getAuthorId();
         UserHelper.getUser(authorId).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -225,12 +236,14 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
         });
     }
 
+    /**
+     * allow the user to follow the project or not
+     * change color of button if the user follows or not
+     */
     @OnClick(R.id.activity_detail_fab)
     public void followTheProject() {
         isButtonClicked = !isButtonClicked;
-        //String userUid = getCurrentUser().getUid();
         if (isButtonClicked) {
-            //change the color of the button
             buttonFollowProject.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.darkColor)));
             buttonFollowProject.setImageDrawable(getResources().getDrawable(R.drawable.ic_check_white));
             //create subscription, maybe list of projects Id in user, so, update a field in user
@@ -243,11 +256,10 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
             }
             int nbrFollower = Integer.parseInt(textViewNbrOfFollowers.getText().toString()) + 1;
             textViewNbrOfFollowers.setText(String.valueOf(nbrFollower));
-            Toast.makeText(this, "You are taking part in this project! You can contact the team through the chat!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getResources().getString(R.string.follow_project_toast), Toast.LENGTH_SHORT).show();
 
         } else {
             //unclick button
-            //delete the field with the projects id in the user tuple. delete the subscription
             String userId = Utils.getCurrentUser().getUid();
             if (clickedProject.getId() != null) {
                 String projectId = clickedProject.getId();
@@ -255,17 +267,18 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
                 UserHelper.removeProjectSubscription(userId, projectId);
                 ChatHelper.removeInvolvedUser(projectId, userId);
             }
-            //change button color
             buttonFollowProject.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.white)));
             buttonFollowProject.setImageDrawable(getResources().getDrawable(R.drawable.ic_check));
             int nbrFollower = Integer.parseInt(textViewNbrOfFollowers.getText().toString()) - 1;
             textViewNbrOfFollowers.setText(String.valueOf(nbrFollower));
 
-            Toast.makeText(this, "You are not part of this project anymore", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getResources().getString(R.string.unfollow_project_toast), Toast.LENGTH_SHORT).show();
         }
-
     }
 
+    /**
+     * display the photo in full screen if the user click on it
+     */
     @OnClick(R.id.image_detail_activity)
     public void displayFullScreenImage() {
         if (clickedProject.getUrlPhoto() != null) {
@@ -273,15 +286,40 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
             intent.putExtra("image_url", clickedProject.getUrlPhoto());
             startActivity(intent);
         }
-
     }
 
     //------------------------------------------
     //--------------------------------------------
+    public void openChatForTheProject() {
+        Intent chatIntent = new Intent(this, ChatActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putString("chatName", clickedProject.getId());
+        chatIntent.putExtras(bundle);
+        startActivity(chatIntent);
+    }
+
+    /**
+     * check if the project got a location and display it on text views
+     */
+    private void displayWrittenLocation(Project project) {
+        if (project.getStreetNumber() != null && project.getStreetName() != null) {
+            projectStreetNameAndStreetNumberTextView.setText(capitalizeFirstLetter(project.getStreetNumber() + " " + project.getStreetName()));
+        }
+        if (project.getCity() != null) {
+            projectPostalCodeAndCityTextView.setText(project.getPostalCode() + " " + capitalizeFirstLetter(project.getCity()));
+        }
+        if (project.getCountry() != null) {
+            projectCountryTextView.setText(capitalizeFirstLetter(project.getCountry()));
+        }
+    }
+
+    //-------------------------------------------
+    //DIALOG METHODS
+    //----------------------------------------------------
     private void displayDialogToDeleteProject(String projectId) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Do you want to delete this project?")
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+        builder.setTitle(getResources().getString(R.string.delete_project_dialog_title))
+                .setPositiveButton(getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         ProjectHelper.deleteProject(projectId);
@@ -302,22 +340,26 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
                                 }
                             }
                         });
-
                         UserHelper.removeProjectSubscription(getCurrentUser().getUid(), projectId);
                         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                         startActivity(intent);
                     }
                 })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                .setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
+                    public void onClick(DialogInterface dialog, int which) {}
                 })
                 .create()
                 .show();
     }
 
+    //-----------------------------------------
+    //METHODS TO DISPLAY UI
+    //-----------------------------------------------
+    /**
+     * check if the user subsribe to the project and set the color of the button
+     * depending of that
+     */
     private void displayColorButton(User user, String projectId) {
         //check if user subscribed to this project maybe
         if (user.getProjectsSubscribedId() != null) {
@@ -333,6 +375,10 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
         }
     }
 
+    /**
+     * remove follow button if this is a current users project
+     * display good color of button depending on if the current user follows the project or not
+     */
     @SuppressLint("RestrictedApi")
     private void displayFollowButton() {
         if (clickedProject.getAuthorId().equals(Utils.getCurrentUser().getUid())) {
@@ -352,18 +398,7 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
         });
     }
 
-    private Project retrieveClickedProject() {
-        Gson gson = new Gson();
-        Project project = new Project();
-        String json = preferences.getString(CLICKED_PROJECT, null);
-        Type type = new TypeToken<Project>() {
-        }.getType();
-
-        project = gson.fromJson(json, type);
-        return project;
-    }
-
-    private void updateUi(Project project, Context context) {
+    private void displayProjectsInformation(Project project, Context context) {
         if (project.getUsersWhoSubscribed().size() > 0) {
             String numberOfFollowers = String.valueOf(project.getUsersWhoSubscribed().size());
             textViewNbrOfFollowers.setText(numberOfFollowers);
@@ -382,7 +417,6 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
         }
         projectDescriptionTextView.setText(project.getDescription());
         if (project.getAuthorId() != null) {
-
             UserHelper.getUser(project.getAuthorId()).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -400,7 +434,6 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
                 }
             });
         }
-
         if (project.getUrlPhoto() != null) {
             Glide.with(this)
                     .load(project.getUrlPhoto())
@@ -411,42 +444,24 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
             params.setAnchorId(R.id.layout_yellow_info);
             buttonFollowProject.setLayoutParams(params);
         }
-
-        if (project.getStreetNumber() != null && project.getStreetName() != null) {
-            projectStreetNameAndStreetNumberTextView.setText(capitalizeFirstLetter(project.getStreetNumber() + " " + project.getStreetName()));
-        }
-        if (project.getCity() != null) {
-            projectPostalCodeAndCityTextView.setText(project.getPostalCode() + " " + capitalizeFirstLetter(project.getCity()));
-        }
-        if (project.getCountry() != null) {
-            projectCountryTextView.setText(capitalizeFirstLetter(project.getCountry()));
-        }
+        displayWrittenLocation(project);
     }
 
+    private void updateUi(Project project, Context context) {
+        displayProjectsInformation(project, context);
+    }
 
+    //------------------------------------
+    //GET DATA
+    //--------------------------------------
+    private Project retrieveClickedProject() {
+        Gson gson = new Gson();
+        Project project = new Project();
+        String json = preferences.getString(CLICKED_PROJECT, null);
+        Type type = new TypeToken<Project>() {
+        }.getType();
 
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        MapsInitializer.initialize(getApplicationContext());
-        if (isNetworkAvailable(getApplicationContext())) {
-
-            if (clickedProject.getLatLng() != null) {
-
-                String latLng = clickedProject.getLatLng();
-                LatLng latLngOfAddress = getLatLngOfPlace(latLng);
-                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLngOfAddress, 16);
-                googleMap.animateCamera(cameraUpdate);
-                googleMap.addMarker(new MarkerOptions()
-                        .position(latLngOfAddress));
-
-            } else {
-                textViewNoInternet.setText("Location not found");
-                textViewNoInternet.setVisibility(View.VISIBLE);
-                mapView.setVisibility(View.GONE);
-            }
-        } else {
-            textViewNoInternet.setVisibility(View.VISIBLE);
-            mapView.setVisibility(View.GONE);
-        }
+        project = gson.fromJson(json, type);
+        return project;
     }
 }

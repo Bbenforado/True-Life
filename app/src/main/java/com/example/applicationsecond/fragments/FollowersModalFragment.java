@@ -37,13 +37,11 @@ import butterknife.ButterKnife;
  */
 public class FollowersModalFragment extends BottomSheetDialogFragment {
 
-
     @BindView(R.id.modal_fragment_followers_recycler_view)
     RecyclerView recyclerView;
     //--------------------------------------------
     private AdapterModalFollower adapter;
     private List<User> followers;
-    private String projectId;
     //------------------------------------------
     public static final String KEY_PROJECT_ID = "keyProjectId";
 
@@ -81,14 +79,10 @@ public class FollowersModalFragment extends BottomSheetDialogFragment {
     private void configureRecyclerView() {
         followers = new ArrayList<>();
         getProjectInformation();
-       /* adapter = new AdapterModalFollower(followers, Glide.with(this));
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));*/
-
     }
 
     private void getProjectInformation() {
-        projectId = getArguments().getString(KEY_PROJECT_ID, null);
+        String projectId = getArguments().getString(KEY_PROJECT_ID, null);
         ProjectHelper.getProject(projectId).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {

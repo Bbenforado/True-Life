@@ -116,6 +116,9 @@ public class UsersProjectsListFragment extends Fragment implements AdapterUsersP
         getDataToConfigureRecyclerView(currentUsersId);
     }
 
+    /**
+     * displays the detail of the project
+     */
     private void configureOnClickRecyclerView() {
         ItemClickSupport.addTo(recyclerView, R.layout.fragment_my_projects_item)
                 .setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
@@ -130,6 +133,9 @@ public class UsersProjectsListFragment extends Fragment implements AdapterUsersP
                 });
     }
 
+    /**
+     * user can delete project if he clicks for long time on an item of the list
+     */
     private void configureOnLongClickRecyclerView() {
         ItemClickSupport.addTo(recyclerView, R.layout.fragment_my_projects_item)
                 .setOnItemLongClickListener(new ItemClickSupport.OnItemLongClickListener() {
@@ -146,8 +152,8 @@ public class UsersProjectsListFragment extends Fragment implements AdapterUsersP
     //------------------------------------------
     private void displayDialogToDeleteProject(String projectId) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle("Do you want to delete this project?")
-               .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+        builder.setTitle(getResources().getString(R.string.delete_project_dialog_title))
+               .setPositiveButton(getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
                    @Override
                    public void onClick(DialogInterface dialog, int which) {
                        ProjectHelper.deleteProject(projectId);
@@ -171,11 +177,9 @@ public class UsersProjectsListFragment extends Fragment implements AdapterUsersP
                        UserHelper.removeProjectSubscription(Utils.getCurrentUser().getUid(), projectId);
                    }
                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                .setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
+                    public void onClick(DialogInterface dialog, int which) {}
                 })
                 .create()
                 .show();

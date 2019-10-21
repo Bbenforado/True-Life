@@ -81,6 +81,8 @@ public class ChatActivity extends AppCompatActivity implements ChatAdapter.Liste
     private String currentChatName;
     //---------------------------------------------
     //---------------------------------------------
+    public static final String COLLECTION_NAME_CHATS = "chats";
+    public static final String COLLECTION_NAME_MESSAGES = "messages";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,30 +92,22 @@ public class ChatActivity extends AppCompatActivity implements ChatAdapter.Liste
 
         configureToolbar();
         String chatName = getIntent().getExtras().getString("chatName");
-        //if (isNetworkAvailable(this)) {
-            configureRecyclerView(chatName);
-            getCurrentUserFromFirestore();
-        /*} else {
-            Toast.makeText(this, "You don't have internet, please, try again later", Toast.LENGTH_SHORT).show();
-        }*/
+        configureRecyclerView(chatName);
+        getCurrentUserFromFirestore();
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
-
+    /**
+     * save the time (milliseconds) for the visit of the user on this chat.
+     * used to get the unread messages for the user
+     */
     private void saveTimeOfTheVisit() {
         if (isNetworkAvailable(this)) {
             Date date = new Date();
             long dateInMilliseconds = date.getTime();
             Map<String, Long> lastChatVisit = new HashMap<>();
             if (modelCurrentUser.getLastChatVisit() != null) {
-
                 try {
                     lastChatVisit = modelCurrentUser.getLastChatVisit();
-
-
                     for (Map.Entry<String, Long> entry : lastChatVisit.entrySet()) {
                         if (entry.getKey().equals(currentChatName)) {
                             entry.setValue(dateInMilliseconds);
@@ -144,6 +138,20 @@ public class ChatActivity extends AppCompatActivity implements ChatAdapter.Liste
         actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
+    private void configureRecyclerView(String chatName) {
+        currentChatName = chatName;
+        adapter = new ChatAdapter(generateOptionsForAdapter(MessageHelper.getAllMessageForChat(currentChatName)),
+                Glide.with(this), this, getCurrentUser().getUid());
+        adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onItemRangeInserted(int positionStart, int itemCount) {
+                recyclerView.smoothScrollToPosition(adapter.getItemCount());
+            }
+        });
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(adapter);
+    }
+
     //-------------------------------
     //ACTIONS
     //---------------------------------
@@ -155,8 +163,8 @@ public class ChatActivity extends AppCompatActivity implements ChatAdapter.Liste
                 Date date = new Date();
                 long dateInMillis = date.getTime();
 
-                CollectionReference ref = FirebaseFirestore.getInstance().collection("chats");
-                String id = ref.document(currentChatName).collection("messages").document().getId();
+                CollectionReference ref = FirebaseFirestore.getInstance().collection(COLLECTION_NAME_CHATS);
+                String id = ref.document(currentChatName).collection(COLLECTION_NAME_MESSAGES).document().getId();
 
                 MessageHelper.createMessageForChat(id, editTextMessage.getText().toString(),
                         currentChatName, modelCurrentUser, dateInMillis).addOnFailureListener(new OnFailureListener() {
@@ -167,7 +175,6 @@ public class ChatActivity extends AppCompatActivity implements ChatAdapter.Liste
                 });
 
                 ChatHelper.addMessageId(currentChatName, id);
-
                 MessageHelper.getLastMessageOfAChat(currentChatName).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -200,9 +207,8 @@ public class ChatActivity extends AppCompatActivity implements ChatAdapter.Liste
                 editTextMessage.setText("");
             }
         } else {
-            Toast.makeText(this, "You don't have internet, please, try again later", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getResources().getString(R.string.no_internet_try_again_toast), Toast.LENGTH_SHORT).show();
         }
-
     }
 
     //---------------------------------
@@ -214,26 +220,10 @@ public class ChatActivity extends AppCompatActivity implements ChatAdapter.Liste
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     modelCurrentUser = task.getResult().toObject(User.class);
-
                     saveTimeOfTheVisit();
                 }
             }
         });
-    }
-
-    private void configureRecyclerView(String chatName) {
-        currentChatName = chatName;
-        adapter = new ChatAdapter(generateOptionsForAdapter(MessageHelper.getAllMessageForChat(currentChatName)),
-                Glide.with(this), this, getCurrentUser().getUid());
-
-        adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-            @Override
-            public void onItemRangeInserted(int positionStart, int itemCount) {
-                recyclerView.smoothScrollToPosition(adapter.getItemCount());
-            }
-        });
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(adapter);
     }
 
     private FirestoreRecyclerOptions<Message> generateOptionsForAdapter(Query query){
@@ -242,7 +232,6 @@ public class ChatActivity extends AppCompatActivity implements ChatAdapter.Liste
                 .setLifecycleOwner(this)
                 .build();
     }
-
 
     @Override
     public void onDataChanged() {

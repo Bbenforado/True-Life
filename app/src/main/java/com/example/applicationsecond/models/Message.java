@@ -23,12 +23,6 @@ public class Message {
         this.dateInMilliseconds = dateInMilliseconds;
     }
 
-    public Message(String message, String urlImage, User userSender) {
-        this.message = message;
-        this.urlImage = urlImage;
-        this.userSender = userSender;
-    }
-
     // --- GETTERS ---
     public String getMessage() { return message; }
     @ServerTimestamp

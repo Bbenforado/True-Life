@@ -21,7 +21,6 @@ public class AdapterRecyclerViewPosts extends FirestoreRecyclerAdapter<Post, Vie
         void onDataChanged();
     }
     private AdapterRecyclerViewPosts.Listener callback;
-    private RequestManager glide;
 
     /**
      * Create a new RecyclerView adapter that listens to a Firestore Query.  See {@link
@@ -29,12 +28,10 @@ public class AdapterRecyclerViewPosts extends FirestoreRecyclerAdapter<Post, Vie
      *
      * @param options
      */
-    public AdapterRecyclerViewPosts(@NonNull FirestoreRecyclerOptions<Post> options, RequestManager glide, Listener callback) {
+    public AdapterRecyclerViewPosts(@NonNull FirestoreRecyclerOptions<Post> options, Listener callback) {
         super(options);
-        this.glide = glide;
         this.callback = callback;
     }
-
 
     @NonNull
     @Override

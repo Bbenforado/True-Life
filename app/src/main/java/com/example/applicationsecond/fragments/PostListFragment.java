@@ -65,14 +65,12 @@ public class PostListFragment extends Fragment {
     //-------------------------------------
     private AdapterPostListFragment adapter;
     private List<Post> postList;
-    private List<String> publishedPostsId;
     private Boolean isFromAssociationProfile;
-    private SharedPreferences preferences;
     private int counterPost;
     //-----------------------------------------------
     //-------------------------------------------------
     public static final String APP_PREFERENCES = "appPreferences";
-    public static final String ASSOCIATION_ID = "associationId";
+    private static final String ASSOCIATION_ID = "associationId";
 
 
     public PostListFragment() {
@@ -89,8 +87,6 @@ public class PostListFragment extends Fragment {
                              Bundle savedInstanceState) {
         View result = inflater.inflate(R.layout.fragment_post_list, container, false);
         ButterKnife.bind(this, result);
-
-        publishedPostsId = new ArrayList<>();
 
         doBasicConfiguration();
         return result;
@@ -114,10 +110,13 @@ public class PostListFragment extends Fragment {
         viewSwitcher.setOutAnimation(noNewsAvailable);
     }
 
+    /**
+     * if it s the association profile, get the posts the association created
+     */
     private void configureRecyclerView() {
         if (isFromAssociationProfile) {
             counterPost = 0;
-            preferences = getActivity().getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
+            SharedPreferences preferences = getActivity().getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
             String associationId = preferences.getString(ASSOCIATION_ID, null);
 
             UserHelper.getUser(associationId).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -150,7 +149,7 @@ public class PostListFragment extends Fragment {
                 }
             });
             displayScreenDependingOfPostsAvailable();
-        } else {
+         }else {
             getDataToConfigureRecyclerView();
         }
     }
@@ -168,16 +167,12 @@ public class PostListFragment extends Fragment {
         }
     }
 
-    private boolean checkIfTheresNewsToDisplay() {
-        return (postList.size() > 0);
-    }
-
-    private void launchActivity(Class activity) {
-        Intent intent = new Intent(getContext(), activity);
-        startActivity(intent);
-    }
-
-
+    //-------------------------------------------
+    //GET DATA
+    //----------------------------------------
+    /**
+     * get the posts created by the associations the user follow
+     */
     private void getDataToConfigureRecyclerView() {
         counterPost = 0;
         //get the current user
