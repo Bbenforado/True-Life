@@ -27,6 +27,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.applicationsecond.R;
 import com.example.applicationsecond.api.ChatHelper;
+import com.example.applicationsecond.api.MessageHelper;
 import com.example.applicationsecond.api.ProjectHelper;
 import com.example.applicationsecond.api.UserHelper;
 import com.example.applicationsecond.fragments.FollowersModalFragment;
@@ -43,6 +44,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -283,8 +285,25 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         ProjectHelper.deleteProject(projectId);
-                        ChatHelper.deleteChat(projectId);
-                        UserHelper.deleteAnIdInProjectSubscribedId(projectId);
+                        ChatHelper.getChat(projectId).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    Chat chat = task.getResult().toObject(Chat.class);
+                                    if (chat.getMessagesId() != null) {
+                                        for (int i = 0; i < chat.getMessagesId().size(); i++) {
+                                            MessageHelper.deleteMessage(projectId, chat.getMessagesId().get(i));
+                                        }
+                                        ChatHelper.deleteChat(projectId);
+                                    } else {
+                                        ChatHelper.deleteChat(projectId);
+                                    }
+                                    ChatHelper.deleteChat(projectId);
+                                }
+                            }
+                        });
+
+                        UserHelper.removeProjectSubscription(getCurrentUser().getUid(), projectId);
                         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                         startActivity(intent);
                     }

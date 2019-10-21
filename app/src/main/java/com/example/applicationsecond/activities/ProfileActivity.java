@@ -8,6 +8,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.ViewPager;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -296,10 +297,29 @@ public class ProfileActivity extends AppCompatActivity {
     //FIREBASE
     //--------------------------------------
     private void uploadPhotoInFireBase() {
+        ProgressDialog dialog = ProgressDialog.show(this, "Loading", "Please wait, it can take one minute", true);
         String uuid = UUID.randomUUID().toString(); // GENERATE UNIQUE STRING
         StorageReference filePath = FirebaseStorage.getInstance().getReference(uuid);
 
-        filePath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+        filePath.putFile(uri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                if (task.isSuccessful()) {
+                    filePath.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Uri> task) {
+                            if (task.isSuccessful()) {
+                                dialog.dismiss();
+                                Uri uri = task.getResult();
+                                UserHelper.updateUrlPhoto(Utils.getCurrentUser().getUid(), uri.toString());
+                            }
+                        }
+                    });
+                }
+            }
+        });
+
+           /*     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
@@ -309,7 +329,7 @@ public class ProfileActivity extends AppCompatActivity {
                     }
                 });
             }
-        });
+        });*/
     }
 
     //-------------------------------

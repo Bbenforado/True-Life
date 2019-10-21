@@ -37,7 +37,7 @@
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:visibility="gone"
-                android:src="@drawable/ic_verified"
+                android:src="@drawable/ic_asso_yellow"
                 android:layout_marginLeft="5dp"/>
 
         </LinearLayout>

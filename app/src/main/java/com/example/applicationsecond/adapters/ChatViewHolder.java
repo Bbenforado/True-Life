@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.applicationsecond.R;
+import com.example.applicationsecond.api.ChatHelper;
 import com.example.applicationsecond.api.MessageHelper;
 import com.example.applicationsecond.models.Message;
 
@@ -103,6 +104,7 @@ public class ChatViewHolder extends RecyclerView.ViewHolder {
                                 public void onClick(DialogInterface dialog, int id) {
                                     if (message.getId() != null) {
                                         MessageHelper.deleteMessage(message.getChatName(), message.getId());
+                                        ChatHelper.removeMessageId(message.getChatName(), message.getId());
                                     }
                                 }
                             })

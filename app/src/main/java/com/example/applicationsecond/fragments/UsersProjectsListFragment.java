@@ -29,8 +29,10 @@ import com.example.applicationsecond.activities.ProjectDetailActivity;
 import com.example.applicationsecond.adapters.AdapterRecyclerViewProjects;
 import com.example.applicationsecond.adapters.AdapterUsersProjectsList;
 import com.example.applicationsecond.api.ChatHelper;
+import com.example.applicationsecond.api.MessageHelper;
 import com.example.applicationsecond.api.ProjectHelper;
 import com.example.applicationsecond.api.UserHelper;
+import com.example.applicationsecond.models.Chat;
 import com.example.applicationsecond.models.Post;
 import com.example.applicationsecond.models.Project;
 import com.example.applicationsecond.utils.ItemClickSupport;
@@ -38,6 +40,7 @@ import com.example.applicationsecond.utils.Utils;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -148,8 +151,24 @@ public class UsersProjectsListFragment extends Fragment implements AdapterUsersP
                    @Override
                    public void onClick(DialogInterface dialog, int which) {
                        ProjectHelper.deleteProject(projectId);
-                       ChatHelper.deleteChat(projectId);
-                       UserHelper.deleteAnIdInProjectSubscribedId(projectId);
+                       ChatHelper.getChat(projectId).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                           @Override
+                           public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                               if (task.isSuccessful()) {
+                                   Chat chat = task.getResult().toObject(Chat.class);
+                                   if (chat.getMessagesId() != null) {
+                                       for (int i = 0; i < chat.getMessagesId().size(); i++) {
+                                           MessageHelper.deleteMessage(projectId, chat.getMessagesId().get(i));
+                                       }
+                                       ChatHelper.deleteChat(projectId);
+                                   } else {
+                                       ChatHelper.deleteChat(projectId);
+                                   }
+                                   ChatHelper.deleteChat(projectId);
+                               }
+                           }
+                       });
+                       UserHelper.removeProjectSubscription(Utils.getCurrentUser().getUid(), projectId);
                    }
                })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

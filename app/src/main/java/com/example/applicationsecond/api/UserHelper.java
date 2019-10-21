@@ -66,6 +66,10 @@ public class UserHelper {
         return UserHelper.getUsersCollection().document(userId).update("publishedPostId",
                 FieldValue.arrayUnion(postId));
     }
+    public static Task<Void> removePublishedPostId(String userId, String postId) {
+        return UserHelper.getUsersCollection().document(userId).update("publishedPostId",
+                FieldValue.arrayRemove(postId));
+    }
 
     public static Task<Void> updateUrlPhoto(String userId, String urlPhoto) {
         return UserHelper.getUsersCollection().document(userId).update("urlPhoto", urlPhoto);
@@ -83,10 +87,10 @@ public class UserHelper {
         return UserHelper.getUsersCollection().document(userId).update("city", city);
     }
 
-    public static Task<Void> deleteAnIdInProjectSubscribedId(String projectId) {
+   /* public static Task<Void> deleteAnIdInProjectSubscribedId(String projectId) {
         return UserHelper.getUsersCollection().document().update("projectsSubscribedId",
                 FieldValue.arrayRemove(projectId));
-    }
+    }*/
 
 
 }

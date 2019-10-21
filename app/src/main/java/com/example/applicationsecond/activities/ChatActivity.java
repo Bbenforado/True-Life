@@ -42,6 +42,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.ConcurrentModificationException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -106,19 +107,24 @@ public class ChatActivity extends AppCompatActivity implements ChatAdapter.Liste
         if (isNetworkAvailable(this)) {
             Date date = new Date();
             long dateInMilliseconds = date.getTime();
-            Map<String, Long> lastChatVisit = new ConcurrentHashMap<>();
+            Map<String, Long> lastChatVisit = new HashMap<>();
             if (modelCurrentUser.getLastChatVisit() != null) {
 
-                lastChatVisit = modelCurrentUser.getLastChatVisit();
+                try {
+                    lastChatVisit = modelCurrentUser.getLastChatVisit();
 
-                for (Map.Entry<String, Long> entry : lastChatVisit.entrySet()) {
-                    if (entry.getKey().equals(currentChatName)) {
-                        entry.setValue(dateInMilliseconds);
-                        UserHelper.updateLastChatVisit(getCurrentUser().getUid(), lastChatVisit);
-                    } else {
-                        lastChatVisit.put(currentChatName, dateInMilliseconds);
-                        UserHelper.updateLastChatVisit(getCurrentUser().getUid(), lastChatVisit);
+
+                    for (Map.Entry<String, Long> entry : lastChatVisit.entrySet()) {
+                        if (entry.getKey().equals(currentChatName)) {
+                            entry.setValue(dateInMilliseconds);
+                            UserHelper.updateLastChatVisit(getCurrentUser().getUid(), lastChatVisit);
+                        } else {
+                            lastChatVisit.put(currentChatName, dateInMilliseconds);
+                            UserHelper.updateLastChatVisit(getCurrentUser().getUid(), lastChatVisit);
+                        }
                     }
+                } catch (ConcurrentModificationException exception) {
+                    System.out.println("error = " + exception.getMessage());
                 }
             } else {
                 lastChatVisit.put(currentChatName, dateInMilliseconds);
@@ -159,6 +165,8 @@ public class ChatActivity extends AppCompatActivity implements ChatAdapter.Liste
                         Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_SHORT).show();
                     }
                 });
+
+                ChatHelper.addMessageId(currentChatName, id);
 
                 MessageHelper.getLastMessageOfAChat(currentChatName).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -201,12 +209,14 @@ public class ChatActivity extends AppCompatActivity implements ChatAdapter.Liste
     //
     //-----------------------------------
     private void getCurrentUserFromFirestore() {
-        UserHelper.getUser(getCurrentUser().getUid()).addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        UserHelper.getUser(getCurrentUser().getUid()).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                modelCurrentUser = documentSnapshot.toObject(User.class);
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    modelCurrentUser = task.getResult().toObject(User.class);
 
-                saveTimeOfTheVisit();
+                    saveTimeOfTheVisit();
+                }
             }
         });
     }

@@ -10,6 +10,7 @@ public class Chat {
     private Message lastMessage;
     private Date dateCreated;
     private List<String> involvedUsers;
+    private List<String> messagesId;
     private String id;
 
     public Chat() { }
@@ -46,5 +47,13 @@ public class Chat {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public List<String> getMessagesId() {
+        return messagesId;
+    }
+
+    public void setMessagesId(List<String> messagesId) {
+        this.messagesId = messagesId;
     }
 }

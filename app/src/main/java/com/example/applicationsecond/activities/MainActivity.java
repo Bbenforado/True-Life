@@ -286,7 +286,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         FragmentManager fragmentManager = this.getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.frame_layout_content_main_activity, fragment);
-        transaction.commit();
+        transaction.commitAllowingStateLoss();
     }
 
     @Override

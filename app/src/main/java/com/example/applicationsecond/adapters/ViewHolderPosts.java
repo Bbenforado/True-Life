@@ -69,7 +69,7 @@ public class ViewHolderPosts extends RecyclerView.ViewHolder {
                 @Override
                 public boolean onLongClick(View v) {
 
-                    displayDialogToDeleteProject(post.getId());
+                    displayDialogToDeletePost(post.getId());
 
                     return  true;
                 }
@@ -77,13 +77,14 @@ public class ViewHolderPosts extends RecyclerView.ViewHolder {
         }
     }
 
-    private void displayDialogToDeleteProject(String postId) {
+    private void displayDialogToDeletePost(String postId) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Do you want to delete this post?")
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         PostHelper.deletePost(postId);
+                        UserHelper.removePublishedPostId(Utils.getCurrentUser().getUid(), postId);
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

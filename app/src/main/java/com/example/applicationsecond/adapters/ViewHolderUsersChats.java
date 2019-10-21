@@ -71,7 +71,12 @@ public class ViewHolderUsersChats extends RecyclerView.ViewHolder {
         }
         if (chat.getLastMessage() != null) {
             Message lastMessage = chat.getLastMessage();
-            textViewLastMessage.setText(lastMessage.getMessage());
+            if (lastMessage.getMessage().length() > 15) {
+                String message = lastMessage.getMessage().substring(0, 15);
+                textViewLastMessage.setText(message);
+            } else {
+                textViewLastMessage.setText(lastMessage.getMessage());
+            }
             textViewTime.setText(convertDateToHour(lastMessage.getDateCreated()));
             String userId = Utils.getCurrentUser().getUid();
             UserHelper.getUser(userId).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {

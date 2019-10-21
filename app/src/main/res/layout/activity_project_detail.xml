@@ -76,6 +76,7 @@
                         android:id="@+id/detail_activity_layout_nbr_follower"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
                         android:clickable="true"
                         android:orientation="horizontal">
 
@@ -167,7 +168,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Description :"
-                android:layout_marginTop="15dp"
                 android:textStyle="bold"/>
 
             <TextView

@@ -32,8 +32,21 @@ public class ChatHelper {
                 .limit(50);
     }
 
+    public static Task<Void> deleteMessagesOfChat(String chatName, String idMessage) {
+        System.out.println("come here");
+        return ChatHelper.getChatCollection().document(chatName).collection(COLLECTION_NAME).document(idMessage).delete();
+    }
+
     public static Task<Void> deleteChat(String idChat) {
+        System.out.println("delete chat");
         return ChatHelper.getChatCollection().document(idChat).delete();
+    }
+
+    public static Task<Void> addMessageId(String chatName, String messageId) {
+        return ChatHelper.getChatCollection().document(chatName).update("messagesId", FieldValue.arrayUnion(messageId));
+    }
+    public static Task<Void> removeMessageId(String chatName, String messageId) {
+        return ChatHelper.getChatCollection().document(chatName).update("messagesId", FieldValue.arrayRemove(messageId));
     }
 
     //CREATE
