@@ -61,4 +61,5 @@ public class ExampleUnitTest {
         String anotherName = Utils.resizeUsername("joel");
         assertEquals("joel", anotherName);
     }
+    
 }
