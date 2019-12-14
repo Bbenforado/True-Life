@@ -3,8 +3,7 @@
 </p>
 
 # True-Life
-Personal project developped for the last OpenClassrooms project.
-Social media where users can create projects, apply to projects, talk together about projects, organize together and build things together to improve their way of living :)
+Personal project developped for the last OpenClassrooms project.  
 
 True life is an app that allows people **to create projects**, and share them. It allows to create a **caring life** in a neighbourhood/city.  
 There is two type of users: basic user and association.  
