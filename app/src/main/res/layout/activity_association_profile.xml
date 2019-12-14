@@ -48,7 +48,6 @@
                     android:id="@+id/text_view_association_name_association_profile_activity"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="name of the association"
                     android:textStyle="bold"
                     android:textSize="18sp"
                     android:layout_marginLeft="25dp"/>
@@ -58,7 +57,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="25dp"
-                    android:text="city, country"
                     android:textSize="10sp"/>
 
             </LinearLayout>

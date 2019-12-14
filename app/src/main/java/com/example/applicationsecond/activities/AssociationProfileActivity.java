@@ -40,6 +40,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static com.example.applicationsecond.utils.Utils.capitalizeFirstLetter;
+import static com.example.applicationsecond.utils.Utils.formatLocation;
 import static com.example.applicationsecond.utils.Utils.isNetworkAvailable;
 
 public class AssociationProfileActivity extends AppCompatActivity {
@@ -202,7 +203,6 @@ public class AssociationProfileActivity extends AppCompatActivity {
                                         .apply(RequestOptions.circleCropTransform())
                                         .into(imageViewAssociationProfile);
                             }
-
                             textViewAssociationName.setText(capitalizeFirstLetter(association.getUsername()));
                             actionBar.setTitle(capitalizeFirstLetter(association.getUsername()));
                             if (association.getCountry() != null && association.getCity() != null) {

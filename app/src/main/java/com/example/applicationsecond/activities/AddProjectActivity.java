@@ -119,6 +119,8 @@ public class AddProjectActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         preferences = getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE);
         configureToolbar();
+
+        System.out.println("pref = " + preferences.getInt(KEY_EDIT_PROJECT, -1));
         //check if it s for editing one existing project
         //if 0 it s not
         //if 1 it is
@@ -143,6 +145,12 @@ public class AddProjectActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         handleResponseForGallery(requestCode, resultCode, data);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        preferences.edit().putInt(KEY_EDIT_PROJECT, -1).apply();
     }
 
     //-------------------------------------------------

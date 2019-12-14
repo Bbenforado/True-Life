@@ -149,6 +149,7 @@ public class ProjectDetailActivity extends AppCompatActivity implements OnMapRea
         switch (item.getItemId()) {
             case R.id.edit_item:
                 preferences.edit().putInt(KEY_EDIT_PROJECT, 1).apply();
+
                 Intent editIntent = new Intent(getApplicationContext(), AddProjectActivity.class);
                 String projectId = clickedProject.getId();
                 Bundle bundle = new Bundle();

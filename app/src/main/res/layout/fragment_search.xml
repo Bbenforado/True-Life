@@ -94,7 +94,7 @@
             android:backgroundTint="@android:color/white"
             android:layout_marginEnd="20dp"
             app:icon="@drawable/ic_search_white_tiny"
-            android:text="Users"/>
+            android:text="Associations"/>
 
     </LinearLayout>
 

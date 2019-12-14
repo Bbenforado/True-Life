@@ -32,6 +32,8 @@ public class ViewHolderUsers extends RecyclerView.ViewHolder {
     }
 
     public void updateUi(User user, RequestManager glide) {
+        System.out.println("username = " + user.getUsername());
+
         if (user.getUrlPhoto() != null) {
             glide.load(user.getUrlPhoto())
                     .apply(RequestOptions.circleCropTransform())

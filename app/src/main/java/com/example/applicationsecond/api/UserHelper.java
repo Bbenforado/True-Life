@@ -32,7 +32,9 @@ public class UserHelper {
     }
 
     public static Task<QuerySnapshot> getUserForSearchOnCity(String search) {
-        return UserHelper.getUsersCollection().whereEqualTo("city", search).get();
+        return UserHelper.getUsersCollection()
+                .whereEqualTo("association", true)
+                .whereEqualTo("city", search).get();
     }
 
     public static Task<Void> addProjectsSubscriptions(String userId, String projectId) {

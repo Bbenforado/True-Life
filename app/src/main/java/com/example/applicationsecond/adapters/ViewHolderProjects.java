@@ -53,6 +53,8 @@ public class ViewHolderProjects extends RecyclerView.ViewHolder {
         } else {
             contentOfNewsTextView.setText(capitalizeFirstLetter(project.getDescription()));
         }
+
+        System.out.println("project " + project.getId());
         titleTextView.setText(capitalizeFirstLetter(project.getTitle()));
         if (project.getAuthorId() != null) {
             UserHelper.getUser(project.getAuthorId()).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -63,6 +65,8 @@ public class ViewHolderProjects extends RecyclerView.ViewHolder {
                         ownerOfPostTextView.setText(capitalizeFirstLetter(user.getUsername()));
                         if (user.isAssociation()) {
                             imageViewAssociationIcon.setVisibility(View.VISIBLE);
+                        } else {
+                            imageViewAssociationIcon.setVisibility(View.GONE);
                         }
                     }
                 }

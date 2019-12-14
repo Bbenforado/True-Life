@@ -25,6 +25,7 @@ import com.bumptech.glide.GenericTransitionOptions;
 import com.bumptech.glide.Glide;
 import com.example.applicationsecond.R;
 import com.example.applicationsecond.activities.AssociationProfileActivity;
+import com.example.applicationsecond.activities.ProfileActivity;
 import com.example.applicationsecond.adapters.AdapterRecyclerViewUsers;
 import com.example.applicationsecond.api.UserHelper;
 import com.example.applicationsecond.models.User;
@@ -126,6 +127,7 @@ public class UserListFragment extends Fragment {
                     Intent authorProfileIntent = new Intent(getContext(), AssociationProfileActivity.class);
                     authorProfileIntent.putExtra("authorId", associationId);
                     startActivity(authorProfileIntent);
+
                 });
     }
 

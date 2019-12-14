@@ -10,6 +10,7 @@ import com.example.applicationsecond.fragments.PostListFragment;
 
 public class ViewPagerAdapterAssociationProfile extends FragmentPagerAdapter {
 
+
     public ViewPagerAdapterAssociationProfile(FragmentManager fm) {
         super(fm);
     }
