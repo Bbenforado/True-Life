@@ -17,4 +17,13 @@ Basic examples : "This day, this place, this time...
 who is ready to help??"  
   
   
-
+## Some screenshots...
+<p align="center"; display: flex; justify-content: space-between>
+  <img src="https://github.com/Bbenforado/True-Life/blob/master/images_true_life/screenshot_search.jpg"/>
+  <img src="https://github.com/Bbenforado/True-Life/blob/master/images_true_life/screenshot_chat.jpg"/>
+  
+  <img src="https://github.com/Bbenforado/True-Life/blob/master/images_true_life/screenshot_create_project.jpg"/>
+  <img src="https://github.com/Bbenforado/True-Life/blob/master/images_true_life/screenshot_menu.jpg"/>
+  
+  <img src="https://github.com/Bbenforado/True-Life/blob/master/images_true_life/screenshot_profile.jpg"/>
+</p>
