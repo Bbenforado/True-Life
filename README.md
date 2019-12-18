@@ -7,7 +7,7 @@ Personal project developped for the last OpenClassrooms project.
 
 True life is an app that allows people **to create projects**, and share them. It allows to create a **caring life** in a neighbourhood/city.  
 There is two type of users: basic user and association.  
-Users can checks available projects in their city, apply to them and then, organize and realise them.  
+Users can check available projects in their city, apply to them and then, organize and realise them.  
 Projects can be anything!  
 Basic examples : "This day, this place, this time...  
 * ...we are collecting clothes for homeless people
