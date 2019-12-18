@@ -21,17 +21,8 @@ Each project has a chat where users can organize between themselves.
 Associations users can publish more than projects, they can publish posts. A post is a quick information about the association, for example, they can post about their current needs and delete the post once the needs are not needed anymore.
   
   
-## Some screenshots...
-<p align="center"; display: flex; justify-content: space-between>
-  <img src="https://github.com/Bbenforado/True-Life/blob/master/images_true_life/screenshot_search.jpg"/>
-  <img src="https://github.com/Bbenforado/True-Life/blob/master/images_true_life/screenshot_chat.jpg"/>
-  
-  <br/>
-  
-  <img src="https://github.com/Bbenforado/True-Life/blob/master/images_true_life/screenshot_create_project.jpg"/>
-  <img src="https://github.com/Bbenforado/True-Life/blob/master/images_true_life/screenshot_menu.jpg"/>
-  
-  <br/>
-  
-  <img src="https://github.com/Bbenforado/True-Life/blob/master/images_true_life/screenshot_profile.jpg"/>
-</p>
+## Some screenshots and doc  
+
+![Documentation](https://github.com/Bbenforado/True-Life/blob/master/images_true_life/doc_true_life_resized.png)
+
+
